@@ -12,18 +12,14 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     var body: some View {
-            // Foreground content
         NavigationStack {
             ZStack {
-//                Color("background")
-//                    .ignoresSafeArea()
                 VStack {
                     Image("logo")
                         .resizable()
                         .scaledToFill()
                         .frame(width: 150, height: 180)
                         .padding(.vertical, 32)
-                    
 
                     VStack(spacing: 24) {
                         InputView(text: $email, title: "Email Address", placeholder: "name@example.com")
@@ -49,9 +45,32 @@ struct LoginView: View {
                     .cornerRadius(10)
                     .padding(.top, 24)
                     
+                    NavigationLink {
+                        
+                    } label: {
+                        Text("forgot password?")
+                            .font(.system(size: 14))
+                            .padding(10)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("background"))
+                    }
+                    
                     Spacer()
                     
-                    // Sign up button
+                    
+                    NavigationLink {
+                        RegistrationView()
+                            .navigationBarBackButtonHidden()
+                    } label: {
+                        HStack(spacing: 3) {
+                            Text("Dont have an account?")
+                            Text("Sign up")
+                                .fontWeight(.bold)
+                            Image(systemName: "arrow.right")
+                        }
+                        .foregroundColor(Color("background"))
+                        .font(.system(size: 14))
+                    }
                 }
             }
         }
