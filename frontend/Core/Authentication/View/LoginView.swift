@@ -12,6 +12,13 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var viewModel: AuthViewModel
+    
+    private var isFormValid: Bool {
+        return
+            viewModel.isValidEmail(email: email)
+        && viewModel.isValidPassword(password: password)
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -41,12 +48,14 @@ struct LoginView: View {
                                 .fontWeight(.semibold)
                             Image(systemName: "arrow.right")
                         }
+                        .opacity(isFormValid ? 1 : 0.5)
                         .foregroundColor(.white)
                         .frame(width: UIScreen.main.bounds.width - 32, height: 48)
                     }
                     .background(Color("background"))
                     .cornerRadius(10)
                     .padding(.top, 24)
+                    .disabled(!isFormValid)
                     
                     NavigationLink {
                         
@@ -82,6 +91,8 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
+        @StateObject var viewModel = AuthViewModel()
         LoginView()
+            .environmentObject(viewModel)
     }
 }

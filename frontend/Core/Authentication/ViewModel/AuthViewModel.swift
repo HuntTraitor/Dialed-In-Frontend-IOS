@@ -22,10 +22,8 @@ class AuthViewModel: ObservableObject {
         let endpoint = "http://localhost:3000/v1/users"
         let requestBody = ["name": name, "email": email, "password": password]
         
-        // Perform the POST request
+        // Send post request
         let result = try await Post(to: endpoint, with: requestBody)
-        
-        print("Result: \(result)")
         
         // Check if the "user" key exists and contains a dictionary of type [String: Any]
         if let user = result["user"] as? [String: Any] {
@@ -55,6 +53,27 @@ class AuthViewModel: ObservableObject {
             print("Unexpected response format: \(result)")
             throw NSError(domain: "UserCreationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unexpected response format"])
         }
+    }
+    
+    // Name is valid if its not empty
+    func isValidName(name: String) -> Bool {
+        return name != ""
+    }
+    
+    // email is valid if it matches the emailRX
+    func isValidEmail(email: String) -> Bool {
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRX)
+        return emailPredicate.evaluate(with: email)
+    }
+    
+    // password is valid if it is at least 8 characters
+    func isValidPassword(password: String) -> Bool {
+        return password.count >= 8
+    }
+    
+    // isValidConfirmPassword is valid if the password and confirm password match
+    func isValidConfirmPassword(password: String, confirmPassword: String) -> Bool {
+        return password == confirmPassword
     }
 }
 

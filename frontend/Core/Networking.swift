@@ -28,7 +28,6 @@ func Post(to urlString: String, with body: [String: Any]) async throws -> [Strin
     guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
         throw URLError(.cannotParseResponse)
     }
-    
     return json
 }
 

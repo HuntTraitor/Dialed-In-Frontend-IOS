@@ -15,6 +15,14 @@ struct RegistrationView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
     
+    private var isFormValid: Bool {
+        return
+            viewModel.isValidEmail(email: email)
+            && viewModel.isValidName(name: name)
+            && viewModel.isValidPassword(password: password)
+            && viewModel.isValidConfirmPassword(password: password, confirmPassword: confirmPassword)
+    }
+    
     var body: some View {
         VStack {
             Image("logo")
@@ -30,10 +38,11 @@ struct RegistrationView: View {
                 InputView(text: $email, title: "Email Address", placeholder: "name@example.com")
                 .autocapitalization(.none)
                 
-                InputView(text: $password, title: "Password", placeholder: "Enter your password")
+                InputView(text: $password, title: "Password", placeholder: "Enter your password", isSecureField: true)
                 .autocapitalization(.none)
+                .textContentType(.none)
                 
-                InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your password")
+                InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your password", isSecureField: true)
             }
             .padding(.horizontal)
             .padding(.top, 12)
@@ -48,12 +57,14 @@ struct RegistrationView: View {
                         .fontWeight(.semibold)
                     Image(systemName: "arrow.right")
                 }
+                .opacity(isFormValid ? 1 : 0.5)
                 .foregroundColor(.white)
                 .frame(width: UIScreen.main.bounds.width - 32, height: 48)
             }
             .background(Color("background"))
             .cornerRadius(10)
             .padding(.top, 24)
+            .disabled(!isFormValid)
             
             Spacer()
             
