@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum CreateUserResult {
+    case user(User)
+    case error([String: Any])
+}
+
 struct User: Identifiable, Codable {
     let id: Int
     let name: String

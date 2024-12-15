@@ -18,39 +18,22 @@ class AuthViewModel: ObservableObject {
         print("Signs the user in")
     }
     
-    func createUser(withEmail email: String, password: String, name: String) async throws -> User {
+    // createUser sends the network call to POST /users and returns the result
+    func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult  {
+        // set endpoints and request body
         let endpoint = "http://localhost:3000/v1/users"
         let requestBody = ["name": name, "email": email, "password": password]
         
         // Send post request
         let result = try await Post(to: endpoint, with: requestBody)
         
-        // Check if the "user" key exists and contains a dictionary of type [String: Any]
-        if let user = result["user"] as? [String: Any] {
-            let jsonData = try JSONSerialization.data(withJSONObject: user, options: [])
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                // Decode the user data into a User object
-                let user = try decoder.decode(User.self, from: jsonData)
-                return user
-            } catch {
-                // Handle error during decoding and throw with a custom message
-                print("Error decoding user: \(error)")
-                throw NSError(domain: "UserCreationError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Error decoding user: \(error.localizedDescription)"])
-            }
+        // Check the response wrapper
+        if let userDict = result["user"] as? [String: Any] {
+            let user = try JSONDecoder().decode(User.self, from: JSONSerialization.data(withJSONObject: userDict))
+            return .user(user)
         } else if let error = result["error"] as? [String: Any] {
-            // If there is an error in the response, print each validation error
-            for (field, message) in error {
-                print("Field \(field) error: \(message)")
-            }
-            // Throw an error if validation fails
-            throw NSError(domain: "UserCreationError", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Error in user creation response: \(error)"])
+            return .error(error)
         } else {
-            // If neither 'user' nor 'error' are present, something went wrong
-            print("Unexpected response format: \(result)")
             throw NSError(domain: "UserCreationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unexpected response format"])
         }
     }

@@ -49,7 +49,9 @@ struct RegistrationView: View {
             
             Button {
                 Task {
-                    try await viewModel.createUser(withEmail: email, password: password, name: name)
+                    let result = try await viewModel.createUser(withEmail: email, password: password, name: name)
+                    print(result)
+                    // CREATE A CUSTOM DIALOGUE HERE
                 }
             } label: {
                 HStack {

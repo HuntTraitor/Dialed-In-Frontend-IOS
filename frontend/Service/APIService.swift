@@ -1,8 +1,8 @@
 //
-//  Networking.swift
+//  APIService.swift
 //  frontend
 //
-//  Created by Hunter Tratar on 12/11/24.
+//  Created by Hunter Tratar on 12/13/24.
 //
 
 import Foundation
@@ -24,7 +24,7 @@ func Post(to urlString: String, with body: [String: Any]) async throws -> [Strin
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
     
     let (data, _) = try await URLSession.shared.data(for: request)
-    
+
     guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
         throw URLError(.cannotParseResponse)
     }
