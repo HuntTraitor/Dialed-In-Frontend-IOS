@@ -18,6 +18,14 @@ struct User: Identifiable, Codable {
     let email: String
     let createdAt: String
     let activated: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case email
+        case createdAt = "created_at"
+        case activated
+    }
 }
 
 let emailRX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
