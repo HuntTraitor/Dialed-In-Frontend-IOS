@@ -17,8 +17,8 @@ struct CustomDialog: View {
     
     var body: some View {
         ZStack {
-            Color(.white)
-                .opacity(0.1)
+            Color(.black)
+                .opacity(0.5)
                 .onTapGesture {
                     close()
                 }
@@ -71,7 +71,7 @@ struct CustomDialog: View {
             .shadow(radius: 12)
             .padding(30)
             .onAppear() {
-                withAnimation(Animation.easeInOut(duration: 0.6)) {
+                withAnimation(Animation.easeInOut(duration: 0.3)) {
                     fadeInOut.toggle()
                 }
             }.opacity(fadeInOut ? 1 : 0)

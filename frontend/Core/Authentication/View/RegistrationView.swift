@@ -14,7 +14,9 @@ struct RegistrationView: View {
     @State private var confirmPassword = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var isDialog: Bool = false
+    @State var isSuccessDialogActive: Bool = false
+    @State var isErrorDialogActive: Bool = false
+    @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
@@ -53,8 +55,17 @@ struct RegistrationView: View {
                 Button {
                     Task {
                         let result = try await viewModel.createUser(withEmail: email, password: password, name: name)
-                        print(result)
-                        //TODO render dialog
+                    
+                        switch result {
+                        case .user:
+                            isSuccessDialogActive = true
+                        case .error(let error):
+                            // uppercase the first letter of the error
+                            if let email = error["email"] as? String {
+                                errorMessage = email.prefix(1).uppercased() + email.dropFirst()
+                            }
+                            isErrorDialogActive = true
+                        }
                     }
                 } label: {
                     HStack {
@@ -85,6 +96,12 @@ struct RegistrationView: View {
                     .foregroundColor(Color("background"))
                     .font(.system(size: 14))
                 }
+            }
+            if isSuccessDialogActive {
+                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+            }
+            if isErrorDialogActive {
+                CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
             }
         }
     }
