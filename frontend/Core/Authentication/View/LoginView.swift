@@ -55,19 +55,24 @@ struct LoginView: View {
                                 return
                             }
                             
+                            
                             switch result {
                             case .token:
                                 isLoading = false
                                 isSuccessDialogActive = true
                             case .error(let error):
                                 if let errorMessageRaw = error["error"] as? String {
-                                    errorMessage = errorMessageRaw.prefix(1).uppercased() + String(errorMessageRaw.dropFirst())
+                                    if errorMessageRaw.contains("could not be found") {
+                                        errorMessage = "An account with this email address does not exist."
+                                    } else if errorMessageRaw.contains("invalid authentication") {
+                                        errorMessage = "Incorrect credentials, please try again"
+                                    }
                                 } else {
                                     errorMessage = "An unknown error occurred."
                                 }
                                 isErrorDialogActive = true
                                 
-                                // store token in some sort of local storage
+                                // TODO store token in some sort of local storage
                             }
                             isLoading = false
                         }

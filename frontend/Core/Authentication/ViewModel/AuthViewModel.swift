@@ -19,12 +19,14 @@ class AuthViewModel: ObservableObject {
         let requestBody = ["email": email, "password": password]
         
         let result = try await Post(to: endpoint, with: requestBody)
-        
+                
         if let tokenDict = result["authentication_token"] as? [String: Any] {
             let token = try JSONDecoder().decode(Token.self, from: JSONSerialization.data(withJSONObject: tokenDict))
             return .token(token)
         } else if let error = result["error"] as? [String: Any] {
             return .error(error)
+        } else if let error = result["error"] as? String {
+            return .error(["error": error])
         } else {
             throw NSError(domain: "UserSignInError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
         }
