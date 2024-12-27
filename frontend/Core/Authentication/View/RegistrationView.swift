@@ -67,9 +67,9 @@ struct RegistrationView: View {
                             if let email = error["email"] as? String {
                                 errorMessage = email.prefix(1).uppercased() + email.dropFirst()
                             }
-                            isLoading = false
                             isErrorDialogActive = true
                         }
+                        isLoading = false
                     }
                 } label: {
                     HStack {

@@ -11,7 +11,11 @@ import SwiftUI
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
+    @State private var isLoading = false
     @EnvironmentObject var viewModel: AuthViewModel
+    @State var isSuccessDialogActive: Bool = false
+    @State var isErrorDialogActive: Bool = false
+    @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
@@ -39,8 +43,33 @@ struct LoginView: View {
                     .padding(.top, 12)
                     
                     Button {
+                        isLoading = true
                         Task {
-                            try await viewModel.signIn(withEmail: email, password: password)
+                            let result: SignInResult
+                            do {
+                            result = try await viewModel.signIn(withEmail: email, password: password)
+                            } catch {
+                                errorMessage = "An unknown error occured."
+                                isErrorDialogActive = true
+                                isLoading = false
+                                return
+                            }
+                            
+                            switch result {
+                            case .token:
+                                isLoading = false
+                                isSuccessDialogActive = true
+                            case .error(let error):
+                                if let errorMessageRaw = error["error"] as? String {
+                                    errorMessage = errorMessageRaw.prefix(1).uppercased() + String(errorMessageRaw.dropFirst())
+                                } else {
+                                    errorMessage = "An unknown error occurred."
+                                }
+                                isErrorDialogActive = true
+                                
+                                // store token in some sort of local storage
+                            }
+                            isLoading = false
                         }
                     } label: {
                         HStack {
@@ -83,6 +112,15 @@ struct LoginView: View {
                         .foregroundColor(Color("background"))
                         .font(.system(size: 14))
                     }
+                }
+                if isSuccessDialogActive {
+                    CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your login was successful!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+                }
+                if isErrorDialogActive {
+                    CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
+                }
+                if isLoading {
+                    LoadingCircle()
                 }
             }
         }
