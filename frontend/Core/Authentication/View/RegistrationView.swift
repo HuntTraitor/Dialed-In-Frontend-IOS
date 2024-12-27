@@ -12,6 +12,7 @@ struct RegistrationView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
+    @State private var isLoading = false
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
     @State var isSuccessDialogActive: Bool = false
@@ -53,17 +54,20 @@ struct RegistrationView: View {
                 .padding(.top, 12)
                 
                 Button {
+                    isLoading = true
                     Task {
                         let result = try await viewModel.createUser(withEmail: email, password: password, name: name)
                     
                         switch result {
                         case .user:
+                            isLoading = false
                             isSuccessDialogActive = true
                         case .error(let error):
                             // uppercase the first letter of the error
                             if let email = error["email"] as? String {
                                 errorMessage = email.prefix(1).uppercased() + email.dropFirst()
                             }
+                            isLoading = false
                             isErrorDialogActive = true
                         }
                     }
@@ -102,6 +106,9 @@ struct RegistrationView: View {
             }
             if isErrorDialogActive {
                 CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
+            }
+            if isLoading {
+                LoadingCircle()
             }
         }
     }
