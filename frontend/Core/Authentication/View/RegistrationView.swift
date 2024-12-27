@@ -56,7 +56,15 @@ struct RegistrationView: View {
                 Button {
                     isLoading = true
                     Task {
-                        let result = try await viewModel.createUser(withEmail: email, password: password, name: name)
+                        let result: CreateUserResult
+                        do {
+                            result = try await viewModel.createUser(withEmail: email, password: password, name: name)
+                        } catch {
+                            errorMessage = "An unknown error occured."
+                            isErrorDialogActive = true
+                            isLoading = false
+                            return
+                        }
                     
                         switch result {
                         case .user:
@@ -66,6 +74,8 @@ struct RegistrationView: View {
                             // uppercase the first letter of the error
                             if let email = error["email"] as? String {
                                 errorMessage = email.prefix(1).uppercased() + email.dropFirst()
+                            } else {
+                                errorMessage = "An unknown error occurred."
                             }
                             isErrorDialogActive = true
                         }
@@ -102,7 +112,7 @@ struct RegistrationView: View {
                 }
             }
             if isSuccessDialogActive {
-                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful, please log in!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
             }
             if isErrorDialogActive {
                 CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
