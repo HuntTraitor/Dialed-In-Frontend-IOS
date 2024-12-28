@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FC5EEDC92D20A9A2004E988A /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FC5EEDC82D20A9A2004E988A /* SimpleKeychain */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FC19E4792D091EE6003438FE /* frontend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = frontend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC5EEDC92D20A9A2004E988A /* SimpleKeychain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = frontend;
 			packageProductDependencies = (
+				FC5EEDC82D20A9A2004E988A /* SimpleKeychain */,
 			);
 			productName = frontend;
 			productReference = FC19E4792D091EE6003438FE /* frontend.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = FC19E4702D091EE6003438FE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC19E47A2D091EE6003438FE /* Products */;
 			projectDirPath = "";
@@ -322,6 +331,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FC5EEDC82D20A9A2004E988A /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FC19E4712D091EE6003438FE /* Project object */;
 }

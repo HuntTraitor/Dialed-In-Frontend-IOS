@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+import SimpleKeychain
 
 @main
 struct frontendApp: App {
     @StateObject var viewModel = AuthViewModel()
+    @StateObject private var keychainManager = KeychainManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(viewModel)
+                .environmentObject(keychainManager)
         }
     }
 }

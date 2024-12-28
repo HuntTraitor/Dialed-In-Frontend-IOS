@@ -13,6 +13,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var isLoading = false
     @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var keychainManager: KeychainManager
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
     @State var errorMessage: String?
@@ -57,7 +58,8 @@ struct LoginView: View {
                             
                             
                             switch result {
-                            case .token:
+                            case .token(let token):
+                                keychainManager.saveToken(token.token)
                                 isLoading = false
                                 isSuccessDialogActive = true
                             case .error(let error):
@@ -71,8 +73,6 @@ struct LoginView: View {
                                     errorMessage = "An unknown error occurred."
                                 }
                                 isErrorDialogActive = true
-                                
-                                // TODO store token in some sort of local storage
                             }
                             isLoading = false
                         }
@@ -135,7 +135,9 @@ struct LoginView: View {
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         @StateObject var viewModel = AuthViewModel()
+        @StateObject var keychainManager = KeychainManager()
         LoginView()
             .environmentObject(viewModel)
+            .environmentObject(keychainManager)
     }
 }

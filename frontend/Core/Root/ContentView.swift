@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import SimpleKeychain
 
 struct ContentView: View {
+    @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var viewModel: AuthViewModel
+    
+    
     var body: some View {
         Group {
-            LoginView()
+            if keychainManager.token == nil {
+                 LoginView()
+             } else {
+                 HomeView()
+             }
         }
     }
 }
@@ -19,7 +27,9 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         @StateObject var viewModel = AuthViewModel()
+        @StateObject var keychainManager = KeychainManager()
         ContentView()
             .environmentObject(viewModel)
+            .environmentObject(keychainManager)
     }
 }
