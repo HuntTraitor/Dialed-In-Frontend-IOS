@@ -135,7 +135,10 @@ struct RegistrationView: View {
                     title: "Success",
                     message: "Your registration was successful. Please log in!",
                     buttonTitle: "Close",
-                    action: {isSuccessDialogActive = false}
+                    action: {
+                        isSuccessDialogActive = false
+                        dismiss()
+                    }
                 )
             }
             if isErrorDialogActive {
