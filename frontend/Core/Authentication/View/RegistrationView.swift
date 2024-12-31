@@ -38,17 +38,35 @@ struct RegistrationView: View {
                     .padding(.vertical, 32)
                 
                 VStack(spacing: 24) {
-                    InputView(text: $name, title: "Name", placeholder: "Enter your name")
+                    InputView(
+                        text: $name,
+                        title: "Name",
+                        placeholder: "Enter your name"
+                    )
                         .autocapitalization(.none)
                     
-                    InputView(text: $email, title: "Email Address", placeholder: "name@example.com")
+                    InputView(
+                        text: $email,
+                        title: "Email Address",
+                        placeholder: "name@example.com"
+                    )
                         .autocapitalization(.none)
                     
-                    InputView(text: $password, title: "Password", placeholder: "Enter your password", isSecureField: true)
+                    InputView(
+                        text: $password,
+                        title: "Password",
+                        placeholder: "Enter your password",
+                        isSecureField: true
+                    )
                         .autocapitalization(.none)
                         .textContentType(.none)
                     
-                    InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "Confirm your password", isSecureField: true)
+                    InputView(
+                        text: $confirmPassword,
+                        title: "Confirm Password",
+                        placeholder: "Confirm your password",
+                        isSecureField: true
+                    )
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -112,10 +130,22 @@ struct RegistrationView: View {
                 }
             }
             if isSuccessDialogActive {
-                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful. Please log in!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+                CustomDialog(
+                    isActive: $isSuccessDialogActive,
+                    title: "Success",
+                    message: "Your registration was successful. Please log in!",
+                    buttonTitle: "Close",
+                    action: {isSuccessDialogActive = false}
+                )
             }
             if isErrorDialogActive {
-                CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
+                CustomDialog(
+                    isActive: $isSuccessDialogActive,
+                    title: "Error",
+                    message: errorMessage ?? "An unexpected error has occured",
+                    buttonTitle: "Close",
+                    action: {isErrorDialogActive = false}
+                )
             }
             if isLoading {
                 LoadingCircle()
@@ -125,7 +155,6 @@ struct RegistrationView: View {
 }
 
 struct RegistrationView_Previews: PreviewProvider {
-    
     static var previews: some View {
         @StateObject var viewModel = AuthViewModel()
         RegistrationView()

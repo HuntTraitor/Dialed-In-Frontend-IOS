@@ -36,10 +36,19 @@ struct LoginView: View {
                         .padding(.vertical, 32)
 
                     VStack(spacing: 24) {
-                        InputView(text: $email, title: "Email Address", placeholder: "name@example.com")
+                        InputView(
+                            text: $email,
+                            title: "Email Address",
+                            placeholder: "name@example.com"
+                        )
                         .autocapitalization(.none)
                         
-                        InputView(text: $password, title: "Password", placeholder: "Enter your password", isSecureField: true)
+                        InputView(
+                            text: $password,
+                            title: "Password",
+                            placeholder: "Enter your password",
+                            isSecureField: true
+                        )
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
@@ -120,13 +129,25 @@ struct LoginView: View {
                     }
                 }
                 if isSuccessDialogActive {
-                    CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your login was successful!", buttonTitle: "Close", action: {
-                        keychainManager.saveToken(signinToken)
-                        isSuccessDialogActive = false
-                    })
+                    CustomDialog(
+                        isActive: $isSuccessDialogActive,
+                        title: "Success",
+                        message: "Your login was successful!",
+                        buttonTitle: "Close",
+                        action: {
+                            keychainManager.saveToken(signinToken)
+                            isSuccessDialogActive = false
+                        }
+                    )
                 }
                 if isErrorDialogActive {
-                    CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})
+                    CustomDialog(
+                        isActive: $isSuccessDialogActive,
+                        title: "Error",
+                        message: errorMessage ?? "An unexpected error has occured",
+                        buttonTitle: "Close",
+                        action: {isErrorDialogActive = false}
+                    )
                 }
                 if isLoading {
                     LoadingCircle()
