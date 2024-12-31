@@ -12,6 +12,7 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isLoading = false
+    @State private var signinToken = ""
     @EnvironmentObject var viewModel: AuthViewModel
     @EnvironmentObject var keychainManager: KeychainManager
     @State var isSuccessDialogActive: Bool = false
@@ -59,9 +60,9 @@ struct LoginView: View {
                             
                             switch result {
                             case .token(let token):
-                                keychainManager.saveToken(token.token)
                                 isLoading = false
                                 isSuccessDialogActive = true
+                                signinToken = token.token
                             case .error(let error):
                                 if let errorMessageRaw = error["error"] as? String {
                                     if errorMessageRaw.contains("could not be found") {
@@ -119,7 +120,10 @@ struct LoginView: View {
                     }
                 }
                 if isSuccessDialogActive {
-                    CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your login was successful!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+                    CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your login was successful!", buttonTitle: "Close", action: {
+                        keychainManager.saveToken(signinToken)
+                        isSuccessDialogActive = false
+                    })
                 }
                 if isErrorDialogActive {
                     CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})

@@ -112,7 +112,7 @@ struct RegistrationView: View {
                 }
             }
             if isSuccessDialogActive {
-                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful, please log in!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
+                CustomDialog(isActive: $isSuccessDialogActive, title: "Success", message: "Your registration was successful. Please log in!", buttonTitle: "Close", action: {isSuccessDialogActive = false})
             }
             if isErrorDialogActive {
                 CustomDialog(isActive: $isSuccessDialogActive, title: "Error", message: errorMessage ?? "An unexpected error has occured", buttonTitle: "Close", action: {isErrorDialogActive = false})

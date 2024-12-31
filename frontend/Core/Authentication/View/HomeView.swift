@@ -9,11 +9,26 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
+    @State private var isLogoutDialogActive: Bool = false
     var body: some View {
-        VStack {
-            Text("Hello World")
-            Button("logout") {
-                keychainManager.deleteToken()
+        ZStack {
+            VStack {
+                Text("Hello World")
+                Button("logout") {
+                    isLogoutDialogActive = true
+                }
+            }
+            if isLogoutDialogActive {
+                CustomDialog(
+                    isActive: $isLogoutDialogActive,
+                    title: "Success",
+                    message: "You have been successfully logged out",
+                    buttonTitle: "Close",
+                    action: {
+                        isLogoutDialogActive = false
+                        keychainManager.deleteToken()
+                    }
+                )
             }
         }
     }
