@@ -30,4 +30,8 @@ class KeychainManager: ObservableObject {
         try? simpleKeychain.deleteItem(forKey: "token")
         loadToken()
     }
+    
+    func getToken() -> String {
+        return (try? simpleKeychain.string(forKey: "token")) ?? ""
+    }
 }

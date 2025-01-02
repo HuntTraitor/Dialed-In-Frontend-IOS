@@ -15,7 +15,7 @@ struct ContentView: View {
     
     var body: some View {
         Group {
-            if keychainManager.token == nil {
+            if keychainManager.getToken() == "" {
                  LoginView()
              } else {
                  HomeView()

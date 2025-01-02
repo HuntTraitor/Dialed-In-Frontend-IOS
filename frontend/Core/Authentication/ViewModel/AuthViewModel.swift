@@ -26,6 +26,7 @@ class AuthViewModel: ObservableObject {
         } else if let error = result["error"] as? [String: Any] {
             return .error(error)
         } else if let error = result["error"] as? String {
+            // TODO throw here instead of return
             return .error(["error": error])
         } else {
             throw NSError(domain: "UserSignInError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
@@ -46,9 +47,26 @@ class AuthViewModel: ObservableObject {
             let user = try JSONDecoder().decode(User.self, from: JSONSerialization.data(withJSONObject: userDict))
             return .user(user)
         } else if let error = result["error"] as? [String: Any] {
+            // TODO throw here instead of return
             return .error(error)
         } else {
-            throw NSError(domain: "UserCreationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unexpected response format"])
+            throw NSError(domain: "UserCreationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown Error"])
+        }
+    }
+    
+    func verifyUser(withToken token: String) async throws -> VerifyUserResult {
+        let endpoint = "http://localhost:3000/v1/users/verify"
+        let headers = ["Authorization": "Bearer \(token)"]
+        
+        let result = try await Get(to: endpoint, with: headers)
+        
+        if let userDict = result["user"] as? [String: Any] {
+            let user = try JSONDecoder().decode(User.self, from: JSONSerialization.data(withJSONObject: userDict))
+            return .user(user)
+        } else if let error = result["error"] as? String {
+            throw CustomError.verifyUserError(message: error)
+        } else {
+            throw NSError(domain: "UserVerificationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown Error"])
         }
     }
     

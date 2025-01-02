@@ -31,3 +31,25 @@ func Post(to urlString: String, with body: [String: Any]) async throws -> [Strin
     return json
 }
 
+// Send a get request with any specific headers
+func Get(to urlString: String, with headers: [String: Any]) async throws -> [String: Any] {
+    guard let url = URL(string: urlString) else {
+        throw URLError(.badURL)
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    for (key, value) in headers {
+        request.setValue("\(value)", forHTTPHeaderField: key)
+    }
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+        throw URLError(.cannotParseResponse)
+    }
+    return json
+}
+

@@ -12,6 +12,11 @@ enum CreateUserResult {
     case error([String: Any])
 }
 
+enum VerifyUserResult {
+    case user(User)
+    case error([String: Any])
+}
+
 struct User: Identifiable, Codable {
     let id: Int
     let name: String
