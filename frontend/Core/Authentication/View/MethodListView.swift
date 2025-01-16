@@ -10,20 +10,17 @@ import SwiftUI
 struct MethodListView: View {
     var body: some View {
         VStack(spacing: 20) {
-            // Main title, centered
             Text("Methods")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .frame(maxWidth: .infinity) // Ensure title takes up full width
-                .multilineTextAlignment(.center) // Center the title text
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
 
-            // Subtext / Instructions, centered
             Text("Select a method you would like to use")
                 .font(.body)
                 .foregroundColor(.gray)
-                .multilineTextAlignment(.center) // Center the instructions text
+                .multilineTextAlignment(.center)
 
-            // Method cards, centered
             MethodCard(title: "Pour Over", image: "v60") {
                 print("Pouring over")
             }
@@ -31,8 +28,8 @@ struct MethodListView: View {
                 print("Switching all over the place")
             }
         }
-        .frame(maxWidth: .infinity, alignment: .center) // Make sure the entire VStack is centered
-        .padding() // Optional: adds padding around the entire VStack
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding()
     }
 }
 
