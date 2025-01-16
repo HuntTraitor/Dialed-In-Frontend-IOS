@@ -1,52 +1,74 @@
-//
-//  HomeView.swift
-//  frontend
-//
-//  Created by Hunter Tratar on 12/28/24.
-//
-
 import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
-    @State private var currentUser: User? = nil
+    @State var currentUser: User? = nil
     @State private var isLoading: Bool = false
     
     var body: some View {
-        ZStack {
-            VStack {
-                if let user = currentUser {
-                    Text("Welcome \(user.name)")
-                }
-                Button("logout") {
-                    // TODO create a dialog for "are u sure"
-                    isLogoutDialogActive = true
-                }
-            }
-            
-            if isLogoutDialogActive {
-                CustomDialog(
-                    isActive: $isLogoutDialogActive,
-                    title: "Success",
-                    message: "You have been successfully logged out",
-                    buttonTitle: "Close",
-                    action: {
-                        isLogoutDialogActive = false
-                        keychainManager.deleteToken()
+        NavigationStack {
+            ZStack {
+                VStack {
+                    TabView {
+                        MethodListView()
+                            .tabItem {
+                                Label("Home", systemImage: "house.fill")
+                            }
+                        
+                        SettingsView()
+                            .tabItem {
+                                Label("Settings", systemImage: "gear")
+                            }
                     }
-                )
+                }
             }
-            if isLoading {
-                LoadingCircle()
+            .onAppear {
+                setupNavigationBarAppearance()
+                if currentUser == nil {
+                    fetchUserInfoFromToken()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Hello, \(currentUser?.name ?? "")")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.top, 5) // Adjusts the title's position for a smaller navbar
+                }
             }
         }
-        .onAppear {
-            if currentUser == nil {
-                fetchUserInfoFromToken()
-            }
-        }
+    }
+    
+    private func setupNavigationBarAppearance() {
+        // Set up the navigation bar background appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
+        // Convert SwiftUI Color to UIColor
+        appearance.backgroundColor = UIColor(Color("background"))
+        
+        // Adjust the title text color and font size for a smaller look
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 18, weight: .bold) // Shrinks the title font size
+        ]
+        
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 20, weight: .bold) // Shrinks large title font size
+        ]
+        
+        // Apply the appearance to different bar states
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        
+        // Remove any background image to make the bar appear more compact
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().shadowImage = UIImage()
     }
     
     private func fetchUserInfoFromToken() {
@@ -69,16 +91,18 @@ struct HomeView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    struct PreviewWrapper: View {
         let keychainManager = KeychainManager()
-        keychainManager.saveToken("RCEWHVFEI6KVUYM2JYVUXKUPG4")
-
         let viewModel = AuthViewModel()
-
-        return HomeView()
-            .environmentObject(keychainManager)
-            .environmentObject(viewModel)
+        static let mockUser = User(id: 1, name: "Hunter Tratar", email: "hunter@example.com", createdAt: "123", activated: false)
+        @State var mockCurrentUser: User? = mockUser
+        
+        var body: some View {
+            HomeView(currentUser: mockCurrentUser)
+                .environmentObject(keychainManager)
+                .environmentObject(viewModel)
+        }
     }
+    return PreviewWrapper()
 }
-

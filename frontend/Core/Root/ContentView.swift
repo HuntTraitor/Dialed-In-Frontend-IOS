@@ -12,7 +12,6 @@ struct ContentView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var viewModel: AuthViewModel
     
-    
     var body: some View {
         Group {
             if keychainManager.getToken() == "" {
@@ -20,6 +19,10 @@ struct ContentView: View {
              } else {
                  HomeView()
              }
+        }
+        .onAppear {
+            // Print the token when the view appears
+            print("Token: \(keychainManager.getToken())")
         }
     }
 }
