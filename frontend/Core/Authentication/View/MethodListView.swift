@@ -10,13 +10,6 @@ import SwiftUI
 struct MethodListView: View {
     var body: some View {
         VStack(spacing: 20) {
-            Text("Methods")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-                .padding()
-
             Text("Select a method you would like to use")
                 .font(.body)
                 .foregroundColor(.gray)
