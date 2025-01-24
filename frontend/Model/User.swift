@@ -17,7 +17,7 @@ enum VerifyUserResult {
     case error([String: Any])
 }
 
-struct User: Identifiable, Codable {
+struct User: Identifiable, Codable, Equatable {
     let id: Int
     let name: String
     let email: String

@@ -5,23 +5,27 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
     @State var currentUser: User? = nil
-    @State private var isLoading: Bool = false
+    @State private var isLoading: Bool = true
 
     var body: some View {
         NavigationStack {
             ZStack {
-                VStack {
-                    TabView {
-                        MethodListView()
-                            .padding(.bottom, 70)
-                            .tabItem {
-                                Label("Home", systemImage: "house.fill")
-                            }
-
-                        SettingsView()
-                            .tabItem {
-                                Label("Settings", systemImage: "gear")
-                            }
+                if isLoading {
+                    LoadingCircle()
+                } else {
+                    VStack {
+                        TabView {
+                            MethodListView()
+                                .padding(.bottom, 70)
+                                .tabItem {
+                                    Label("Home", systemImage: "house.fill")
+                                }
+                            
+                            SettingsView()
+                                .tabItem {
+                                    Label("Settings", systemImage: "gear")
+                                }
+                        }
                     }
                 }
             }
@@ -29,6 +33,7 @@ struct HomeView: View {
                 if currentUser == nil {
                     fetchUserInfoFromToken()
                 }
+                isLoading = false
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -55,13 +60,14 @@ struct HomeView: View {
                 result = try await viewModel.verifyUser(withToken: keychainManager.getToken())
             } catch {
                 print(error)
+                keychainManager.deleteToken()
                 return
             }
-            
+        
             switch result {
             case .user(let user):
                 currentUser = user
-            case .error:
+            default:
                 keychainManager.deleteToken()
             }
         }
