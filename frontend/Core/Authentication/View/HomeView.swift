@@ -6,7 +6,7 @@ struct HomeView: View {
     @State private var isLogoutDialogActive: Bool = false
     @State var currentUser: User? = nil
     @State private var isLoading: Bool = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -17,7 +17,7 @@ struct HomeView: View {
                             .tabItem {
                                 Label("Home", systemImage: "house.fill")
                             }
-                        
+
                         SettingsView()
                             .tabItem {
                                 Label("Settings", systemImage: "gear")
@@ -30,9 +30,21 @@ struct HomeView: View {
                     fetchUserInfoFromToken()
                 }
             }
-            .navigationTitle("Dialed-In")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack {
+                        Image("logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 28, height: 28)
+                        Text("Dialed-In")
+                            .font(.custom("Cochin-BoldItalic", size: 28))
+                            .foregroundColor(.black)
+                            .opacity(0.75)
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarAttributes(Color("background"), UIFont(name: "Cochin-BoldItalic", size: 28)!)
         }
     }
     
