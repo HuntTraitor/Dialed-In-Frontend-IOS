@@ -15,6 +15,7 @@ struct MethodListView: View {
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
+                .padding()
 
             Text("Select a method you would like to use")
                 .font(.body)

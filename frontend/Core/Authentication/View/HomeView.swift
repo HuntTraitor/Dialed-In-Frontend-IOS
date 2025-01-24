@@ -13,6 +13,7 @@ struct HomeView: View {
                 VStack {
                     TabView {
                         MethodListView()
+                            .padding(.bottom, 70)
                             .tabItem {
                                 Label("Home", systemImage: "house.fill")
                             }
@@ -25,50 +26,14 @@ struct HomeView: View {
                 }
             }
             .onAppear {
-                setupNavigationBarAppearance()
                 if currentUser == nil {
                     fetchUserInfoFromToken()
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Hello, \(currentUser?.name ?? "")")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top, 5) // Adjusts the title's position for a smaller navbar
-                }
-            }
+            .navigationTitle("Dialed-In")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarAttributes(Color("background"), UIFont(name: "Cochin-BoldItalic", size: 28)!)
         }
-    }
-    
-    private func setupNavigationBarAppearance() {
-        // Set up the navigation bar background appearance
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        
-        // Convert SwiftUI Color to UIColor
-        appearance.backgroundColor = UIColor(Color("background"))
-        
-        // Adjust the title text color and font size for a smaller look
-        appearance.titleTextAttributes = [
-            .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 18, weight: .bold) // Shrinks the title font size
-        ]
-        
-        appearance.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 20, weight: .bold) // Shrinks large title font size
-        ]
-        
-        // Apply the appearance to different bar states
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().compactAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        
-        // Remove any background image to make the bar appear more compact
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-        UINavigationBar.appearance().shadowImage = UIImage()
     }
     
     private func fetchUserInfoFromToken() {
@@ -105,4 +70,19 @@ struct HomeView: View {
         }
     }
     return PreviewWrapper()
+}
+
+extension View {
+    func navigationBarAttributes(_ color: Color, _ font: UIFont) -> some View {
+        let uiColor = UIColor(color)
+        UINavigationBar.appearance().titleTextAttributes = [
+            .foregroundColor: uiColor,
+            .font: font
+        ]
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .foregroundColor: uiColor,
+            .font: font
+        ]
+        return self
+    }
 }
