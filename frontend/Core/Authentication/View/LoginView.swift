@@ -38,15 +38,15 @@ struct LoginView: View {
                     VStack(spacing: 24) {
                         InputView(
                             text: $email,
-                            title: "Email Address",
-                            placeholder: "name@example.com"
+                            icon: "envelope",
+                            placeholder: "Enter Email"
                         )
                         .autocapitalization(.none)
                         
                         InputView(
                             text: $password,
-                            title: "Password",
-                            placeholder: "Enter your password",
+                            icon: "lock",
+                            placeholder: "Enter Password",
                             isSecureField: true
                         )
                     }
@@ -94,12 +94,13 @@ struct LoginView: View {
                         }
                         .opacity(isFormValid ? 1 : 0.5)
                         .foregroundColor(.white)
-                        .frame(width: UIScreen.main.bounds.width - 32, height: 48)
+                        .frame(width: UIScreen.main.bounds.width - 180, height: 48)
                     }
                     .background(Color("background"))
-                    .cornerRadius(10)
+                    .cornerRadius(30)
                     .padding(.top, 24)
                     .disabled(!isFormValid)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 4, y: 6)
                     
                     NavigationLink {
                         

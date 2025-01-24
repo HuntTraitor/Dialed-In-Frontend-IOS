@@ -37,25 +37,25 @@ struct RegistrationView: View {
                     .frame(width: 150, height: 180)
                     .padding(.vertical, 32)
                 
-                VStack(spacing: 24) {
+                VStack {
                     InputView(
                         text: $name,
-                        title: "Name",
-                        placeholder: "Enter your name"
+                        icon: "person",
+                        placeholder: "Enter Username"
                     )
                         .autocapitalization(.none)
                     
                     InputView(
                         text: $email,
-                        title: "Email Address",
-                        placeholder: "name@example.com"
+                        icon: "envelope",
+                        placeholder: "Enter Email"
                     )
                         .autocapitalization(.none)
                     
                     InputView(
                         text: $password,
-                        title: "Password",
-                        placeholder: "Enter your password",
+                        icon: "lock",
+                        placeholder: "Enter Password",
                         isSecureField: true
                     )
                         .autocapitalization(.none)
@@ -63,8 +63,8 @@ struct RegistrationView: View {
                     
                     InputView(
                         text: $confirmPassword,
-                        title: "Confirm Password",
-                        placeholder: "Confirm your password",
+                        icon: "lock",
+                        placeholder: "Confirm Password",
                         isSecureField: true
                     )
                 }
@@ -89,7 +89,6 @@ struct RegistrationView: View {
                             isLoading = false
                             isSuccessDialogActive = true
                         case .error(let error):
-                            // uppercase the first letter of the error
                             if let email = error["email"] as? String {
                                 errorMessage = email.prefix(1).uppercased() + email.dropFirst()
                             } else {
@@ -107,12 +106,13 @@ struct RegistrationView: View {
                     }
                     .opacity(isFormValid ? 1 : 0.5)
                     .foregroundColor(.white)
-                    .frame(width: UIScreen.main.bounds.width - 32, height: 48)
+                    .frame(width: UIScreen.main.bounds.width - 180, height: 48)
                 }
                 .background(Color("background"))
-                .cornerRadius(10)
+                .cornerRadius(30)
                 .padding(.top, 24)
                 .disabled(!isFormValid)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 4, y: 6)
                 
                 Spacer()
                 

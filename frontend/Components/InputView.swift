@@ -9,33 +9,46 @@ import SwiftUI
 
 struct InputView: View {
     @Binding var text: String
-    let title: String
+    let icon: String
     let placeholder: String
     var isSecureField = false
+    
     var body: some View {
-        VStack (alignment: .leading, spacing: 12){
-            Text(title)
-                .foregroundColor(Color(.darkGray))
-                .fontWeight(.semibold)
-                .font(.footnote)
-        
+        VStack(alignment: .leading, spacing: 12) {
             if isSecureField {
-                SecureField(placeholder, text: $text)
-                    .font(.system(size: 14))
+                HStack(spacing: 12) {
+                    Spacer()
+                    Image(systemName: icon)
+                    SecureField(placeholder, text: $text)
+                        .font(.system(size: 14))
+                        .padding()
+                }
             } else {
-                TextField(placeholder, text: $text)
-                    .font(.system(size: 14))
+                HStack(spacing: 12) {
+                    Spacer()
+                    Image(systemName: icon)
+                    TextField(placeholder, text: $text)
+                        .font(.system(size: 14))
+                        .padding()
+                }
             }
-            
-            Divider()
-            
         }
-
+        .background(
+            RoundedRectangle(cornerRadius: 40)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 4, y: 6)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.black.opacity(0.05), lineWidth: 0.5)
+        )
+        .padding()
     }
 }
 
+
 struct InputView_Previews: PreviewProvider {
     static var previews: some View {
-        InputView(text: .constant(""), title: "Email Address", placeholder: "name@example.com")
+        InputView(text: .constant(""), icon: "envelope", placeholder: "Enter Email")
     }
 }
