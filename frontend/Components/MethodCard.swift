@@ -9,9 +9,7 @@ import SwiftUI
 
 struct MethodCard: View {
     let title: String
-    let image: String
-    let action: () -> Void
-    
+    let image: String   
     var body: some View {
         GeometryReader { geometry in
                 AsyncImage(url: URL(string: image)) { phase in
@@ -49,9 +47,6 @@ struct MethodCard: View {
         .cornerRadius(15)
         .shadow(radius: 5)
         .contentShape( Rectangle())
-        .onTapGesture {
-            action()
-        }
     }
 
 
@@ -60,9 +55,7 @@ struct MethodCard: View {
 
 struct MethodCardPreviews: PreviewProvider {
     static var previews: some View {
-        MethodCard(title: "Pour Over", image: "https://www.hario-canada.ca/cdn/shop/products/hario_ssd-200-b-v60-02-switch-immersion-dripper_pouring_1024x1024.jpg?v=1672852353") {
-            print("hello")
-        }
+        MethodCard(title: "Pour Over", image: "https://www.hario-canada.ca/cdn/shop/products/hario_ssd-200-b-v60-02-switch-immersion-dripper_pouring_1024x1024.jpg?v=1672852353")
     }
 }
 

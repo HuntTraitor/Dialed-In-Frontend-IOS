@@ -13,24 +13,29 @@ struct MethodListView: View {
     @State var methodList: [Method] = []
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Select a method you would like to use")
-                .font(.body)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-            
-            VStack {
-                ForEach(methodList, id: \.self) { method in
-                    MethodCard(title: method.name, image: method.img) {
-                        print("Selecting card \(method.name)")
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("Select a method you would like to use")
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                
+                
+                VStack {
+                    ForEach(methodList, id: \.self) { method in
+                        NavigationLink {
+                            RecipeListView(curMethod: method)
+                        } label: {
+                            MethodCard(title: method.name, image: method.img)
+                            .padding(5)
+                        }
                     }
-                    .padding(5)
                 }
             }
-        }
-        .padding()
-        .task {
-            await fetchMethods()
+            .padding()
+            .task {
+                await fetchMethods()
+            }
         }
     }
     
