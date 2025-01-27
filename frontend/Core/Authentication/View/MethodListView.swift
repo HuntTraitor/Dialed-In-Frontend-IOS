@@ -19,14 +19,14 @@ struct MethodListView: View {
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
             
-            // TODO fix this problem with the weird clicking issue
-            ForEach(methodList, id: \.self) { method in
-                MethodCard(title: method.name, image: method.img) {
-                    print("Selecting card \(method.name)")
+            VStack {
+                ForEach(methodList, id: \.self) { method in
+                    MethodCard(title: method.name, image: method.img) {
+                        print("Selecting card \(method.name)")
+                    }
                 }
             }
         }
-        .frame(maxWidth: .infinity, alignment: .center)
         .padding()
         .task {
             await fetchMethods()
