@@ -24,6 +24,7 @@ struct MethodListView: View {
                     MethodCard(title: method.name, image: method.img) {
                         print("Selecting card \(method.name)")
                     }
+                    .padding(5)
                 }
             }
         }
