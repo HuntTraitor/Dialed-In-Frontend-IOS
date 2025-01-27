@@ -7,4 +7,5 @@
 
 enum CustomError: Error {
     case verifyUserError(message: String)
+    case methodError(message: String)
 }

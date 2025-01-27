@@ -14,10 +14,7 @@ struct MethodCard: View {
     
     var body: some View {
         ZStack {
-            Image(image)
-                .scaleEffect(0.5)
-                .frame(width: 300, height: 300)
-                .opacity(0.9)
+            AsyncImage(url: URL(string: image))
             Text(title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
@@ -32,7 +29,7 @@ struct MethodCard: View {
         .cornerRadius(15)
         .shadow(radius: 5)
         .onTapGesture {
-            action() // Trigger action on tap
+            action()
         }
     }
 }

@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var methodModel: MethodViewModel
     @State private var isLogoutDialogActive: Bool = false
     @State var currentUser: User? = nil
     @State private var isLoading: Bool = true
@@ -78,6 +79,7 @@ struct HomeView: View {
     struct PreviewWrapper: View {
         let keychainManager = KeychainManager()
         let viewModel = AuthViewModel()
+        let methodModel = MethodViewModel()
         static let mockUser = User(id: 1, name: "Hunter Tratar", email: "hunter@example.com", createdAt: "123", activated: false)
         @State var mockCurrentUser: User? = mockUser
         
@@ -85,6 +87,7 @@ struct HomeView: View {
             HomeView(currentUser: mockCurrentUser)
                 .environmentObject(keychainManager)
                 .environmentObject(viewModel)
+                .environmentObject(methodModel)
         }
     }
     return PreviewWrapper()

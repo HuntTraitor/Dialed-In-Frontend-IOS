@@ -11,6 +11,7 @@ import SimpleKeychain
 struct ContentView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var methodModel: MethodViewModel
     
     var body: some View {
         Group {
@@ -31,8 +32,10 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         @StateObject var viewModel = AuthViewModel()
         @StateObject var keychainManager = KeychainManager()
+        @StateObject var methodModel = MethodViewModel()
         ContentView()
             .environmentObject(viewModel)
             .environmentObject(keychainManager)
+            .environmentObject(methodModel)
     }
 }
