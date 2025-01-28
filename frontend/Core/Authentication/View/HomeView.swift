@@ -7,26 +7,17 @@ struct HomeView: View {
     @State private var isLogoutDialogActive: Bool = false
     @State var currentUser: User? = nil
     @State private var isLoading: Bool = true
+    @Bindable private var navigator = NavigationManager.nav
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigator.mainNavigator) {
             ZStack {
                 if isLoading {
                     LoadingCircle()
                 } else {
                     VStack {
-                        TabView {
-                            MethodListView()
-                                .padding(.bottom, 70)
-                                .tabItem {
-                                    Label("Home", systemImage: "house.fill")
-                                }
-                            
-                            SettingsView()
-                                .tabItem {
-                                    Label("Settings", systemImage: "gear")
-                                }
-                        }
+                        MethodListView()
+                            .padding(.bottom, 70)
                     }
                 }
             }
@@ -36,21 +27,8 @@ struct HomeView: View {
                 }
                 isLoading = false
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Image("logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 28, height: 28)
-                        Text("Dialed-In")
-                            .font(.custom("Cochin-BoldItalic", size: 28))
-                            .foregroundColor(.black)
-                            .opacity(0.75)
-                    }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
+            .addToolbar()
+            .addNavigationSupport()
         }
     }
     
