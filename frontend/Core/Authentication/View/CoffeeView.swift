@@ -12,7 +12,15 @@ struct CoffeeView: View {
     @Bindable private var navigator = NavigationManager.nav
     
     var body: some View {
-        Text("CoffeeView")
+        NavigationStack(path: $navigator.mainNavigator) {
+            ZStack {
+                VStack {
+                    Text("CoffeeView")
+                }
+            }
+            .addToolbar()
+            .addNavigationSupport()
+        }
     }
 }
 
