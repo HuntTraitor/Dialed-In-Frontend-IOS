@@ -12,44 +12,52 @@ struct CoffeeCard: View {
     let region: String
     let description: String
     let imgURL: String
+
     var body: some View {
-            GeometryReader { geometry in
-                ZStack {
-                    VStack(spacing: 0) {
-                        Text(name)
-                            .font(Font.custom("Italianno-Regular", size: 40))
-                            .padding(.top, 20)
-                        HStack {
-                            AsyncImage(url: URL(string: imgURL)){ phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                case .empty, .failure:
-                                    EmptyView()
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                            .padding()
-                            VStack {
-                                Text(region)
-                                    .font(Font.custom("Italianno-Regular", size: 35))
-                                Text(description)
-                                    .font(Font.custom("HinaMincho-Regular", size: 18))
-                            }
-                            .padding(.trailing, 20)
+        ZStack {
+            VStack(spacing: 10) {
+                Text(name)
+                    .font(Font.custom("Italianno-Regular", size: 30))
+                    .padding(.top, 10)
+
+                HStack {
+                    AsyncImage(url: URL(string: imgURL)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                                .cornerRadius(10) // ✅ Keeps rounded edges
+                        case .empty, .failure:
+                            Color.gray.opacity(0.3)
+                                .frame(width: 100, height: 100)
+                                .cornerRadius(10)
+                        @unknown default:
+                            EmptyView()
                         }
                     }
+                    .frame(width: 70, height: 70)
+//                    .padding()
+
+//                    VStack(alignment: .leading, spacing: 5) {
+//                        Text(region)
+//                            .font(Font.custom("Italianno-Regular", size: 23))
+//                        Text(description)
+//                            .font(Font.custom("HinaMincho-Regular", size: 15))
+//                            .padding(.bottom, 10)
+//                    }
+//                    .padding(.trailing, 10)
                 }
-                .background(RoundedRectangle(cornerRadius: 20).fill(Color("background")))
-                .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.4)
-                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                .opacity(0.95)
+            }
         }
+        .frame(width: 150, height: 150)
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color("background")))
+        .opacity(0.95)
     }
 }
+
 
 #Preview {
     CoffeeCard(
