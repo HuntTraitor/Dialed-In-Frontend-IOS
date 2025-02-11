@@ -23,6 +23,7 @@
 /* Begin PBXFileReference section */
 		FC19E4792D091EE6003438FE /* DialedIn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DialedIn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC69BF402D28790E00367B0D /* DialedInUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DialedInUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCA81CDA2D5B2C8D0065D90D /* DialedIn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "DialedIn-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -60,6 +61,7 @@
 		FC19E4702D091EE6003438FE = {
 			isa = PBXGroup;
 			children = (
+				FCA81CDA2D5B2C8D0065D90D /* DialedIn-Info.plist */,
 				FC19E47B2D091EE6003438FE /* frontend */,
 				FC69BF412D28790E00367B0D /* DialedInUITests */,
 				FC19E47A2D091EE6003438FE /* Products */,
@@ -338,6 +340,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"frontend/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DialedIn-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -366,6 +369,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"frontend/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DialedIn-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
