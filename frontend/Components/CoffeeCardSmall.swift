@@ -8,14 +8,26 @@
 import SwiftUI
 
 struct CoffeeCardSmall: View {
+    let title: String
+    let imgURL: String
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                Text("Image")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .frame(width: 100, height: 75)
-                    .border(Color.black)
-                Text("Title")
+                AsyncImage(url: URL(string: imgURL)) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(minHeight: 75, maxHeight: .infinity)
+                    case .empty, .failure:
+                        Text("Image Unavailable")
+                    @unknown default:
+                        EmptyView()
+                        
+                    }
+                }
+                Text(title)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.black)
             }
@@ -26,6 +38,6 @@ struct CoffeeCardSmall: View {
 }
 
 #Preview {
-    CoffeeCardSmall()
+    CoffeeCardSmall(title: "Milky Cake", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
 }
 
