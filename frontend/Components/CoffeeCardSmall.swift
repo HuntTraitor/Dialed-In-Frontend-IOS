@@ -21,7 +21,7 @@ struct CoffeeCardSmall: View {
                             .scaledToFit()
                             .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
                     case .empty:
-                        LoadingCircle()
+                        ProgressView()
                             .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
                     case .failure:
                         Text("Image Unavailable")

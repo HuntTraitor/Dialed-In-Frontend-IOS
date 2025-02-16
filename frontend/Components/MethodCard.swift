@@ -26,9 +26,10 @@ struct MethodCard: View {
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .clipped()
                     case .failure:
-                        Color.red
+                        Color.gray
                             .frame(width: 300, height: 200)
                             .cornerRadius(15)
+                            .opacity(0.3)
                     @unknown default:
                         EmptyView()
                     }
