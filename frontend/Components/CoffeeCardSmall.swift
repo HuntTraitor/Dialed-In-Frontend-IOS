@@ -19,8 +19,11 @@ struct CoffeeCardSmall: View {
                         image
                             .resizable()
                             .scaledToFit()
-                            .frame(minHeight: 75, maxHeight: .infinity)
-                    case .empty, .failure:
+                            .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
+                    case .empty:
+                        LoadingCircle()
+                            .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
+                    case .failure:
                         Text("Image Unavailable")
                     @unknown default:
                         EmptyView()
@@ -38,6 +41,6 @@ struct CoffeeCardSmall: View {
 }
 
 #Preview {
-    CoffeeCardSmall(title: "Milky Cake", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
+    CoffeeCardSmall(title: "Milky Cake", imgURL: "https://www.lankerpack.com/wp-content/uploads/2023/04/matte-coffee-bag-mockup-template.png")
 }
 

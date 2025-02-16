@@ -30,9 +30,13 @@ struct CoffeeCard: View {
                         image
                             .resizable()
                             .scaledToFit()
-                            .frame(minHeight: 200, maxHeight: .infinity)
-                    case .empty, .failure:
+                            .frame(minHeight: 200, maxHeight: 300)
+                    case .empty:
+                        LoadingCircle()
+                        .frame(minHeight: 200, maxHeight: 300)
+                    case .failure:
                         Text("Image Unavailable")
+                        .frame(minHeight: 200, maxHeight: 300)
                     @unknown default:
                         EmptyView()
                         
