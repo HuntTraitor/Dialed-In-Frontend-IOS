@@ -10,7 +10,8 @@ import SwiftUI
 struct CoffeeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @Bindable private var navigator = NavigationManager.nav
-    
+    @State private var pressedItemId: Int?
+
     let coffeeItems = [
         Coffee.MOCK_COFFEE,
         Coffee(id: 2, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://www.lankerpack.com/wp-content/uploads/2023/04/matte-coffee-bag-mockup-template.png"),
@@ -30,12 +31,51 @@ struct CoffeeView: View {
             .italic()
             ScrollView {
                 ForEach(coffeeItems, id: \.id) { coffee in
-                    CoffeeCardSmall(title: coffee.name, imgURL: coffee.imgURL)
+                    NavigationLink(destination: CoffeeCard(coffee: coffee)) {
+                        CoffeeCardSmall(coffee: coffee)
+                            .opacity(pressedItemId == coffee.id ? 0.8 : 1)
+                            .scaleEffect(pressedItemId == coffee.id ? 1.1 : 1)
+                            .pressEvent(onPress: {
+                                withAnimation(.easeIn(duration: 0.2)) {
+                                    pressedItemId = coffee.id
+                                }
+                            }, onRelease: {
+                                withAnimation {
+                                    pressedItemId = nil
+                                }
+                            })
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .addToolbar()
             .addNavigationSupport()
         }
+    }
+}
+
+struct ButtonPress: ViewModifier {
+    var onPress: () -> Void
+    var onRelease: () -> Void
+    
+    func body(content: Content) -> some View {
+        content
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged({ _ in
+                        onPress()
+                    })
+                    .onEnded ({ _ in
+                        onRelease()
+                    })
+            )
+    }
+}
+
+extension View {
+    func pressEvent(onPress: @escaping (() -> Void), onRelease: @escaping (() -> Void)) ->
+    some View {
+        modifier(ButtonPress(onPress: {onPress()}, onRelease: {onRelease()}))
     }
 }
 

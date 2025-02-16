@@ -8,18 +8,25 @@
 import SwiftUI
 
 struct CoffeeCardSmall: View {
-    let title: String
-    let imgURL: String
+    let coffee: Coffee
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                AsyncImage(url: URL(string: imgURL)) { phase in
+                AsyncImage(url: URL(string: coffee.imgURL)) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
+                            .clipShape(
+                                .rect(
+                                    topLeadingRadius: 15,
+                                    bottomLeadingRadius: 15,
+                                    bottomTrailingRadius: 0,
+                                    topTrailingRadius: 0
+                                )
+                            )
                     case .empty:
                         ProgressView()
                             .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
@@ -30,17 +37,20 @@ struct CoffeeCardSmall: View {
                         
                     }
                 }
-                Text(title)
+                Text(coffee.name)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .border(Color.black)
+                    .overlay(Rectangle().frame(width: 1, height: nil, alignment: .leading).foregroundColor(Color.black), alignment: .leading)
             }
             .frame(width: 300, height: 75)
-            .border(Color.black)
+            .overlay(
+                RoundedRectangle(cornerRadius: 15)
+                    .stroke(Color.black, lineWidth: 1)
+            )
         }
     }
 }
 
 #Preview {
-    CoffeeCardSmall(title: "Milky Cake", imgURL: "https://www.lankerpack.com/wp-content/uploads/2023/04/matte-coffee-bag-mockup-template.png")
+    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEE)
 }
 

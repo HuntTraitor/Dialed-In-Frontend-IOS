@@ -8,54 +8,51 @@
 import SwiftUI
 
 struct CoffeeCard: View {
-    let name: String
-    let region: String
-    let process: String
-    let description: String
-    let imgURL: String
-
+    let coffee: Coffee
     var body: some View {
         
         ZStack {
             VStack(spacing: 0){
-                Text(name)
+                Text(coffee.name)
                     .frame(maxWidth: .infinity)
-                    .padding([.bottom, .top], 40)
-                    .font(.title2)
-                    .border(Color.black)
+                    .padding(.top, 30)
+                    .font(.custom("Italianno-Regular", size: 45))
+                    .underline()
                 
-                AsyncImage(url: URL(string: imgURL)) { phase in
+                AsyncImage(url: URL(string: coffee.imgURL)) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
                             .scaledToFit()
                             .frame(minHeight: 200, maxHeight: 300)
+                            .padding(.bottom, 10)
                     case .empty:
                         ProgressView()
                         .frame(minHeight: 200, maxHeight: 300)
+                        .padding(.bottom, 10)
                     case .failure:
                         Text("Image Unavailable")
                         .frame(minHeight: 200, maxHeight: 300)
+                        .padding(.bottom, 10)
                     @unknown default:
                         EmptyView()
-                        
                     }
                 }
 
                 HStack(spacing: 0) {
-                    Text(region)
+                    Text(coffee.region)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .font(.subheadline)
                         .border(Color.black)
-                    Text(process)
+                    Text(coffee.process)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .font(.subheadline)
                         .border(Color.black)
                 }
                 .border(Color.black)
                 
-                Text(description)
+                Text(coffee.description)
                     .font(.footnote)
                     .multilineTextAlignment(.leading)
                     .lineLimit(nil)
@@ -67,7 +64,10 @@ struct CoffeeCard: View {
                 Spacer()
             }
             .frame(width: 350, height: 500)
-            .border(Color.black)
+            .overlay(
+                RoundedRectangle(cornerRadius: 15)
+                    .stroke(Color.black, lineWidth: 1)
+            )
         }
     }
 }
@@ -75,10 +75,6 @@ struct CoffeeCard: View {
 
 #Preview {
     CoffeeCard(
-        name: "Milky Cake",
-        region: "Colombia",
-        process: "Thermal Shock",
-        description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
-        imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        coffee: Coffee.MOCK_COFFEE
     )
 }
