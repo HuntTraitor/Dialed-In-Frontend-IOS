@@ -9,7 +9,19 @@ import SwiftUI
 
 struct CoffeeCardSmall: View {
     var body: some View {
-        Text("Hello, World!")
+        ZStack {
+            HStack(spacing: 0) {
+                Text("Image")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(width: 100, height: 75)
+                    .border(Color.black)
+                Text("Title")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .border(Color.black)
+            }
+            .frame(width: 300, height: 75)
+            .border(Color.black)
+        }
     }
 }
 
