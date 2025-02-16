@@ -13,32 +13,25 @@ struct CoffeeView: View {
     
     let coffeeItems = [
         Coffee.MOCK_COFFEE,
-        Coffee(id: 2, name: "Milky Cake", region: "Columbia", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
-        Coffee(id: 3, name: "Milky Cake", region: "Columbia", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
-        Coffee(id: 4, name: "Milky Cake", region: "Columbia", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
-        Coffee(id: 5, name: "Milky Cake", region: "Columbia", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
-    ]
-    
-    private let columns = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8)
+        Coffee(id: 2, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
+        Coffee(id: 3, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
+        Coffee(id: 4, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
+        Coffee(id: 5, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"),
     ]
     
     var body: some View {
         NavigationStack(path: $navigator.mainNavigator) {
-            VStack{
-                Text("Coffee List")
+            VStack {
+                Text("Coffees")
             }
-                .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 25)
+            .padding(.leading, 50)
+            .italic()
             ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(coffeeItems, id: \.id) { coffee in
-                        CoffeeCard(name: coffee.name, region: coffee.region, description: coffee.description, imgURL: coffee.imgURL)
-
-                    }
+                ForEach(coffeeItems, id: \.id) { coffee in
+                    CoffeeCardSmall(title: coffee.name, imgURL: coffee.imgURL)
                 }
-                .padding(.horizontal, 30)
-
             }
             .addToolbar()
             .addNavigationSupport()
