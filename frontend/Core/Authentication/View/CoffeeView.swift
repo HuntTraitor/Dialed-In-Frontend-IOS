@@ -25,16 +25,15 @@ struct CoffeeView: View {
             VStack {
                 Text("Coffees")
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 25)
-            .padding(.leading, 50)
+            .padding(.top, 40)
+            .padding(.bottom, 15)
             .italic()
+            .underline()
             ScrollView {
                 ForEach(coffeeItems, id: \.id) { coffee in
                     NavigationLink(destination: CoffeeCard(coffee: coffee)) {
                         CoffeeCardSmall(coffee: coffee)
                             .opacity(pressedItemId == coffee.id ? 0.8 : 1)
-                            .scaleEffect(pressedItemId == coffee.id ? 1.1 : 1)
                             .pressEvent(onPress: {
                                 withAnimation(.easeIn(duration: 0.2)) {
                                     pressedItemId = coffee.id
@@ -48,6 +47,7 @@ struct CoffeeView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+            .padding()
             .addToolbar()
             .addNavigationSupport()
         }

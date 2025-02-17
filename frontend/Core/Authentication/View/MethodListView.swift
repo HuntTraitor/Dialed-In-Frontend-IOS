@@ -14,7 +14,11 @@ struct MethodListView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack {
+                Text("Methods")
+                    .padding(.bottom, 20)
+                    .italic()
+                    .underline()
                 Text("Select a method you would like to use")
                     .font(.body)
                     .foregroundColor(.gray)
