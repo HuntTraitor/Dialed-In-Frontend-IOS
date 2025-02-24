@@ -34,6 +34,7 @@ struct CoffeeView: View {
                     NavigationLink(destination: CoffeeCard(coffee: coffee)) {
                         CoffeeCardSmall(coffee: coffee)
                             .opacity(pressedItemId == coffee.id ? 0.8 : 1)
+                            .contentShape(Rectangle())
                             .pressEvent(onPress: {
                                 withAnimation(.easeIn(duration: 0.2)) {
                                     pressedItemId = coffee.id
