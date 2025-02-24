@@ -11,6 +11,7 @@ struct MethodListView: View {
     
     @EnvironmentObject var methodModel: MethodViewModel
     @State var methodList: [Method] = []
+    @State var imageList: [String] = ["v60", "Hario Switch"]
     
     var body: some View {
         NavigationStack {
@@ -26,12 +27,12 @@ struct MethodListView: View {
                 
                 
                 VStack {
-                    ForEach(methodList, id: \.self) { method in
+                    ForEach(Array(zip(methodList, imageList)), id: \.0.self) { method, image in
                         NavigationLink {
                             RecipeListView(curMethod: method)
                         } label: {
-                            MethodCard(title: method.name, image: method.img)
-                            .padding(5)
+                            MethodCard(title: method.name, image: image)
+                                .padding(5)
                         }
                     }
                 }

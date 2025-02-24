@@ -7,11 +7,7 @@
 
 import Foundation
 
-class MethodViewModel: ObservableObject {
-    init() {
-        
-    }
-    
+class MethodViewModel: ObservableObject {    
     func getMethods() async throws -> [Method] {
         let endpoint = "http://localhost:3000/v1/methods"
         let result = try await Get(to: endpoint, with: [:])
