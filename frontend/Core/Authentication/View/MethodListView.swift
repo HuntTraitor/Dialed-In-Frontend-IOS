@@ -20,6 +20,7 @@ struct MethodListView: View {
                     .padding(.bottom, 20)
                     .italic()
                     .underline()
+                    .font(.title)
                 Text("Select a method you would like to use")
                     .font(.body)
                     .foregroundColor(.gray)
