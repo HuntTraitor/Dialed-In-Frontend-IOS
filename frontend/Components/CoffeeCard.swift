@@ -19,7 +19,7 @@ struct CoffeeCard: View {
                     .font(.custom("Italianno-Regular", size: 45))
                     .underline()
                 
-                AsyncImage(url: URL(string: coffee.imgURL)) { phase in
+                AsyncImage(url: URL(string: coffee.img)) { phase in
                     switch phase {
                     case .success(let image):
                         image

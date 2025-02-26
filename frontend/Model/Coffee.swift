@@ -13,7 +13,7 @@ struct Coffee: Identifiable, Codable, Hashable {
     let region: String
     let process: String
     let description: String
-    let imgURL: String
+    let img: String
     
     private enum CodingKeys: String, CodingKey {
         case id
@@ -21,10 +21,10 @@ struct Coffee: Identifiable, Codable, Hashable {
         case region
         case process
         case description
-        case imgURL
+        case img
     }
 }
 
 extension Coffee {
-    static var MOCK_COFFEE = Coffee(id: 1, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", imgURL: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
+    static var MOCK_COFFEE = Coffee(id: 1, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
 }

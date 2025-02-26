@@ -12,7 +12,7 @@ struct CoffeeCardSmall: View {
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                AsyncImage(url: URL(string: coffee.imgURL)) { phase in
+                AsyncImage(url: URL(string: coffee.img)) { phase in
                     switch phase {
                     case .success(let image):
                         image
