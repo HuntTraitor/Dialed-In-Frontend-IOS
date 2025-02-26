@@ -12,31 +12,18 @@ struct CoffeeCardSmall: View {
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                AsyncImage(url: URL(string: coffee.img)) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
-                            .clipShape(
-                                .rect(
-                                    topLeadingRadius: 15,
-                                    bottomLeadingRadius: 15,
-                                    bottomTrailingRadius: 0,
-                                    topTrailingRadius: 0
-                                )
-                            )
-                    case .empty:
-                        ProgressView()
-                            .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
-                    case .failure:
-                        Text("Image Unavailable")
-                    @unknown default:
-                        EmptyView()
-                        
-                    }
+                VStack {
+                    ImageView(URL(string: coffee.img))
                 }
+                .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
+                .clipShape(
+                    .rect(
+                        topLeadingRadius: 15,
+                        bottomLeadingRadius: 15,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: 0
+                    )
+                )
                 Text(coffee.name)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay(Rectangle().frame(width: 1, height: nil, alignment: .leading).foregroundColor(Color.black), alignment: .leading)

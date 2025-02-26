@@ -62,7 +62,6 @@ struct CoffeeView: View {
     }
     func fetchCoffees() async {
         do {
-            keychainManager.saveToken("R3G2F5QYSDIC6NJI26BAWXKY4U")
             coffeeItems = try await coffeeModel.getCoffees(withToken: keychainManager.getToken())
         } catch {
             print("error getting coffees")

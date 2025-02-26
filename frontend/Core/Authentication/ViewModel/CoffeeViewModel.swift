@@ -13,7 +13,6 @@ class CoffeeViewModel: ObservableObject {
         let headers = ["Authorization": "Bearer \(token)"]
         
         let result = try await Get(to: endpoint, with: headers)
-        print(result)
         
         guard let coffeeDicts = result["coffees"] as? [[String: Any]] else {
             throw CustomError.methodError(message: "Error when parsing coffees")

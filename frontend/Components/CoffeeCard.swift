@@ -18,27 +18,11 @@ struct CoffeeCard: View {
                     .padding(.top, 30)
                     .font(.custom("Italianno-Regular", size: 45))
                     .underline()
-                
-                AsyncImage(url: URL(string: coffee.img)) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(minHeight: 200, maxHeight: 300)
-                            .padding(.bottom, 10)
-                    case .empty:
-                        ProgressView()
-                        .frame(minHeight: 200, maxHeight: 300)
-                        .padding(.bottom, 10)
-                    case .failure:
-                        Text("Image Unavailable")
-                        .frame(minHeight: 200, maxHeight: 300)
-                        .padding(.bottom, 10)
-                    @unknown default:
-                        EmptyView()
-                    }
+                VStack {
+                    ImageView(URL(string: coffee.img))
                 }
+                .frame(minHeight: 200, maxHeight: 300)
+                .padding(.bottom, 10)
 
                 HStack(spacing: 0) {
                     Text(coffee.region)
