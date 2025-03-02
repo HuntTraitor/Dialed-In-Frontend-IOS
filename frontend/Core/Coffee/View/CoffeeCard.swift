@@ -25,23 +25,53 @@ struct CoffeeCard: View {
                 .padding(.bottom, 10)
 
                 HStack(spacing: 0) {
-                    Text(coffee.region)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .font(.subheadline)
-                        .border(Color.black)
-                    Text(coffee.process)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .font(.subheadline)
-                        .border(Color.black)
+                    VStack(spacing: 0) {
+                        Text("Region")
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .padding(.leading, 4)
+                            .padding(.top, 4)
+                            .italic()
+                        
+                        Text(coffee.region)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .font(.system(size: 12))
+                            .offset(y: -8)
+                        
+                    }
+                    .border(Color.black)
+
+                    VStack(spacing: 0) {
+                        Text("Process")
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .padding(.leading, 4)
+                            .padding(.top, 4)
+                            .italic()
+                        Text(coffee.process)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .font(.system(size: 12))
+                            .offset(y: -8)
+                    }
+                    .border(Color.black)
                 }
-                .border(Color.black)
                 
-                Text(coffee.description)
-                    .font(.footnote)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(nil)
-                    .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
-                    .padding()
+                ZStack(alignment: .topLeading) {
+                    Text("Description")
+                        .font(.system(size: 10))
+                        .foregroundColor(.gray)
+                        .padding(4)
+                        .italic()
+                    Text(coffee.description)
+                        .font(.footnote)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(nil)
+                        .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
+                        .padding()
+                        .padding(.top, 10)
+                }
                 
                 
                 
