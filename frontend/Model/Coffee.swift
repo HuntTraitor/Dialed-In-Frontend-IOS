@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Coffee: Identifiable, Codable, Hashable {
     let id: Int
@@ -16,15 +17,66 @@ struct Coffee: Identifiable, Codable, Hashable {
     let img: String
     
     private enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case region
-        case process
-        case description
-        case img
+        case id, name, region, process, description, img
+    }
+}
+
+struct CoffeeInput: Identifiable {
+    let id = UUID()
+    let name: String
+    let region: String
+    let process: String
+    let description: String
+    let img: UIImage
+    
+    func toMultiPartData(boundary: String) -> Data {
+        var data = Data()
+        
+        let boundaryPrefix = "--\(boundary)\r\n".data(using: .utf8)!
+        
+        // Append name
+        data.append(boundaryPrefix)
+        data.append("Content-Disposition: form-data; name=\"name\"\r\n\r\n".data(using: .utf8)!)
+        data.append("\(name)\r\n".data(using: .utf8)!)
+
+        // Append region
+        data.append(boundaryPrefix)
+        data.append("Content-Disposition: form-data; name=\"region\"\r\n\r\n".data(using: .utf8)!)
+        data.append("\(region)\r\n".data(using: .utf8)!)
+
+        // Append process
+        data.append(boundaryPrefix)
+        data.append("Content-Disposition: form-data; name=\"process\"\r\n\r\n".data(using: .utf8)!)
+        data.append("\(process)\r\n".data(using: .utf8)!)
+
+        // Append description
+        data.append(boundaryPrefix)
+        data.append("Content-Disposition: form-data; name=\"description\"\r\n\r\n".data(using: .utf8)!)
+        data.append("\(description)\r\n".data(using: .utf8)!)
+
+        // Append image
+        if let imageData = img.jpegData(compressionQuality: 0.8) {
+            data.append(boundaryPrefix)
+            data.append("Content-Disposition: form-data; name=\"img\"; filename=\"coffee.jpg\"\r\n".data(using: .utf8)!)
+            data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+            data.append(imageData)
+            data.append("\r\n".data(using: .utf8)!)
+        }
+
+        // Closing boundary
+        data.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
+        return data
     }
 }
 
 extension Coffee {
-    static var MOCK_COFFEE = Coffee(id: 1, name: "Milky Cake", region: "Columbia", process: "Thermal Shock", description: "This is a delicious sweet coffee that has notes of caramel and chocolate.", img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png")
+    static var MOCK_COFFEE = Coffee(
+        id: 1,
+        name: "Milky Cake",
+        region: "Colombia",
+        process: "Thermal Shock",
+        description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+        img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+    )
 }
