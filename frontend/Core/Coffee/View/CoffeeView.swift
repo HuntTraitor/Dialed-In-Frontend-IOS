@@ -14,6 +14,7 @@ struct CoffeeView: View {
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var coffeeItems: [Coffee] = []
+    @State private var isShowingCreateCoffeeView = false
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return coffeeItems }
@@ -23,12 +24,32 @@ struct CoffeeView: View {
     var body: some View {
         NavigationStack(path: $navigator.mainNavigator) {
             VStack {
-                Text("Coffees")
-                    .font(.title)
-                    .italic()
-                    .underline()
+                HStack {
+                    Text("Coffees")
+                        .font(.title)
+                        .italic()
+                        .underline()
+                        .padding(.top, 40)
+                        .padding(.bottom, 10)
+                        .padding(.leading, 30)
+                    
+                    Spacer()
+                    
+                    Button {
+                        isShowingCreateCoffeeView = true
+                    } label: {
+                        Label("Add New Coffee", systemImage: "plus")
+                            .font(.system(size: 15))
+                            .bold()
+                            .padding(.trailing, 30)
+                    }
+                    .sheet(isPresented: $isShowingCreateCoffeeView) {
+                        CreateCoffeeView()
+                    }
                     .padding(.top, 40)
-                    .padding(.bottom, 10)
+                    .italic()
+
+                }
                 
                 SearchBar(text: $searchTerm, placeholder: "Search Coffees")
 

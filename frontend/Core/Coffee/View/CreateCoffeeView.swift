@@ -9,12 +9,14 @@ import SwiftUI
 import PhotosUI
 
 struct CreateCoffeeView: View {
+    @Environment(\.presentationMode) var presentationMode
     @State private var coffeeName: String = ""
     @State private var coffeeRegion: String = ""
     @State private var coffeeProcess: String = ""
     @State private var coffeeDescription: String = ""
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
+
     var body: some View {
         NavigationView {
             Form {
@@ -22,7 +24,6 @@ struct CreateCoffeeView: View {
                     TextField("Name", text: $coffeeName)
                     TextField("Region", text: $coffeeRegion)
                     TextField("Process", text: $coffeeProcess)
-                    
                 } header: {
                     Text("Information")
                 } footer: {
@@ -53,27 +54,31 @@ struct CreateCoffeeView: View {
                             }
                         }
                 }
+                
                 Section("Coffee Description") {
                     TextField("Description", text: $coffeeDescription, axis: .vertical)
                 }
             }
             .navigationTitle("Add Coffee")
+            .navigationBarBackButtonHidden(true) // Hides the back button
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        
+                        // Handle submission
+                        presentationMode.wrappedValue.dismiss() // Dismiss the view
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel", role: .cancel) {
-                        
+                        presentationMode.wrappedValue.dismiss() // Dismiss the view
                     }
                 }
             }
         }
     }
 }
+
 
 #Preview {
     CreateCoffeeView()
