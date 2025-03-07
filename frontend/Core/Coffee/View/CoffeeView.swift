@@ -15,6 +15,8 @@ struct CoffeeView: View {
     @State private var searchTerm = ""
     @State private var coffeeItems: [Coffee] = []
     @State private var isShowingCreateCoffeeView = false
+    @State public var refreshData: Bool = false
+    
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return coffeeItems }
@@ -44,7 +46,8 @@ struct CoffeeView: View {
                             .padding(.trailing, 30)
                     }
                     .sheet(isPresented: $isShowingCreateCoffeeView) {
-                        CreateCoffeeView()
+                        CreateCoffeeView(refreshData: $refreshData)
+                            .environmentObject(coffeeModel)
                     }
                     .padding(.top, 40)
                     .italic()
@@ -79,14 +82,25 @@ struct CoffeeView: View {
             .task {
                 await fetchCoffees()
             }
+            .onChange(of: refreshData) { oldValue, newValue in
+                print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
+                if newValue {
+                    Task {
+                        await fetchCoffees()
+                    }
+                }
+            }
         }
     }
     func fetchCoffees() async {
+        print("🔄 fetchCoffees() called")
         do {
             coffeeItems = try await coffeeModel.getCoffees(withToken: keychainManager.getToken())
         } catch {
-            print("error getting coffees")
+            print("❌ Error getting coffees: \(error)")
         }
+        refreshData = false // Reset refreshData after fetching
+        print("🔄 refreshData reset to false")
     }
 }
 

@@ -27,13 +27,13 @@ struct CoffeeInput: Identifiable {
     let region: String
     let process: String
     let description: String
-    let img: UIImage
-    
+    let img: Data // Change this from UIImage to Data
+
     func toMultiPartData(boundary: String) -> Data {
         var data = Data()
-        
+
         let boundaryPrefix = "--\(boundary)\r\n".data(using: .utf8)!
-        
+
         // Append name
         data.append(boundaryPrefix)
         data.append("Content-Disposition: form-data; name=\"name\"\r\n\r\n".data(using: .utf8)!)
@@ -55,13 +55,11 @@ struct CoffeeInput: Identifiable {
         data.append("\(description)\r\n".data(using: .utf8)!)
 
         // Append image
-        if let imageData = img.jpegData(compressionQuality: 0.8) {
-            data.append(boundaryPrefix)
-            data.append("Content-Disposition: form-data; name=\"img\"; filename=\"coffee.jpg\"\r\n".data(using: .utf8)!)
-            data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-            data.append(imageData)
-            data.append("\r\n".data(using: .utf8)!)
-        }
+        data.append(boundaryPrefix)
+        data.append("Content-Disposition: form-data; name=\"img\"; filename=\"coffee.jpg\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        data.append(img) // Use the compressed Data directly
+        data.append("\r\n".data(using: .utf8)!)
 
         // Closing boundary
         data.append("--\(boundary)--\r\n".data(using: .utf8)!)
