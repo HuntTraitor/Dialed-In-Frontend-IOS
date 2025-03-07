@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FC5EEDC92D20A9A2004E988A /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FC5EEDC82D20A9A2004E988A /* SimpleKeychain */; };
+		FCE09F332D7BA0B200F1C7BC /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC5EEDC92D20A9A2004E988A /* SimpleKeychain in Frameworks */,
+				FCE09F332D7BA0B200F1C7BC /* SimpleKeychain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +64,7 @@
 				FCA81CDA2D5B2C8D0065D90D /* DialedIn-Info.plist */,
 				FC19E47B2D091EE6003438FE /* frontend */,
 				FC69BF412D28790E00367B0D /* DialedInUITests */,
+				FCE09F2E2D7B9F6E00F1C7BC /* Frameworks */,
 				FC19E47A2D091EE6003438FE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +76,13 @@
 				FC69BF402D28790E00367B0D /* DialedInUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FCE09F2E2D7B9F6E00F1C7BC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -97,7 +105,7 @@
 			);
 			name = DialedIn;
 			packageProductDependencies = (
-				FC5EEDC82D20A9A2004E988A /* SimpleKeychain */,
+				FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */,
 			);
 			productName = frontend;
 			productReference = FC19E4792D091EE6003438FE /* DialedIn.app */;
@@ -155,7 +163,7 @@
 			mainGroup = FC19E4702D091EE6003438FE;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+				FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC19E47A2D091EE6003438FE /* Products */;
@@ -455,7 +463,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+		FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
 			requirement = {
@@ -466,9 +474,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		FC5EEDC82D20A9A2004E988A /* SimpleKeychain */ = {
+		FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FC5EEDC72D20A9A2004E988A /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			package = FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
 			productName = SimpleKeychain;
 		};
 /* End XCSwiftPackageProductDependency section */
