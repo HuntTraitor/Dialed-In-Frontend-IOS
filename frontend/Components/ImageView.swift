@@ -85,7 +85,3 @@ struct ImageView: View {
         }
     }
 }
-
-#Preview {
-    ImageView(URL(string: "https://dialedin-dev.s3.us-east-2.amazonaws.com/coffees/9a9e81ceff071cea966814b65f2b4c1c7494c7d93a7e3082dff5c9d711dfc7dd?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=AKIAT4ETZVPU7CPWNIGS%2F20250226%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250226T005713Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=f32a5334b6b7230ec6bf12b1248ce2265ae5c1b8d3d8c2b5d808ae8fbdd86079"))
-}

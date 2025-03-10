@@ -43,5 +43,16 @@ class CoffeeViewModel: ObservableObject {
             throw CustomError.methodError(message: "Failed to upload coffee")
         }
     }
+    
+    func deleteCoffee(coffeeId: Int, token: String) async throws {
+        let endpoint = "http://localhost:3000/v1/coffees/\(coffeeId)"
+        let headers = ["Authorization": "Bearer \(token)"]
+        
+        let result = try await Delete(to: endpoint, with: headers)
+        
+        if result["message"] as? String != "coffee successfully deleted" {
+            throw CustomError.methodError(message: "Failed to delete coffee, \(result)")
+        }
+    }
 
 }

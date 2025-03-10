@@ -58,7 +58,11 @@ struct CoffeeView: View {
 
                 ScrollView {
                     ForEach(filteredCoffees, id: \.id) { coffee in
-                        NavigationLink(destination: CoffeeCard(coffee: coffee)) {
+                        NavigationLink(
+                            destination: CoffeeCard(coffee: coffee)
+                                .environmentObject(keychainManager)
+                                .environmentObject(coffeeModel)
+                        ) {
                             CoffeeCardSmall(coffee: coffee)
                                 .opacity(pressedItemId == coffee.id ? 0.8 : 1)
                                 .contentShape(Rectangle())
@@ -99,7 +103,7 @@ struct CoffeeView: View {
         } catch {
             print("❌ Error getting coffees: \(error)")
         }
-        refreshData = false // Reset refreshData after fetching
+        refreshData = false
         print("🔄 refreshData reset to false")
     }
 }

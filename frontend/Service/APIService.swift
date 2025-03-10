@@ -53,3 +53,20 @@ func Get(to urlString: String, with headers: [String: Any]) async throws -> [Str
     return json
 }
 
+func Delete(to urlString: String, with headers: [String: Any]) async throws -> [String: Any] {
+    guard let url = URL(string: urlString) else {
+        throw URLError(.badURL)
+    }
+    var request = URLRequest(url: url)
+    request.httpMethod = "DELETE"
+    for (key, value) in headers {
+        request.setValue("\(value)", forHTTPHeaderField: key)
+    }
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+        throw URLError(.cannotParseResponse)
+    }
+    return json
+}
+
