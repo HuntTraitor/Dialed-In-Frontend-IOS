@@ -54,5 +54,39 @@ class CoffeeViewModel: ObservableObject {
             throw CustomError.methodError(message: "Failed to delete coffee, \(result)")
         }
     }
+    
+    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee{
+        let url = URL(string: "http://localhost:3000/v1/coffees/\(String(describing: input.id!))")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        
+        let boundary = "Boundary-\(UUID().uuidString)"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let patchData = input.toMultiPartData(boundary: boundary)
+        request.httpBody = patchData
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw CustomError.methodError(message: "Failed to upload coffee")
+        }
+
+        guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+            throw URLError(.cannotParseResponse)
+        }
+        
+        
+        guard let coffeeDict = json["coffee"] as? [String: Any] else {
+            throw CustomError.methodError(message: "Error when parsing coffees")
+        }
+        
+        let jsonData = try JSONSerialization.data(withJSONObject: coffeeDict, options: [])
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let coffee = try decoder.decode(Coffee.self, from: jsonData)
+        return coffee
+    }
 
 }
