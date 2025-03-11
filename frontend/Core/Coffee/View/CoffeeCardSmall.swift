@@ -13,7 +13,7 @@ struct CoffeeCardSmall: View {
         ZStack {
             HStack(spacing: 0) {
                 VStack {
-                    ImageView(URL(string: coffee.img))
+                    ImageView(URL(string: coffee.img!))
                 }
                 .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
                 .clipShape(

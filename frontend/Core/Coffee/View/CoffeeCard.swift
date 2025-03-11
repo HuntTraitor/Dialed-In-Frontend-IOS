@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CoffeeCard: View {
-    let coffee: Coffee
+    @State private var coffee: Coffee
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var keyChainManager: KeychainManager
     @Environment(\.presentationMode) var presentationMode
@@ -17,9 +17,26 @@ struct CoffeeCard: View {
     @State var isSuccessDeleteDialogActive: Bool = false
     @State var isFailureDeleteDialogActive: Bool = false
     @State var errorMessage: String?
+    @State private var refreshData: Bool = false
+    @State private var isDetailViewPresented: Bool = false
+    
+    init(coffee: Coffee) {
+        _coffee = State(initialValue: coffee)
+    }
+    
     var body: some View {
         ZStack {
             VStack {
+                HStack {
+                    Button(action: {
+                        isDetailViewPresented = true // Show the sheet
+                    }) {
+                        Text("Edit")
+                            .font(.body)
+                    }
+                    Spacer()
+                }
+                .padding(.leading, 40)
                 ZStack {
                     VStack(spacing: 0){
                         Text(coffee.name)
@@ -28,7 +45,7 @@ struct CoffeeCard: View {
                             .font(.custom("Italianno-Regular", size: 45))
                             .underline()
                         VStack {
-                            ImageView(URL(string: coffee.img))
+                            ImageView(URL(string: coffee.img!))
                         }
                         .frame(minHeight: 200, maxHeight: 300)
                         .padding(.bottom, 10)
@@ -67,6 +84,7 @@ struct CoffeeCard: View {
                             .border(Color.black)
                         }
                         
+                        
                         ZStack(alignment: .topLeading) {
                             Text("Description")
                                 .font(.system(size: 10))
@@ -81,17 +99,18 @@ struct CoffeeCard: View {
                                 .padding()
                                 .padding(.top, 10)
                         }
-                        
-                        
+                    
                         
                         Spacer()
                     }
+                    
                     .frame(width: 350, height: 500)
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
                             .stroke(Color.black, lineWidth: 1)
                     )
                 }
+                    
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color("background"))
                     .frame(height: 40)
@@ -107,6 +126,10 @@ struct CoffeeCard: View {
                     .padding(.horizontal, 22)
                     .padding(.top, 10)
             }
+            .sheet(isPresented: $isDetailViewPresented) {
+                EditCoffeeView(coffee: $coffee, refreshData: $refreshData)
+            }
+                
             if isChoiceDialogActive {
                 ChoiceDialog(isActive: $isChoiceDialogActive, title: "Delete", message: "Are you sure you want to delete this item?", buttonOptions: ["Yes", "No"], action: deleteAction)
             }
@@ -130,7 +153,7 @@ struct CoffeeCard: View {
             isLoading = true
             defer {isLoading = false}
             do {
-                try await coffeeViewModel.deleteCoffee(coffeeId:coffee.id, token: keyChainManager.getToken())
+                try await coffeeViewModel.deleteCoffee(coffeeId: coffee.id, token: keyChainManager.getToken())
                 isChoiceDialogActive = false
                 isSuccessDeleteDialogActive = true
             } catch {
@@ -155,7 +178,6 @@ struct CoffeeCard: View {
             }
         }
     }
-    
 }
 
 

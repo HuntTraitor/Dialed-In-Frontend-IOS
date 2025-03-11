@@ -1,36 +1,48 @@
 //
-//  CreateCoffeeView.swift
+//  EditCoffeeView.swift
 //  DialedIn
 //
-//  Created by Hunter Tratar on 2/17/25.
+//  Created by Hunter Tratar on 3/11/25.
 //
 
 import SwiftUI
 import PhotosUI
 
-struct CreateCoffeeView: View {
+struct EditCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var keyChainManager: KeychainManager
-    @State private var coffeeName: String = ""
-    @State private var coffeeRegion: String = ""
-    @State private var coffeeProcess: String = ""
-    @State private var coffeeDescription: String = ""
+    @Binding var coffee: Coffee // Use @Binding for the coffee object
+    @Binding var refreshData: Bool
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
     @State private var coffeeImageData: Data?
     @State private var isUploading: Bool = false
-    @Binding public var refreshData: Bool
 
+    // Local state variables for temporary values
+    @State private var tempName: String
+    @State private var tempRegion: String
+    @State private var tempProcess: String
+    @State private var tempDescription: String
+
+    // Initializer to set initial values for local state variables
+    init(coffee: Binding<Coffee>, refreshData: Binding<Bool>) {
+        self._coffee = coffee
+        self._refreshData = refreshData
+        self._tempName = State(initialValue: coffee.wrappedValue.name)
+        self._tempRegion = State(initialValue: coffee.wrappedValue.region)
+        self._tempProcess = State(initialValue: coffee.wrappedValue.process)
+        self._tempDescription = State(initialValue: coffee.wrappedValue.description)
+    }
 
     var body: some View {
         ZStack {
             NavigationView {
                 Form {
                     Section {
-                        TextField("Name", text: $coffeeName)
-                        TextField("Region", text: $coffeeRegion)
-                        TextField("Process", text: $coffeeProcess)
+                        TextField("Name", text: $tempName) // Bind to tempName
+                        TextField("Region", text: $tempRegion) // Bind to tempRegion
+                        TextField("Process", text: $tempProcess) // Bind to tempProcess
                     } header: {
                         Text("Information")
                     } footer: {
@@ -60,7 +72,6 @@ struct CreateCoffeeView: View {
                                                     self.coffeeImageObject = UIImage(data: resizedData)
                                                     self.coffeeImageData = resizedData
                                                 }
-                                                
                                             } else {
                                                 print("❌ Compression failed")
                                             }
@@ -71,10 +82,10 @@ struct CreateCoffeeView: View {
                     }
                     
                     Section("Coffee Description") {
-                        TextField("Description", text: $coffeeDescription, axis: .vertical)
+                        TextField("Description", text: $tempDescription, axis: .vertical) // Bind to tempDescription
                     }
                 }
-                .navigationTitle("Add Coffee")
+                .navigationTitle("Edit Coffee")
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
@@ -89,18 +100,26 @@ struct CreateCoffeeView: View {
                                     }
                                     
                                     let coffeeInput = CoffeeInput(
-                                        id: nil,
-                                        name: coffeeName,
-                                        region: coffeeRegion,
-                                        process: coffeeProcess,
-                                        description: coffeeDescription,
+                                        id: coffee.id,
+                                        name: tempName,
+                                        region: tempRegion,
+                                        process: tempProcess,
+                                        description: tempDescription,
                                         img: imageData
                                     )
                                     
-                                    print("📤 Uploading CoffeeInput with compressed image...")
-                                    try await coffeeViewModel.postCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    print("📤 Updating CoffeeInput with compressed image...")
+                                    let updatedCoffee = try await coffeeViewModel.updateCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    
+                                    // Update the parent's coffee state only after successful API call
+                                    coffee.name = updatedCoffee.name
+                                    coffee.region = updatedCoffee.region
+                                    coffee.process = updatedCoffee.process
+                                    coffee.description = updatedCoffee.description
+                                    coffee.img = updatedCoffee.img
+                                    
+                                    refreshData.toggle() // Trigger refresh in the parent view
                                     presentationMode.wrappedValue.dismiss()
-                                    refreshData.toggle()                                    
                                 } catch {
                                     print("❌ Failed to upload coffee: \(error)")
                                 }
@@ -122,38 +141,31 @@ struct CreateCoffeeView: View {
     }
 }
 
-extension UIImage {
-    func compressTo(maxSizeInMB: Double) -> Data? {
-        let maxSizeInBytes = Int(maxSizeInMB * 1024 * 1024)
-        var compression: CGFloat = 1.0
-        var imageData = self.jpegData(compressionQuality: compression)
-
-        while let data = imageData, data.count > maxSizeInBytes, compression > 0.1 {
-            compression -= 0.1
-            imageData = self.jpegData(compressionQuality: compression)
-        }
-
-        if let finalData = imageData, finalData.count <= maxSizeInBytes {
-            return finalData
-        } else {
-            print("❌ Compression failed to meet the required size")
-            return nil
-        }
-    }
-}
-
 #Preview {
-
     struct PreviewWrapper: View {
         @State private var refreshData: Bool = false
+        @State private var sampleCoffee = Coffee(
+            id: 1,
+            name: "Ethiopian Yirgacheffe",
+            region: "Yirgacheffe, Ethiopia",
+            process: "Washed",
+            description: "Bright and floral with notes of citrus and jasmine",
+            img: nil
+        )
+        
         var body: some View {
             let coffeeViewModel = CoffeeViewModel()
             let keyChainManager = KeychainManager()
-            CreateCoffeeView(refreshData: $refreshData)
-                .environmentObject(coffeeViewModel)
-                .environmentObject(keyChainManager)
+            
+            EditCoffeeView(
+                coffee: $sampleCoffee,
+                refreshData: $refreshData
+            )
+            .environmentObject(coffeeViewModel)
+            .environmentObject(keyChainManager)
         }
     }
 
     return PreviewWrapper()
 }
+

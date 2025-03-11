@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 
 struct Coffee: Identifiable, Codable, Hashable {
-    let id: Int
-    let name: String
-    let region: String
-    let process: String
-    let description: String
-    let img: String
+    var id: Int
+    var name: String
+    var region: String
+    var process: String
+    var description: String
+    var img: String?
     
     private enum CodingKeys: String, CodingKey {
         case id, name, region, process, description, img
@@ -22,12 +22,12 @@ struct Coffee: Identifiable, Codable, Hashable {
 }
 
 struct CoffeeInput: Identifiable {
-    let id = UUID()
+    let id: Int?
     let name: String
     let region: String
     let process: String
     let description: String
-    let img: Data // Change this from UIImage to Data
+    let img: Data
 
     func toMultiPartData(boundary: String) -> Data {
         var data = Data()
