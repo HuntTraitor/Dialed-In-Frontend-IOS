@@ -12,7 +12,7 @@ struct EditCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var keyChainManager: KeychainManager
-    @Binding var coffee: Coffee // Use @Binding for the coffee object
+    @Binding var coffee: Coffee
     @Binding var refreshData: Bool
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
@@ -40,9 +40,9 @@ struct EditCoffeeView: View {
             NavigationView {
                 Form {
                     Section {
-                        TextField("Name", text: $tempName) // Bind to tempName
-                        TextField("Region", text: $tempRegion) // Bind to tempRegion
-                        TextField("Process", text: $tempProcess) // Bind to tempProcess
+                        TextField("Name", text: $tempName)
+                        TextField("Region", text: $tempRegion)
+                        TextField("Process", text: $tempProcess)
                     } header: {
                         Text("Information")
                     } footer: {
@@ -82,7 +82,7 @@ struct EditCoffeeView: View {
                     }
                     
                     Section("Coffee Description") {
-                        TextField("Description", text: $tempDescription, axis: .vertical) // Bind to tempDescription
+                        TextField("Description", text: $tempDescription, axis: .vertical)
                     }
                 }
                 .navigationTitle("Edit Coffee")
@@ -111,14 +111,13 @@ struct EditCoffeeView: View {
                                     print("📤 Updating CoffeeInput with compressed image...")
                                     let updatedCoffee = try await coffeeViewModel.updateCoffee(input: coffeeInput, token: keyChainManager.getToken())
                                     
-                                    // Update the parent's coffee state only after successful API call
                                     coffee.name = updatedCoffee.name
                                     coffee.region = updatedCoffee.region
                                     coffee.process = updatedCoffee.process
                                     coffee.description = updatedCoffee.description
                                     coffee.img = updatedCoffee.img
                                     
-                                    refreshData.toggle() // Trigger refresh in the parent view
+                                    refreshData.toggle()
                                     presentationMode.wrappedValue.dismiss()
                                 } catch {
                                     print("❌ Failed to upload coffee: \(error)")

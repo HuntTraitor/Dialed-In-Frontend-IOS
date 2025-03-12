@@ -83,5 +83,11 @@ struct ImageView: View {
         .task {
             await viewModel.load(url: url)
         }
+        .onChange(of: url) { oldValue, newValue in
+            viewModel.resource = nil
+            Task {
+                await viewModel.load(url: newValue)
+            }
+        }
     }
 }

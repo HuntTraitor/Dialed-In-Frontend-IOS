@@ -29,7 +29,7 @@ struct CoffeeCard: View {
             VStack {
                 HStack {
                     Button(action: {
-                        isDetailViewPresented = true // Show the sheet
+                        isDetailViewPresented = true
                     }) {
                         Text("Edit")
                             .font(.body)
