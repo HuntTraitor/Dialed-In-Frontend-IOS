@@ -27,7 +27,7 @@ struct CoffeeInput: Identifiable {
     let region: String
     let process: String
     let description: String
-    let img: Data
+    let img: Data?
 
     func toMultiPartData(boundary: String) -> Data {
         var data = Data()
@@ -54,12 +54,14 @@ struct CoffeeInput: Identifiable {
         data.append("Content-Disposition: form-data; name=\"description\"\r\n\r\n".data(using: .utf8)!)
         data.append("\(description)\r\n".data(using: .utf8)!)
 
-        // Append image
-        data.append(boundaryPrefix)
-        data.append("Content-Disposition: form-data; name=\"img\"; filename=\"coffee.jpg\"\r\n".data(using: .utf8)!)
-        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-        data.append(img) // Use the compressed Data directly
-        data.append("\r\n".data(using: .utf8)!)
+        if img != nil {
+            // Append image
+            data.append(boundaryPrefix)
+            data.append("Content-Disposition: form-data; name=\"img\"; filename=\"coffee.jpg\"\r\n".data(using: .utf8)!)
+            data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+            data.append(img!) // Use the compressed Data directly
+            data.append("\r\n".data(using: .utf8)!)
+        }
 
         // Closing boundary
         data.append("--\(boundary)--\r\n".data(using: .utf8)!)

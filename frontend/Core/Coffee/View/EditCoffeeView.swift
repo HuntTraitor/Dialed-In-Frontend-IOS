@@ -94,11 +94,7 @@ struct EditCoffeeView: View {
                                 isUploading = true
                                 defer { isUploading = false }
                                 do {
-                                    guard let imageData = coffeeImageData else {
-                                        print("❌ No image selected or failed to convert to Data")
-                                        return
-                                    }
-                                    
+                                    let imageData = coffeeImageData
                                     let coffeeInput = CoffeeInput(
                                         id: coffee.id,
                                         name: tempName,
