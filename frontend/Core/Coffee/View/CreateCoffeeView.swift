@@ -21,7 +21,15 @@ struct CreateCoffeeView: View {
     @State private var coffeeImageData: Data?
     @State private var isUploading: Bool = false
     @Binding public var refreshData: Bool
-
+    
+    private var isFormValid: Bool {
+        return (
+            coffeeViewModel.isValidName(name: coffeeName)
+            && coffeeViewModel.isValidRegion(region: coffeeRegion)
+            && coffeeViewModel.isValidProcess(process: coffeeProcess)
+            && coffeeViewModel.isValidDescription(description: coffeeDescription)
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -106,8 +114,8 @@ struct CreateCoffeeView: View {
                                 }
                             }
                         }
-                    }
-                    
+                        .disabled(!isFormValid)
+                    } 
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Cancel", role: .cancel) {
                             presentationMode.wrappedValue.dismiss()

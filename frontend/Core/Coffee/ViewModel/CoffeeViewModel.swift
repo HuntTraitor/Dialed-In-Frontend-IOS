@@ -88,5 +88,20 @@ class CoffeeViewModel: ObservableObject {
         let coffee = try decoder.decode(Coffee.self, from: jsonData)
         return coffee
     }
-
+    
+    func isValidName(name: String) -> Bool {
+        return name != "" || name.count > 500
+    }
+    
+    func isValidDescription(description: String) -> Bool {
+        return description != "" || description.count > 1000
+    }
+    
+    func isValidProcess(process: String) -> Bool {
+        return process != "" || process.count > 200
+    }
+    
+    func isValidRegion(region: String) -> Bool {
+        return region != "" || region.count > 100
+    }
 }

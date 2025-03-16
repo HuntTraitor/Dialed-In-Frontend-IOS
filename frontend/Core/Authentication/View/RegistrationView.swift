@@ -27,7 +27,6 @@ struct RegistrationView: View {
             && viewModel.isValidConfirmPassword(password: password, confirmPassword: confirmPassword)
     }
     
-    
     var body: some View {
         ZStack {
             VStack {
