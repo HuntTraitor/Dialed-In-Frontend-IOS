@@ -64,7 +64,7 @@ struct SwitchRecipeData: Codable, Hashable {
     
     struct Phase: Codable, Hashable {
         var open: Bool
-        var Time: Int
+        var time: Int
         var amount: Int
     }
 }
@@ -78,6 +78,24 @@ struct V60RecipeData: Codable, Hashable {
         var time: Int
         var amount: Int
     }
+}
+
+extension Recipe {
+    static var MOCK_SWITCH_RECIPE = Recipe(
+        id: 1,
+        userId: 101,
+        coffeeId: 5,
+        methodId: 2,
+        info: .switchRecipe(SwitchRecipeData(
+            gramsIn: 20,
+            mlOut: 320,
+            phases: [
+                1: SwitchRecipeData.Phase(open: true, time: 45, amount: 160),
+                2: SwitchRecipeData.Phase(open: false, time: 75, amount: 160),
+                3: SwitchRecipeData.Phase(open: true, time: 60, amount: 0)
+            ]
+        ))
+    )
 }
 
 
