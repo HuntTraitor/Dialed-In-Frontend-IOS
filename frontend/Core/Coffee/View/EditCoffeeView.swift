@@ -34,6 +34,15 @@ struct EditCoffeeView: View {
         self._tempProcess = State(initialValue: coffee.wrappedValue.process)
         self._tempDescription = State(initialValue: coffee.wrappedValue.description)
     }
+    
+    private var isFormValid: Bool {
+        return (
+            coffeeViewModel.isValidName(name: tempName)
+            && coffeeViewModel.isValidRegion(region: tempRegion)
+            && coffeeViewModel.isValidProcess(process: tempProcess)
+            && coffeeViewModel.isValidDescription(description: tempDescription)
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -120,6 +129,7 @@ struct EditCoffeeView: View {
                                 }
                             }
                         }
+                        .disabled(!isFormValid)
                     }
                     
                     ToolbarItem(placement: .navigationBarLeading) {
