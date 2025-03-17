@@ -40,7 +40,6 @@ struct PhaseView: View {
                         .foregroundColor(.gray)
                 }
                 .padding(.top, 40)
-                Spacer()
             } else {
                 Text("Phase not found")
             }

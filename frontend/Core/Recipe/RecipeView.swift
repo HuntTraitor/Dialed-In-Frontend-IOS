@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct RecipeView: View {
+    let recipe: SwitchRecipe
     var body: some View {
-        Text("Recipe for: Coffee")
+        Text("Information about an individual recipe")
     }
 }
 
 #Preview {
-    RecipeView()
+    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
 }
