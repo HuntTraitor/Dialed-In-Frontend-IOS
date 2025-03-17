@@ -8,93 +8,53 @@
 import Foundation
 import UIKit
 
-struct Recipe: Identifiable, Codable, Hashable {
+struct SwitchRecipe: Identifiable, Codable, Hashable {
     var id: Int
     var userId: Int
     var coffeeId: Int
     var methodId: Int
     var info: RecipeInfo
     
-    enum RecipeInfo: Codable, Hashable {
-        case switchRecipe(SwitchRecipeData)
-        case v60Recipe(V60RecipeData)
+    struct RecipeInfo: Codable, Hashable {
+        var gramsIn: Int
+        var mlOut: Int
+        var phases: [Int: Phase]
         
-        enum CodingKeys: String, CodingKey {
-            case type, data
-        }
-        
-        enum RecipeType: String, Codable {
-            case switchRecipe
-            case v60Recipe
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try container.decode(RecipeType.self, forKey: .type)
-            
-            switch type {
-            case .switchRecipe:
-                let data = try container.decode(SwitchRecipeData.self, forKey: .data)
-                self = .switchRecipe(data)
-            case .v60Recipe:
-                let data = try container.decode(V60RecipeData.self, forKey: .data)
-                self = .v60Recipe(data)
-            }
-        }
-        
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            
-            switch self {
-            case .switchRecipe(let data):
-                try container.encode(RecipeType.switchRecipe, forKey: .type)
-                try container.encode(data, forKey: .data)
-            case .v60Recipe(let data):
-                try container.encode(RecipeType.v60Recipe, forKey: .type)
-                try container.encode(data, forKey: .data)
-            }
+        struct Phase: Codable, Hashable {
+            var open: Bool
+            var time: Int
+            var amount: Int
         }
     }
 }
 
-struct SwitchRecipeData: Codable, Hashable {
-    var gramsIn: Int
-    var mlOut: Int
-    var phases: [Int: Phase]
+struct V60Recipe: Identifiable, Codable, Hashable {
+    var id: Int
+    var coffeeId: Int
+    var methodId: Int
+    var info: RecipeInfo
     
-    struct Phase: Codable, Hashable {
-        var open: Bool
+    struct RecipeInfo: Codable, Hashable {
         var time: Int
         var amount: Int
     }
 }
 
-struct V60RecipeData: Codable, Hashable {
-    var gramsIn: Int
-    var mlOut: Int
-    var pours: [Pour]
-    
-    struct Pour: Codable, Hashable {
-        var time: Int
-        var amount: Int
-    }
-}
-
-extension Recipe {
-    static var MOCK_SWITCH_RECIPE = Recipe(
+extension SwitchRecipe {
+    static var MOCK_SWITCH_RECIPE = SwitchRecipe(
         id: 1,
         userId: 101,
         coffeeId: 5,
         methodId: 2,
-        info: .switchRecipe(SwitchRecipeData(
+        info: RecipeInfo(
             gramsIn: 20,
             mlOut: 320,
             phases: [
-                1: SwitchRecipeData.Phase(open: true, time: 45, amount: 160),
-                2: SwitchRecipeData.Phase(open: false, time: 75, amount: 160),
-                3: SwitchRecipeData.Phase(open: true, time: 60, amount: 0)
+                1: RecipeInfo.Phase(open: true, time: 45, amount: 160),
+                2: RecipeInfo.Phase(open: false, time: 75, amount: 160),
+                3: RecipeInfo.Phase(open: true, time: 60, amount: 0)
             ]
-        ))
+        )
     )
 }
 
