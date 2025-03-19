@@ -27,6 +27,10 @@ struct CoffeeCardSmall: View {
                 Text(coffee.name)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay(Rectangle().frame(width: 1, height: nil, alignment: .leading).foregroundColor(Color.black), alignment: .leading)
+                Image(systemName: "arrow.right")
+                    .foregroundColor(Color("background"))
+                    .padding()
+                    .padding(.trailing, 10)
             }
             .frame(width: 300, height: 75)
             .overlay(
