@@ -11,7 +11,7 @@ import UIKit
 struct SwitchRecipe: Identifiable, Codable, Hashable {
     var id: Int
     var userId: Int
-    var coffeeId: Int
+    var coffee: Coffee
     var methodId: Int
     var info: RecipeInfo
     
@@ -45,7 +45,7 @@ extension SwitchRecipe {
     static var MOCK_SWITCH_RECIPE = SwitchRecipe(
         id: 1,
         userId: 101,
-        coffeeId: 5,
+        coffee: Coffee.MOCK_COFFEE,
         methodId: 2,
         info: RecipeInfo(
             name: "Classic Switch Recipe",

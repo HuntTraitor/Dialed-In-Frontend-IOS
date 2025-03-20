@@ -38,13 +38,12 @@ struct RecipeListView: View {
                     ForEach(filteredRecipes, id: \.self) { recipe in
                         NavigationLink(
                             destination: RecipeView(
-                                recipe: recipe,
-                                coffee: Coffee.MOCK_COFFEE
+                                recipe: recipe
                             )
                             .environmentObject(keychainManager)
                             .environmentObject(coffeeModel)
                         ) {
-                            RecipeCard(recipe: recipe, coffee: Coffee.MOCK_COFFEE)
+                            RecipeCard(recipe: recipe)
                                 .frame(maxWidth: .infinity, maxHeight: 120)
                                 .padding()
                                 .background(Color(.systemBackground))

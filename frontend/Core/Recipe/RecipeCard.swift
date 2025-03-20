@@ -9,13 +9,12 @@ import SwiftUI
 
 struct RecipeCard: View {
     var recipe: SwitchRecipe
-    var coffee: Coffee
     var body: some View {
         let totalTime = recipe.info.phases.reduce(0) { $0 + $1.value.time }
         HStack {
             VStack {
-                ImageView(URL(string: coffee.img!))
-                Text(coffee.name)
+                ImageView(URL(string: recipe.coffee.img!))
+                Text(recipe.coffee.name)
                     .bold()
             }
             VStack {
@@ -45,5 +44,5 @@ struct RecipeCard: View {
 }
 
 #Preview {
-    RecipeCard(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, coffee: Coffee.MOCK_COFFEE)
+    RecipeCard(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
 }

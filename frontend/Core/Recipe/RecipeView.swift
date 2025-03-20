@@ -9,7 +9,6 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: SwitchRecipe
-    let coffee: Coffee
     @EnvironmentObject var coffeeModel: CoffeeViewModel
     @EnvironmentObject var keychainManager: KeychainManager
     
@@ -27,11 +26,11 @@ struct RecipeView: View {
                     .italic()
                     .bold()
                 NavigationLink(
-                    destination: CoffeeCard(coffee: coffee)
+                    destination: CoffeeCard(coffee: recipe.coffee)
                         .environmentObject(keychainManager)
                         .environmentObject(coffeeModel)
                 ) {
-                    CoffeeCardSmall(coffee: coffee)
+                    CoffeeCardSmall(coffee: recipe.coffee)
                 }
                 .buttonStyle(PlainButtonStyle())
                 HStack {
@@ -127,7 +126,7 @@ struct RecipeView: View {
 #Preview {
     let coffeeViewModel = CoffeeViewModel()
     let keyChainManager = KeychainManager()
-    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, coffee: Coffee.MOCK_COFFEE)
+    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
         .environmentObject(coffeeViewModel)
         .environmentObject(keyChainManager)
 }
