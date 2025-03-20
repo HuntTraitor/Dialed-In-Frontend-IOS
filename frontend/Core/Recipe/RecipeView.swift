@@ -23,6 +23,9 @@ struct RecipeView: View {
                 .map { getColor(for: $0.offset) }
             
             VStack {
+                Text(recipe.info.name)
+                    .italic()
+                    .bold()
                 NavigationLink(
                     destination: CoffeeCard(coffee: coffee)
                         .environmentObject(keychainManager)

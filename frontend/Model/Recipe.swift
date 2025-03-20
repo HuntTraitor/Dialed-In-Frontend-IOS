@@ -16,6 +16,7 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
     var info: RecipeInfo
     
     struct RecipeInfo: Codable, Hashable {
+        var name: String
         var gramsIn: Int
         var mlOut: Int
         var phases: [Int: Phase]
@@ -47,6 +48,7 @@ extension SwitchRecipe {
         coffeeId: 5,
         methodId: 2,
         info: RecipeInfo(
+            name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
             phases: [
