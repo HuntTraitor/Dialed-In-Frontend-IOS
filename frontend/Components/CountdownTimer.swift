@@ -51,6 +51,9 @@ struct CountdownTimer: View {
                 self.counter += 1
             }
         }
+        .onChange(of: seconds) { oldSeconds, newSeconds in
+            counter = 0 // Reset counter when seconds change
+        }
     }
     
     func completed() -> Bool {
