@@ -9,11 +9,13 @@ import SwiftUI
 
 struct CountdownDialog: View {
     let seconds: Int
+    var onComplete: (() -> Void)? = nil
     @State private var remainingSeconds: Int
     @State private var timer: Timer?
     
-    init(seconds: Int) {
+    init(seconds: Int, onComplete: (() -> Void)? = nil) {
         self.seconds = seconds
+        self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: seconds)
     }
     
@@ -40,6 +42,7 @@ struct CountdownDialog: View {
                 remainingSeconds -= 1
             } else {
                 timer?.invalidate()
+                onComplete?()
             }
         }
     }

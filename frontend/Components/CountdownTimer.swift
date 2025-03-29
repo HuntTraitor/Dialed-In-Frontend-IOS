@@ -52,7 +52,7 @@ struct CountdownTimer: View {
             }
         }
         .onChange(of: seconds) { oldSeconds, newSeconds in
-            counter = 0 // Reset counter when seconds change
+            counter = 0 
         }
     }
     
