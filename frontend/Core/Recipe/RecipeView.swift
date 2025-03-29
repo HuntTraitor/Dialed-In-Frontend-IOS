@@ -58,6 +58,13 @@ struct RecipeView: View {
                     .edgesIgnoringSafeArea(.all)
                     .zIndex(2)
                     .transition(.opacity)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
+                            withAnimation {
+                                showAnimation = false
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -102,7 +109,6 @@ struct RecipeView: View {
                 
                 // Brew visualization
                 brewVisualization
-                    .padding(.vertical, 20)
                 
                 // Start button
                 Button {
@@ -115,7 +121,6 @@ struct RecipeView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(Color("background"))
                 .padding(.horizontal, 40)
-                .padding(.top, 10)
             }
             .padding()
         }

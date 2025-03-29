@@ -9,7 +9,7 @@ struct PhaseView: View {
         VStack {
             if let phaseData = recipe.info.phases[phase] {
                 VStack {
-                    Text("Step \(phase + 1) of \(recipe.info.phases.count)")
+                    Text("Step \(phase) of \(recipe.info.phases.count)")
                         .font(.footnote)
                         .foregroundColor(.gray)
                     Divider()
@@ -22,6 +22,7 @@ struct PhaseView: View {
                     .padding(.bottom, 25)
 
                 CountdownTimer(seconds: phaseData.time)
+                    .id("phase-\(phase)") // This ensures a fresh timer for each phase
                     .padding()
 
                 VStack {
@@ -34,8 +35,7 @@ struct PhaseView: View {
                 }
                 .padding(.top, 40)
             } else {
-                // Fallback if phase data is missing
-                Text("Phase \(phase + 1) not found")
+                Text("Phase \(phase) not found")
                     .font(.title)
                     .foregroundColor(.red)
             }
