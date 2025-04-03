@@ -36,6 +36,11 @@ struct RecipeView: View {
                 
                 // Countdown overlay
                 if showCountdown {
+                    Color.black.opacity(0.5)
+                        .edgesIgnoringSafeArea(.all)
+                        .transition(.opacity)
+                        .zIndex(0)
+                    
                     CountdownDialog(
                         seconds: 3,
                         onComplete: {
