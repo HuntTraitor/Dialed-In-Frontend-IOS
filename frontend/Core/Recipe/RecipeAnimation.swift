@@ -45,8 +45,6 @@ struct RecipeAnimation: View {
             currentPhase += 1
             if currentPhase < recipe.info.phases.count {
                 startAnimation()
-            } else {
-                print("All phases completed")
             }
         }
     }
