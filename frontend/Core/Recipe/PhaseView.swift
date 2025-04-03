@@ -22,7 +22,7 @@ struct PhaseView: View {
                     .padding(.bottom, 25)
 
                 CountdownTimer(seconds: phaseData.time)
-                    .id("phase-\(phase)") // This ensures a fresh timer for each phase
+                    .id("phase-\(phase)")
                     .padding()
 
                 VStack {

@@ -10,13 +10,13 @@ import SwiftUI
 struct CountdownTimer: View {
     @State private var counter: Int = 0
     private var seconds: Int
-    
+
     private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
     init(seconds: Int) {
         self.seconds = seconds
     }
-    
+
     var body: some View {
         VStack {
             ZStack {
@@ -26,7 +26,7 @@ struct CountdownTimer: View {
                     .overlay(
                         Circle().stroke(Color.white, lineWidth: 25)
                     )
-                
+
                 Circle()
                     .fill(Color.clear)
                     .frame(width: 250, height: 250)
@@ -42,8 +42,13 @@ struct CountdownTimer: View {
                             .foregroundColor(completed() ? Color("background") : Color("background"))
                             .animation(.easeInOut(duration: 0.5), value: progress())
                     )
-                
+
                 Clock(counter: counter, countTo: seconds)
+            }
+        }
+        .onAppear {
+            if counter == 0 {
+                counter += 1
             }
         }
         .onReceive(timer) { _ in
@@ -52,23 +57,23 @@ struct CountdownTimer: View {
             }
         }
         .onChange(of: seconds) { oldSeconds, newSeconds in
-            counter = 0 
+            counter = 0
         }
     }
-    
+
     func completed() -> Bool {
         return counter >= seconds
     }
-    
+
     func progress() -> CGFloat {
-        return CGFloat(counter) / CGFloat(seconds)
+        return CGFloat(counter) / CGFloat(seconds == 0 ? 1 : seconds)
     }
 }
 
 struct Clock: View {
     var counter: Int
     var countTo: Int
-    
+
     var body: some View {
         VStack {
             Text(counterToMinutes())
@@ -76,7 +81,7 @@ struct Clock: View {
                 .fontWeight(.black)
         }
     }
-    
+
     func counterToMinutes() -> String {
         let currentTime = countTo - counter
         let seconds = currentTime % 60
@@ -88,3 +93,4 @@ struct Clock: View {
 #Preview {
     CountdownTimer(seconds: 10)
 }
+
