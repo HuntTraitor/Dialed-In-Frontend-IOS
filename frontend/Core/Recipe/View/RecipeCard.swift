@@ -9,19 +9,23 @@ import SwiftUI
 
 struct RecipeCard: View {
     var recipe: SwitchRecipe
+
     var body: some View {
-        let totalTime = recipe.info.phases.reduce(0) { $0 + $1.value.time }
+        let totalTime = recipe.info.phases.reduce(0) { $0 + $1.time }
+
         HStack {
             VStack {
-                ImageView(URL(string: recipe.coffee.img!))
+                ImageView(URL(string: recipe.coffee.img ?? ""))
                 Text(recipe.coffee.name)
                     .bold()
             }
-            VStack {
+
+            VStack(alignment: .leading) {
                 Text(recipe.info.name)
                     .italic()
                     .bold()
                     .padding(.bottom, 10)
+
                 HStack {
                     Image(systemName: "cup.and.heat.waves.fill")
                         .foregroundColor(Color("background"))
@@ -32,6 +36,7 @@ struct RecipeCard: View {
                     Text("\(recipe.info.mlOut)ml")
                 }
                 .padding(.bottom, 10)
+
                 HStack {
                     Image(systemName: "clock")
                         .foregroundColor(Color("background"))

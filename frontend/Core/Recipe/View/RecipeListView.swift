@@ -10,7 +10,8 @@ import SwiftUI
 struct RecipeListView: View {
     @EnvironmentObject var keychainManager: KeychainManager
     @EnvironmentObject var coffeeModel: CoffeeViewModel
-    @State private var recipeList: [SwitchRecipe] = [SwitchRecipe.MOCK_SWITCH_RECIPE, SwitchRecipe.MOCK_SWITCH_RECIPE, SwitchRecipe.MOCK_SWITCH_RECIPE]
+    @EnvironmentObject var recipeModel: RecipeViewModel
+    @State private var recipeList: [SwitchRecipe] = []
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     let curMethod: Method
@@ -57,6 +58,20 @@ struct RecipeListView: View {
                 }
             }
         }
+        .addToolbar()
+        .addNavigationSupport()
+        .task {
+            await fetchRecipes()
+        }
+    }
+    
+    func fetchRecipes() async {
+        print("fetchRecipes called...")
+        do {
+            recipeList = try await recipeModel.getSwitchRecipes(withToken: "ZKC66R7U7WEPFVI2CSQQLRAR7I", methodId: 2)
+        } catch {
+            print("Error getting recipes: \(error)")
+        }
     }
 }
 
@@ -64,8 +79,10 @@ struct RecipeListView_Previews: PreviewProvider {
     static var previews: some View {
         let keychainManager = KeychainManager()
         let coffeeViewModel = CoffeeViewModel()
+        let recipeViewModel = RecipeViewModel()
         RecipeListView(curMethod: Method(id: 1, name: "Pour Over"))
             .environmentObject(keychainManager)
             .environmentObject(coffeeViewModel)
+            .environmentObject(recipeViewModel)
     }
 }

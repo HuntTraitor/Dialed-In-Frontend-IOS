@@ -12,15 +12,15 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
     var id: Int
     var userId: Int
     var coffee: Coffee
-    var methodId: Int
+    var method: Method
     var info: RecipeInfo
-    
+
     struct RecipeInfo: Codable, Hashable {
         var name: String
         var gramsIn: Int
         var mlOut: Int
-        var phases: [Int: Phase]
-        
+        var phases: [Phase]
+
         struct Phase: Codable, Hashable {
             var open: Bool
             var time: Int
@@ -46,15 +46,18 @@ extension SwitchRecipe {
         id: 1,
         userId: 101,
         coffee: Coffee.MOCK_COFFEE,
-        methodId: 2,
+        method: Method(
+            id: 1,
+            name: "Hario Switch"
+        ),
         info: RecipeInfo(
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
             phases: [
-                1: RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                2: RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                3: RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                RecipeInfo.Phase(open: true, time: 3, amount: 160),
+                RecipeInfo.Phase(open: false, time: 3, amount: 160),
+                RecipeInfo.Phase(open: true, time: 3, amount: 0)
             ]
         )
     )

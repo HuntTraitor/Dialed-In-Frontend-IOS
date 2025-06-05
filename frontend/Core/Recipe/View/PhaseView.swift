@@ -5,11 +5,15 @@ struct PhaseView: View {
     let phase: Int
     let totalWater: Int
 
+    var phaseData: SwitchRecipe.RecipeInfo.Phase? {
+        recipe.info.phases.indices.contains(phase) ? recipe.info.phases[phase] : nil
+    }
+
     var body: some View {
         VStack {
-            if let phaseData = recipe.info.phases[phase] {
+            if let phaseData = phaseData {
                 VStack {
-                    Text("Step \(phase) of \(recipe.info.phases.count)")
+                    Text("Step \(phase + 1) of \(recipe.info.phases.count)")
                         .font(.footnote)
                         .foregroundColor(.gray)
                     Divider()
@@ -35,7 +39,7 @@ struct PhaseView: View {
                 }
                 .padding(.top, 40)
             } else {
-                Text("Phase \(phase) not found")
+                Text("Phase \(phase + 1) not found")
                     .font(.title)
                     .foregroundColor(.red)
             }

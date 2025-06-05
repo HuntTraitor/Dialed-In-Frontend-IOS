@@ -14,12 +14,13 @@ struct RecipeView: View {
     @State private var showCountdown = false
     @State private var showAnimation = false
     
-    private var sortedPhases: [(key: Int, value: SwitchRecipe.RecipeInfo.Phase)] {
-        recipe.info.phases.sorted { $0.key < $1.key }
+    private var sortedPhases: [SwitchRecipe.RecipeInfo.Phase] {
+        // Assuming phases are already sorted by order in the array
+        recipe.info.phases
     }
     
     private var totalTime: Int {
-        sortedPhases.reduce(0) { $0 + $1.value.time }
+        sortedPhases.reduce(0) { $0 + $1.time }
     }
     
     private var phaseColors: [Color] {
@@ -144,8 +145,8 @@ struct RecipeView: View {
                 
                 // Phase segments
                 ForEach(Array(sortedPhases.enumerated()), id: \.offset) { index, phase in
-                    let slice = CGFloat(phase.value.time) / CGFloat(totalTime)
-                    let startAngle = sortedPhases.prefix(index).reduce(0) { $0 + CGFloat($1.value.time)/CGFloat(totalTime) }
+                    let slice = CGFloat(phase.time) / CGFloat(totalTime)
+                    let startAngle = sortedPhases.prefix(index).reduce(0) { $0 + CGFloat($1.time)/CGFloat(totalTime) }
                     let endAngle = startAngle + slice
                     
                     Circle()
@@ -173,15 +174,15 @@ struct RecipeView: View {
                             .cornerRadius(4)
                         
                         VStack(alignment: .leading) {
-                            Text("Phase \(phase.key + 1)")
+                            Text("Phase \(index + 1)")
                                 .font(.headline)
-                            Text("\(phase.value.time)s - \(phase.value.amount)g")
+                            Text("\(phase.time)s - \(phase.amount)g")
                                 .font(.subheadline)
                         }
                         
                         Spacer()
                         
-                        Image(systemName: phase.value.open ? "lock.open" : "lock")
+                        Image(systemName: phase.open ? "lock.open" : "lock")
                     }
                     .padding(.horizontal)
                 }
