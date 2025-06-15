@@ -27,6 +27,8 @@ struct RecipeAnimation: View {
         .onDisappear {
             stopAnimation()
         }
+        .padding(.top, 44)
+        .edgesIgnoringSafeArea(.bottom)
     }
 
     private func startAnimation() {

@@ -10,8 +10,8 @@ import PhotosUI
 
 struct EditCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var keyChainManager: KeychainManager
+    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @Binding var coffee: Coffee
     @Binding var refreshData: Bool
     @State private var coffeeImageSelection: PhotosPickerItem?
@@ -159,14 +159,12 @@ struct EditCoffeeView: View {
         )
         
         var body: some View {
-            let coffeeViewModel = CoffeeViewModel()
             let keyChainManager = KeychainManager()
             
             EditCoffeeView(
                 coffee: $sampleCoffee,
                 refreshData: $refreshData
             )
-            .environmentObject(coffeeViewModel)
             .environmentObject(keyChainManager)
         }
     }

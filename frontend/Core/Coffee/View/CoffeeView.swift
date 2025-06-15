@@ -9,18 +9,17 @@ import SwiftUI
 
 struct CoffeeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
-    @EnvironmentObject var coffeeModel: CoffeeViewModel
+    @ObservedObject var coffeeList = CoffeeViewModel()
     @Bindable private var navigator = NavigationManager.nav
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
-    @State private var coffeeItems: [Coffee] = []
     @State private var isShowingCreateCoffeeView = false
     @State public var refreshData: Bool = false
     
     
     var filteredCoffees: [Coffee] {
-        guard !searchTerm.isEmpty else { return coffeeItems }
-        return coffeeItems.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
+        guard !searchTerm.isEmpty else { return coffeeList.coffees }
+        return coffeeList.coffees.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -47,7 +46,6 @@ struct CoffeeView: View {
                     }
                     .sheet(isPresented: $isShowingCreateCoffeeView) {
                         CreateCoffeeView(refreshData: $refreshData)
-                            .environmentObject(coffeeModel)
                     }
                     .padding(.top, 40)
                     .italic()
@@ -61,7 +59,6 @@ struct CoffeeView: View {
                         NavigationLink(
                             destination: CoffeeCard(coffee: coffee)
                                 .environmentObject(keychainManager)
-                                .environmentObject(coffeeModel)
                         ) {
                             CoffeeCardSmall(coffee: coffee)
                                 .opacity(pressedItemId == coffee.id ? 0.8 : 1)
@@ -84,27 +81,18 @@ struct CoffeeView: View {
             .addToolbar()
             .addNavigationSupport()
             .task {
-                await fetchCoffees()
+                await coffeeList.fetchCoffees(withToken: keychainManager.getToken())
             }
             .onChange(of: refreshData) { oldValue, newValue in
                 print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
                 if newValue {
                     Task {
-                        await fetchCoffees()
+                        await coffeeList.fetchCoffees(withToken: keychainManager.getToken())
+                        refreshData = false
                     }
                 }
             }
         }
-    }
-    func fetchCoffees() async {
-        print("🔄 fetchCoffees() called")
-        do {
-            coffeeItems = try await coffeeModel.getCoffees(withToken: keychainManager.getToken())
-        } catch {
-            print("❌ Error getting coffees: \(error)")
-        }
-        refreshData = false
-        print("🔄 refreshData reset to false")
     }
 }
 
@@ -135,8 +123,6 @@ extension View {
 
 #Preview {
     let keychainManager = KeychainManager()
-    let coffeeViewModel = CoffeeViewModel()
     return CoffeeView()
         .environmentObject(keychainManager)
-        .environmentObject(coffeeViewModel)
 }

@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct MethodListView: View {
-    
-    @EnvironmentObject var methodModel: MethodViewModel
-    @State var methodList: [Method] = []
+    @ObservedObject var methodList = MethodViewModel()
     @State var imageList: [String] = ["v60", "Hario Switch"]
     
     var body: some View {
@@ -28,7 +26,7 @@ struct MethodListView: View {
                 
                 
                 VStack {
-                    ForEach(Array(zip(methodList, imageList)), id: \.0.self) { method, image in
+                    ForEach(Array(zip(methodList.methods, imageList)), id: \.0.self) { method, image in
                         NavigationLink {
                             RecipeListView(curMethod: method)
                         } label: {
@@ -40,28 +38,20 @@ struct MethodListView: View {
             }
             .padding()
             .task {
-                await fetchMethods()
+                do {
+                    await methodList.fetchMethods()
+                }
             }
-        }
-    }
-    
-    func fetchMethods() async {
-        do {
-            methodList = try await methodModel.getMethods()
-        } catch {
-            print("error getting methods")
         }
     }
 }
 
-
-
-
-
 struct MethodListView_Previews: PreviewProvider {
     static var previews: some View {
-        @StateObject var viewModel = MethodViewModel()
+        @StateObject var recipeViewModel = RecipeViewModel()
+        @StateObject var keychainManager = KeychainManager()
         MethodListView()
-            .environmentObject(viewModel)
+            .environmentObject(recipeViewModel)
+            .environmentObject(keychainManager)
     }
 }

@@ -10,8 +10,8 @@ import PhotosUI
 
 struct CreateCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var keyChainManager: KeychainManager
+    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @State private var coffeeName: String = ""
     @State private var coffeeRegion: String = ""
     @State private var coffeeProcess: String = ""
@@ -155,10 +155,8 @@ extension UIImage {
     struct PreviewWrapper: View {
         @State private var refreshData: Bool = false
         var body: some View {
-            let coffeeViewModel = CoffeeViewModel()
             let keyChainManager = KeychainManager()
             CreateCoffeeView(refreshData: $refreshData)
-                .environmentObject(coffeeViewModel)
                 .environmentObject(keyChainManager)
         }
     }

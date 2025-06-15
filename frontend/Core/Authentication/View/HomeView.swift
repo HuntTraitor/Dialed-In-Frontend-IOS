@@ -58,6 +58,7 @@ struct HomeView: View {
         let keychainManager = KeychainManager()
         let viewModel = AuthViewModel()
         let methodModel = MethodViewModel()
+        let recipeModel = RecipeViewModel()
         static let mockUser = User(id: 1, name: "Hunter Tratar", email: "hunter@example.com", createdAt: "123", activated: false)
         @State var mockCurrentUser: User? = mockUser
         
@@ -66,6 +67,7 @@ struct HomeView: View {
                 .environmentObject(keychainManager)
                 .environmentObject(viewModel)
                 .environmentObject(methodModel)
+                .environmentObject(recipeModel)
         }
     }
     return PreviewWrapper()

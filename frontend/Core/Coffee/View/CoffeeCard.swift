@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CoffeeCard: View {
     @State private var coffee: Coffee
-    @EnvironmentObject var coffeeViewModel: CoffeeViewModel
+    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @EnvironmentObject var keyChainManager: KeychainManager
     @Environment(\.presentationMode) var presentationMode
     @State private var isLoading = false
@@ -183,11 +183,9 @@ struct CoffeeCard: View {
 
 #Preview {
     let keychainManager = KeychainManager()
-    let coffeeViewModel = CoffeeViewModel()
     return CoffeeCard(
         coffee: Coffee.MOCK_COFFEE
     )
     .environmentObject(keychainManager)
-    .environmentObject(coffeeViewModel)
     
 }

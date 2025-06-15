@@ -75,6 +75,12 @@ struct RecipeView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .safeAreaInset(edge: .top) {
+            Color.clear.frame(height: 0) // pushes content down from top safe area
+        }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 0) // pushes content up from bottom safe area
+        }
     }
     
     private var mainContent: some View {

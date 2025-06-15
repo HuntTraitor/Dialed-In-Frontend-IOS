@@ -8,21 +8,30 @@
 import Foundation
 
 class CoffeeViewModel: ObservableObject {
-    func getCoffees(withToken token: String) async throws -> [Coffee] {
-        let endpoint = "http://localhost:3000/v1/coffees"
-        let headers = ["Authorization": "Bearer \(token)"]
-        
-        let result = try await Get(to: endpoint, with: headers)
-        
-        guard let coffeeDicts = result["coffees"] as? [[String: Any]] else {
-            throw CustomError.methodError(message: "Error when parsing coffees")
+    @Published var coffees: [Coffee] = []
+    
+    func fetchCoffees(withToken token: String) async {
+        do {
+            let endpoint = "http://localhost:3000/v1/coffees"
+            let headers = ["Authorization": "Bearer \(token)"]
+            
+            let result = try await Get(to: endpoint, with: headers)
+            
+            guard let coffeeDicts = result["coffees"] as? [[String: Any]] else {
+                throw CustomError.methodError(message: "Error when parsing coffees")
+            }
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: coffeeDicts, options: [])
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let coffees = try decoder.decode([Coffee].self, from: jsonData)
+            
+            await MainActor.run {
+                self.coffees = coffees
+            }
+        } catch {
+            print("Error fetching coffees: \(error)")
         }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: coffeeDicts, options: [])
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let coffees = try decoder.decode([Coffee].self, from: jsonData)
-        return coffees
     }
     
     func postCoffee(input: CoffeeInput, token: String) async throws {

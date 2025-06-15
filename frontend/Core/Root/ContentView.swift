@@ -13,6 +13,7 @@ struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @EnvironmentObject var methodModel: MethodViewModel
     @EnvironmentObject var coffeeModel: CoffeeViewModel
+    @EnvironmentObject var recipeModel: RecipeViewModel
     @Bindable private var navigator = NavigationManager.nav
     
     var body: some View {
@@ -86,10 +87,12 @@ struct ContentView_Previews: PreviewProvider {
         @StateObject var keychainManager = KeychainManager()
         @StateObject var methodModel = MethodViewModel()
         @StateObject var coffeeModel = CoffeeViewModel()
+        @StateObject var recipeModel = RecipeViewModel()
         ContentView()
             .environmentObject(viewModel)
             .environmentObject(keychainManager)
             .environmentObject(methodModel)
             .environmentObject(coffeeModel)
+            .environmentObject(recipeModel)
     }
 }

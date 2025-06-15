@@ -9,8 +9,7 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject var keychainManager: KeychainManager
-    @EnvironmentObject var coffeeModel: CoffeeViewModel
-    @EnvironmentObject var recipeModel: RecipeViewModel
+    @ObservedObject var recipeViewModel = RecipeViewModel()
     @State private var recipeList: [SwitchRecipe] = []
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
@@ -42,7 +41,6 @@ struct RecipeListView: View {
                                 recipe: recipe
                             )
                             .environmentObject(keychainManager)
-                            .environmentObject(coffeeModel)
                         ) {
                             RecipeCard(recipe: recipe)
                                 .frame(maxWidth: .infinity, maxHeight: 120)
@@ -61,16 +59,12 @@ struct RecipeListView: View {
         .addToolbar()
         .addNavigationSupport()
         .task {
-            await fetchRecipes()
-        }
-    }
-    
-    func fetchRecipes() async {
-        print("fetchRecipes called...")
-        do {
-            recipeList = try await recipeModel.getSwitchRecipes(withToken: "ZKC66R7U7WEPFVI2CSQQLRAR7I", methodId: 2)
-        } catch {
-            print("Error getting recipes: \(error)")
+            do {
+                try Task.checkCancellation()
+                try await recipeViewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: curMethod.id)
+            } catch {
+                print("Error getting recipes: \(error)")
+            }
         }
     }
 }
@@ -78,11 +72,7 @@ struct RecipeListView: View {
 struct RecipeListView_Previews: PreviewProvider {
     static var previews: some View {
         let keychainManager = KeychainManager()
-        let coffeeViewModel = CoffeeViewModel()
-        let recipeViewModel = RecipeViewModel()
         RecipeListView(curMethod: Method(id: 1, name: "Pour Over"))
             .environmentObject(keychainManager)
-            .environmentObject(coffeeViewModel)
-            .environmentObject(recipeViewModel)
     }
 }

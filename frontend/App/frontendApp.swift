@@ -14,6 +14,7 @@ struct frontendApp: App {
     @StateObject private var keychainManager = KeychainManager()
     @State var methodViewModel = MethodViewModel()
     @StateObject var coffeeViewModel = CoffeeViewModel()
+    @StateObject var recipeViewModel = RecipeViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -22,6 +23,7 @@ struct frontendApp: App {
                 .environmentObject(keychainManager)
                 .environmentObject(methodViewModel)
                 .environmentObject(coffeeViewModel)
+                .environmentObject(recipeViewModel)
         }
     }
 }
