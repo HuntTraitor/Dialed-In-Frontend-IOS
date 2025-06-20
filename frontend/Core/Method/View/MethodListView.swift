@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MethodListView: View {
-    @ObservedObject var methodList = MethodViewModel()
+    @ObservedObject var methodList: MethodViewModel
     @State var imageList: [String] = ["v60", "Hario Switch"]
     
     var body: some View {
@@ -48,10 +48,8 @@ struct MethodListView: View {
 
 struct MethodListView_Previews: PreviewProvider {
     static var previews: some View {
-        @StateObject var recipeViewModel = RecipeViewModel()
         @StateObject var keychainManager = KeychainManager()
-        MethodListView()
-            .environmentObject(recipeViewModel)
+        MethodListView(methodList: MethodViewModel())
             .environmentObject(keychainManager)
     }
 }

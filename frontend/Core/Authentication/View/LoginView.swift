@@ -13,7 +13,8 @@ struct LoginView: View {
     @State private var password = ""
     @State private var isLoading = false
     @State private var signinToken = ""
-    @EnvironmentObject var viewModel: AuthViewModel
+//    @EnvironmentObject var viewModel: AuthViewModel
+    @ObservedObject var viewModel = AuthViewModel()
     @EnvironmentObject var keychainManager: KeychainManager
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
@@ -160,10 +161,8 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        @StateObject var viewModel = AuthViewModel()
         @StateObject var keychainManager = KeychainManager()
         LoginView()
-            .environmentObject(viewModel)
             .environmentObject(keychainManager)
     }
 }
