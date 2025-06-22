@@ -9,15 +9,14 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject var keychainManager: KeychainManager
-    @ObservedObject var recipeViewModel = RecipeViewModel()
-    @State private var recipeList: [SwitchRecipe] = []
+    @StateObject var viewModel = RecipeViewModel()
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     let curMethod: Method
     
     var filteredRecipes: [SwitchRecipe] {
-        guard !searchTerm.isEmpty else { return recipeList }
-        return recipeList.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+        guard !searchTerm.isEmpty else { return viewModel.switchRecipes }
+        return viewModel.switchRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -61,7 +60,7 @@ struct RecipeListView: View {
         .task {
             do {
                 try Task.checkCancellation()
-                try await recipeViewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: curMethod.id)
+                try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: curMethod.id)
             } catch {
                 print("Error getting recipes: \(error)")
             }

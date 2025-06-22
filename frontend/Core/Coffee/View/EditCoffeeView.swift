@@ -11,8 +11,8 @@ import PhotosUI
 struct EditCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var keyChainManager: KeychainManager
-    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @Binding var coffee: Coffee
+    @ObservedObject var viewModel: CoffeeViewModel
     @Binding var refreshData: Bool
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
@@ -26,8 +26,9 @@ struct EditCoffeeView: View {
     @State private var tempDescription: String
 
     // Initializer to set initial values for local state variables
-    init(coffee: Binding<Coffee>, refreshData: Binding<Bool>) {
+    init(coffee: Binding<Coffee>, refreshData: Binding<Bool>, viewModel: CoffeeViewModel) {
         self._coffee = coffee
+        self.viewModel = viewModel
         self._refreshData = refreshData
         self._tempName = State(initialValue: coffee.wrappedValue.name)
         self._tempRegion = State(initialValue: coffee.wrappedValue.region)
@@ -37,10 +38,10 @@ struct EditCoffeeView: View {
     
     private var isFormValid: Bool {
         return (
-            coffeeViewModel.isValidName(name: tempName)
-            && coffeeViewModel.isValidRegion(region: tempRegion)
-            && coffeeViewModel.isValidProcess(process: tempProcess)
-            && coffeeViewModel.isValidDescription(description: tempDescription)
+            viewModel.isValidName(name: tempName)
+            && viewModel.isValidRegion(region: tempRegion)
+            && viewModel.isValidProcess(process: tempProcess)
+            && viewModel.isValidDescription(description: tempDescription)
         )
     }
 
@@ -114,7 +115,7 @@ struct EditCoffeeView: View {
                                     )
                                     
                                     print("📤 Updating CoffeeInput with compressed image...")
-                                    let updatedCoffee = try await coffeeViewModel.updateCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    let updatedCoffee = try await viewModel.updateCoffee(input: coffeeInput, token: keyChainManager.getToken())
                                     
                                     coffee.name = updatedCoffee.name
                                     coffee.region = updatedCoffee.region
@@ -163,7 +164,8 @@ struct EditCoffeeView: View {
             
             EditCoffeeView(
                 coffee: $sampleCoffee,
-                refreshData: $refreshData
+                refreshData: $refreshData,
+                viewModel: CoffeeViewModel()
             )
             .environmentObject(keyChainManager)
         }

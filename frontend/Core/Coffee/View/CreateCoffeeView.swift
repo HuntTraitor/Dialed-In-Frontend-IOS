@@ -11,7 +11,7 @@ import PhotosUI
 struct CreateCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var keyChainManager: KeychainManager
-    @ObservedObject var coffeeViewModel = CoffeeViewModel()
+    @ObservedObject var viewModel: CoffeeViewModel
     @State private var coffeeName: String = ""
     @State private var coffeeRegion: String = ""
     @State private var coffeeProcess: String = ""
@@ -24,10 +24,10 @@ struct CreateCoffeeView: View {
     
     private var isFormValid: Bool {
         return (
-            coffeeViewModel.isValidName(name: coffeeName)
-            && coffeeViewModel.isValidRegion(region: coffeeRegion)
-            && coffeeViewModel.isValidProcess(process: coffeeProcess)
-            && coffeeViewModel.isValidDescription(description: coffeeDescription)
+            viewModel.isValidName(name: coffeeName)
+            && viewModel.isValidRegion(region: coffeeRegion)
+            && viewModel.isValidProcess(process: coffeeProcess)
+            && viewModel.isValidDescription(description: coffeeDescription)
         )
     }
 
@@ -106,7 +106,7 @@ struct CreateCoffeeView: View {
                                     )
                                     
                                     print("📤 Uploading CoffeeInput with compressed image...")
-                                    try await coffeeViewModel.postCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    try await viewModel.postCoffee(input: coffeeInput, token: keyChainManager.getToken())
                                     presentationMode.wrappedValue.dismiss()
                                     refreshData.toggle()                                    
                                 } catch {
@@ -156,7 +156,7 @@ extension UIImage {
         @State private var refreshData: Bool = false
         var body: some View {
             let keyChainManager = KeychainManager()
-            CreateCoffeeView(refreshData: $refreshData)
+            CreateCoffeeView(viewModel: CoffeeViewModel(), refreshData: $refreshData)
                 .environmentObject(keyChainManager)
         }
     }

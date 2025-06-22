@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: SwitchRecipe
-    @EnvironmentObject var coffeeModel: CoffeeViewModel
+    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @EnvironmentObject var keychainManager: KeychainManager
     @State private var showCountdown = false
     @State private var showAnimation = false
@@ -95,9 +95,8 @@ struct RecipeView: View {
                         .padding(.bottom, 5)
                     
                     NavigationLink {
-                        CoffeeCard(coffee: recipe.coffee)
+                        CoffeeCard(coffee: recipe.coffee, coffeeViewModel: coffeeViewModel)
                             .environmentObject(keychainManager)
-                            .environmentObject(coffeeModel)
                     } label: {
                         CoffeeCardSmall(coffee: recipe.coffee)
                     }

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CoffeeCard: View {
     @State private var coffee: Coffee
-    @ObservedObject var coffeeViewModel = CoffeeViewModel()
     @EnvironmentObject var keyChainManager: KeychainManager
+    @ObservedObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var isLoading = false
     @State var isChoiceDialogActive: Bool = false
@@ -20,8 +20,9 @@ struct CoffeeCard: View {
     @State private var refreshData: Bool = false
     @State private var isDetailViewPresented: Bool = false
     
-    init(coffee: Coffee) {
+    init(coffee: Coffee, coffeeViewModel: CoffeeViewModel) {
         _coffee = State(initialValue: coffee)
+        self.viewModel = coffeeViewModel
     }
     
     var body: some View {
@@ -127,7 +128,7 @@ struct CoffeeCard: View {
                     .padding(.top, 10)
             }
             .sheet(isPresented: $isDetailViewPresented) {
-                EditCoffeeView(coffee: $coffee, refreshData: $refreshData)
+                EditCoffeeView(coffee: $coffee, refreshData: $refreshData, viewModel: viewModel)
             }
                 
             if isChoiceDialogActive {
@@ -153,7 +154,7 @@ struct CoffeeCard: View {
             isLoading = true
             defer {isLoading = false}
             do {
-                try await coffeeViewModel.deleteCoffee(coffeeId: coffee.id, token: keyChainManager.getToken())
+                try await viewModel.deleteCoffee(coffeeId: coffee.id, token: keyChainManager.getToken())
                 isChoiceDialogActive = false
                 isSuccessDeleteDialogActive = true
             } catch {
@@ -183,9 +184,9 @@ struct CoffeeCard: View {
 
 #Preview {
     let keychainManager = KeychainManager()
-    return CoffeeCard(
-        coffee: Coffee.MOCK_COFFEE
+    CoffeeCard(
+        coffee: Coffee.MOCK_COFFEE,
+        coffeeViewModel: CoffeeViewModel()
     )
     .environmentObject(keychainManager)
-    
 }

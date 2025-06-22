@@ -9,17 +9,16 @@ import SwiftUI
 
 struct CoffeeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
-    @ObservedObject var coffeeList = CoffeeViewModel()
+    @StateObject var viewModel = CoffeeViewModel()
     @Bindable private var navigator = NavigationManager.nav
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
     @State public var refreshData: Bool = false
     
-    
     var filteredCoffees: [Coffee] {
-        guard !searchTerm.isEmpty else { return coffeeList.coffees }
-        return coffeeList.coffees.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
+        guard !searchTerm.isEmpty else { return viewModel.coffees }
+        return viewModel.coffees.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -45,7 +44,7 @@ struct CoffeeView: View {
                             .padding(.trailing, 30)
                     }
                     .sheet(isPresented: $isShowingCreateCoffeeView) {
-                        CreateCoffeeView(refreshData: $refreshData)
+                        CreateCoffeeView(viewModel: viewModel, refreshData: $refreshData)
                     }
                     .padding(.top, 40)
                     .italic()
@@ -56,24 +55,7 @@ struct CoffeeView: View {
 
                 ScrollView {
                     ForEach(filteredCoffees, id: \.id) { coffee in
-                        NavigationLink(
-                            destination: CoffeeCard(coffee: coffee)
-                                .environmentObject(keychainManager)
-                        ) {
-                            CoffeeCardSmall(coffee: coffee)
-                                .opacity(pressedItemId == coffee.id ? 0.8 : 1)
-                                .contentShape(Rectangle())
-                                .pressEvent(onPress: {
-                                    withAnimation(.easeIn(duration: 0.2)) {
-                                        pressedItemId = coffee.id
-                                    }
-                                }, onRelease: {
-                                    withAnimation {
-                                        pressedItemId = nil
-                                    }
-                                })
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        CoffeeRow(coffee: coffee, viewModel: viewModel, pressedItemId: $pressedItemId)
                 }
                     .padding()
                 }
@@ -81,43 +63,18 @@ struct CoffeeView: View {
             .addToolbar()
             .addNavigationSupport()
             .task {
-                await coffeeList.fetchCoffees(withToken: keychainManager.getToken())
+                await viewModel.fetchCoffees(withToken: keychainManager.getToken())
             }
             .onChange(of: refreshData) { oldValue, newValue in
                 print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
                 if newValue {
                     Task {
-                        await coffeeList.fetchCoffees(withToken: keychainManager.getToken())
+                        await viewModel.fetchCoffees(withToken: keychainManager.getToken())
                         refreshData = false
                     }
                 }
             }
         }
-    }
-}
-
-struct ButtonPress: ViewModifier {
-    var onPress: () -> Void
-    var onRelease: () -> Void
-    
-    func body(content: Content) -> some View {
-        content
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onPress()
-                    })
-                    .onEnded ({ _ in
-                        onRelease()
-                    })
-            )
-    }
-}
-
-extension View {
-    func pressEvent(onPress: @escaping (() -> Void), onRelease: @escaping (() -> Void)) ->
-    some View {
-        modifier(ButtonPress(onPress: {onPress()}, onRelease: {onRelease()}))
     }
 }
 

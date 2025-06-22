@@ -13,8 +13,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var isLoading = false
     @State private var signinToken = ""
-//    @EnvironmentObject var viewModel: AuthViewModel
-    @ObservedObject var viewModel = AuthViewModel()
+    @StateObject var viewModel = AuthViewModel()
     @EnvironmentObject var keychainManager: KeychainManager
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
@@ -117,7 +116,7 @@ struct LoginView: View {
                     
                     
                     NavigationLink {
-                        RegistrationView()
+                        RegistrationView(viewModel: viewModel)
                             .navigationBarBackButtonHidden()
                     } label: {
                         HStack(spacing: 3) {

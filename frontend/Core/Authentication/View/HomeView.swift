@@ -2,8 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var keychainManager: KeychainManager
-    @ObservedObject var authViewModel = AuthViewModel()
-    @ObservedObject var methodList = MethodViewModel()
+    @StateObject var viewModel = AuthViewModel()
     @State private var isLogoutDialogActive: Bool = false
     @State private var isLoading: Bool = true
     @Bindable private var navigator = NavigationManager.nav
@@ -15,13 +14,13 @@ struct HomeView: View {
                     LoadingCircle()
                 } else {
                     VStack {
-                        MethodListView(methodList: methodList)
+                        MethodListView()
                             .padding(.bottom, 70)
                     }
                 }
             }
             .onAppear {
-                if authViewModel.currentUser == nil {
+                if viewModel.currentUser == nil {
                     fetchUserInfoFromToken()
                 }
                 isLoading = false
@@ -34,7 +33,7 @@ struct HomeView: View {
     private func fetchUserInfoFromToken() {
         Task {
             do {
-                try await authViewModel.verifyUser(withToken: "2IMHQAJA3QPRXXGAUGHOPEV4VI")
+                try await viewModel.verifyUser(withToken: keychainManager.getToken())
             } catch {
                 print(error)
                 keychainManager.deleteToken()

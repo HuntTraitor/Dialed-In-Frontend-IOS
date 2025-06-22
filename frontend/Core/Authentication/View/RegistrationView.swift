@@ -14,17 +14,17 @@ struct RegistrationView: View {
     @State private var confirmPassword = ""
     @State private var isLoading = false
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var authViewModel = AuthViewModel()
+    @ObservedObject var viewModel: AuthViewModel
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
     @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
-            authViewModel.isValidEmail(email: email)
-            && authViewModel.isValidName(name: name)
-            && authViewModel.isValidPassword(password: password)
-            && authViewModel.isValidConfirmPassword(password: password, confirmPassword: confirmPassword)
+            viewModel.isValidEmail(email: email)
+            && viewModel.isValidName(name: name)
+            && viewModel.isValidPassword(password: password)
+            && viewModel.isValidConfirmPassword(password: password, confirmPassword: confirmPassword)
     }
     
     var body: some View {
@@ -75,7 +75,7 @@ struct RegistrationView: View {
                     Task {
                         let result: CreateUserResult
                         do {
-                            result = try await authViewModel.createUser(withEmail: email, password: password, name: name)
+                            result = try await viewModel.createUser(withEmail: email, password: password, name: name)
                         } catch {
                             errorMessage = "An unknown error occured."
                             isErrorDialogActive = true
@@ -158,7 +158,7 @@ struct RegistrationView: View {
 
 struct RegistrationView_Previews: PreviewProvider {
     static var previews: some View {
-        RegistrationView()
+        RegistrationView(viewModel: AuthViewModel())
     }
 }
 
