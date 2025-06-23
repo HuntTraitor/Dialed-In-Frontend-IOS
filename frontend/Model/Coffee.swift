@@ -80,3 +80,32 @@ extension Coffee {
         img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
     )
 }
+
+extension Coffee {
+    static var MOCK_COFFEES = [
+        Coffee(
+            id: 1,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
+        Coffee(
+            id: 2,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
+        Coffee(
+            id: 3,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
+    ]
+}
