@@ -25,7 +25,9 @@ struct CoffeePickerView: View {
     
     var body: some View {
         Button(action: {
-            showCoffeePicker.toggle()
+            withAnimation {
+                showCoffeePicker.toggle()
+            }
         }) {
             HStack {
                 if let coffee = selectedCoffee {
@@ -36,10 +38,11 @@ struct CoffeePickerView: View {
                         .foregroundColor(.gray)
                 }
                 Spacer()
-                Image(systemName: "chevron.down")
+                Image(systemName: showCoffeePicker ? "chevron.up" : "chevron.down")
                     .foregroundColor(.gray)
             }
         }
+
 
         if showCoffeePicker {
             SearchBar(text: $searchTerm, placeholder: "Search Coffees")
