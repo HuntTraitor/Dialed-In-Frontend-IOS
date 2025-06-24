@@ -82,7 +82,8 @@ struct CreateCoffeeView: View {
                         TextField("Description", text: $coffeeDescription, axis: .vertical)
                     }
                 }
-                .navigationTitle("Add Coffee")
+                .navigationTitle("New Coffee")
+                .navigationBarTitleDisplayMode(.inline)
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {

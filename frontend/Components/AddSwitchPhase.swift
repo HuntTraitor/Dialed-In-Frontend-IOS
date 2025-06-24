@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PhaseRowView: View {
     @Binding var phaseNum: Int
-    @Binding var phase: SwitchRecipe.RecipeInfo.Phase
+    @Binding var phase: SwitchRecipeInput.RecipeInfo.Phase
 
     var body: some View {
         VStack(spacing: 0) {
@@ -43,7 +43,7 @@ struct PhaseRowView: View {
 
 #Preview {
     struct PreviewContainer: View {
-        @State var mockPhase = SwitchRecipe.RecipeInfo.Phase(open: true, time: 30, amount: 150)
+        @State var mockPhase = SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 30, amount: 150)
         @State var phaseNum = 1
 
         var body: some View {

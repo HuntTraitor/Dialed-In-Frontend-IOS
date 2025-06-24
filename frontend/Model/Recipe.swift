@@ -29,6 +29,25 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
     }
 }
 
+struct SwitchRecipeInput: Codable, Hashable {
+    var methodId: Int
+    var coffeeId: Int
+    var info: RecipeInfo
+    
+    struct RecipeInfo: Codable, Hashable {
+        var name: String
+        var gramsIn: Int
+        var mlOut: Int
+        var phases: [Phase]
+        
+        struct Phase: Codable, Hashable {
+            var open: Bool
+            var time: Int
+            var amount: Int
+        }
+    }
+}
+
 struct V60Recipe: Identifiable, Codable, Hashable {
     var id: Int
     var coffeeId: Int

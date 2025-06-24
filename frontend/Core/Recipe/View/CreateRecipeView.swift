@@ -20,7 +20,8 @@ struct CreateRecipeView: View {
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
     @State public var refreshData: Bool = false
-    @State private var phases: [SwitchRecipe.RecipeInfo.Phase] = []
+    @State private var phases: [SwitchRecipeInput.RecipeInfo.Phase] = []
+    @State private var isUploading: Bool = false
     
     var selectedCoffee: Coffee? {
         coffeeViewModel.coffees.first { $0.id == selectedCoffeeId }
@@ -70,7 +71,7 @@ struct CreateRecipeView: View {
                         }
                     }
                     Button {
-                        let newPhase = SwitchRecipe.RecipeInfo.Phase(open: true, time: 0, amount: 0)
+                        let newPhase = SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 0, amount: 0)
                         phases.append(newPhase)
                     } label: {
                         Label("Add Pour...", systemImage: "plus")
@@ -85,14 +86,15 @@ struct CreateRecipeView: View {
             }
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
                         saveRecipe()
                         presentationMode.wrappedValue.dismiss()
                     }
@@ -103,8 +105,37 @@ struct CreateRecipeView: View {
     }
     
     private func saveRecipe() {
-        // Your save logic here
+        Task {
+            isUploading = true
+            defer { isUploading = false }
+            
+            guard
+                let gramsInInt = Int(gramsIn),
+                let mlOutInt = Int(mlOut),
+                let coffeeId = selectedCoffeeId
+            else {
+                print("Invalid input")
+                return
+            }
+
+            let recipeInfo = SwitchRecipeInput.RecipeInfo(
+                name: recipeName,
+                gramsIn: gramsInInt,
+                mlOut: mlOutInt,
+                phases: phases
+            )
+
+            let newRecipe = SwitchRecipeInput(
+                methodId: 2,
+                coffeeId: coffeeId,
+                info: recipeInfo
+            )
+
+            // Proceed with using newRecipe (e.g., upload or save)
+            print("Ready to save: \(newRecipe)")
+        }
     }
+
 }
 
 #Preview {
