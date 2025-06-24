@@ -19,6 +19,7 @@ struct CreateRecipeView: View {
     @State private var showCoffeePicker = false
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
+    @State private var coffeeRefreshData: Bool = false
     @State public var refreshData: Bool = false
     @State private var phases: [SwitchRecipeInput.RecipeInfo.Phase] = []
     @State private var isUploading: Bool = false
@@ -81,8 +82,18 @@ struct CreateRecipeView: View {
                     }
                 }
             }
+            .onAppear {
+                Task {
+                    await coffeeViewModel.fetchCoffees(withToken: keychainManager.getToken())
+                }
+            }
+            .onChange(of: coffeeRefreshData) { _, _ in
+                Task {
+                    await coffeeViewModel.fetchCoffees(withToken: keychainManager.getToken())
+                }
+            }
             .sheet(isPresented: $isShowingCreateCoffeeView) {
-                CreateCoffeeView(viewModel: coffeeViewModel, refreshData: $refreshData)
+                CreateCoffeeView(viewModel: coffeeViewModel, refreshData: $coffeeRefreshData)
             }
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
@@ -109,30 +120,39 @@ struct CreateRecipeView: View {
             isUploading = true
             defer { isUploading = false }
             
-            guard
-                let gramsInInt = Int(gramsIn),
-                let mlOutInt = Int(mlOut),
-                let coffeeId = selectedCoffeeId
-            else {
-                print("Invalid input")
-                return
+            do {
+                
+                guard
+                    let gramsInInt = Int(gramsIn),
+                    let mlOutInt = Int(mlOut),
+                    let coffeeId = selectedCoffeeId
+                else {
+                    print("Invalid input")
+                    return
+                }
+                
+                let recipeInfo = SwitchRecipeInput.RecipeInfo(
+                    name: recipeName,
+                    gramsIn: gramsInInt,
+                    mlOut: mlOutInt,
+                    phases: phases
+                )
+                
+                let newRecipe = SwitchRecipeInput(
+                    methodId: 2,
+                    coffeeId: coffeeId,
+                    info: recipeInfo
+                )
+                
+                
+                print("📤 Uploading Recipe...")
+                
+                try await viewModel.postSwitchRecipe(withToken: keychainManager.getToken(), recipe: newRecipe)
+                presentationMode.wrappedValue.dismiss()
+                refreshData.toggle()
+            } catch {
+                print("❌ Failed to upload recipe: \(error)")
             }
-
-            let recipeInfo = SwitchRecipeInput.RecipeInfo(
-                name: recipeName,
-                gramsIn: gramsInInt,
-                mlOut: mlOutInt,
-                phases: phases
-            )
-
-            let newRecipe = SwitchRecipeInput(
-                methodId: 2,
-                coffeeId: coffeeId,
-                info: recipeInfo
-            )
-
-            // Proceed with using newRecipe (e.g., upload or save)
-            print("Ready to save: \(newRecipe)")
         }
     }
 
@@ -140,8 +160,8 @@ struct CreateRecipeView: View {
 
 #Preview {
     let keychainManager = KeychainManager()
+    keychainManager.saveToken("LIPIEZJZ74LJVJ5YNWKPWAEYYM")
     let coffeeViewModel = CoffeeViewModel()
-    coffeeViewModel.coffees = Coffee.MOCK_COFFEES
     
     return CreateRecipeView(viewModel: RecipeViewModel(), coffeeViewModel: coffeeViewModel)
         .environmentObject(keychainManager)

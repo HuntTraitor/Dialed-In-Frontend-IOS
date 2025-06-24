@@ -14,7 +14,7 @@ class AuthViewModel: ObservableObject {
         let endpoint = "http://localhost:3000/v1/tokens/authentication"
         let requestBody = ["email": email, "password": password]
         
-        let result = try await Post(to: endpoint, with: requestBody)
+        let result = try await Post(to: endpoint, with: requestBody, withHeaders: [:])
                 
         if let tokenDict = result["authentication_token"] as? [String: Any] {
             let token = try JSONDecoder().decode(Token.self, from: JSONSerialization.data(withJSONObject: tokenDict))
@@ -35,7 +35,7 @@ class AuthViewModel: ObservableObject {
         let requestBody = ["name": name, "email": email, "password": password]
         
         // Send post request
-        let result = try await Post(to: endpoint, with: requestBody)
+        let result = try await Post(to: endpoint, with: requestBody, withHeaders: [:])
         
         // Check the response wrapper
         if let userDict = result["user"] as? [String: Any] {

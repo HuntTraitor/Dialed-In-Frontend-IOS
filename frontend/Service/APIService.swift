@@ -13,7 +13,7 @@ struct APIResponse: Decodable {
 }
 
 // Send a post request with a specific body
-func Post(to urlString: String, with body: [String: Any]) async throws -> [String: Any] {
+func Post(to urlString: String, with body: [String: Any], withHeaders headers: [String: Any]) async throws -> [String: Any] {
     guard let url = URL(string: urlString) else {
         throw URLError(.badURL)
     }
@@ -21,6 +21,11 @@ func Post(to urlString: String, with body: [String: Any]) async throws -> [Strin
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    for (key, value) in headers {
+        request.setValue("\(value)", forHTTPHeaderField: key)
+    }
+    
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
     
     let (data, _) = try await URLSession.shared.data(for: request)

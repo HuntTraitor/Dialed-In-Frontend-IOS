@@ -29,5 +29,31 @@ class RecipeViewModel: ObservableObject {
             }
         }
     }
+    
+    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws {
+        guard let url = URL(string: "http://localhost:3000/v1/recipes") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let jsonData = try encoder.encode(recipe)
+        request.httpBody = jsonData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
+            let responseBody = String(data: data, encoding: .utf8) ?? "No response body"
+            print("Server responded with: \(responseBody)")
+            throw CustomError.methodError(message: "Failed to upload recipe")
+        }
+        
+        print("Recipe uploaded successfully")
+    }
 }
 
