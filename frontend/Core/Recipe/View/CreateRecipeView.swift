@@ -20,6 +20,7 @@ struct CreateRecipeView: View {
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
     @State public var refreshData: Bool = false
+    @State private var phases: [SwitchRecipe.RecipeInfo.Phase] = []
     
     var selectedCoffee: Coffee? {
         coffeeViewModel.coffees.first { $0.id == selectedCoffeeId }
@@ -35,9 +36,9 @@ struct CreateRecipeView: View {
             Form {
                 Section {
                     TextField("Name", text: $recipeName)
-                    TextField("Grams In", text: $gramsIn)
+                    TextField("Total Grams In", text: $gramsIn)
                         .keyboardType(.decimalPad)
-                    TextField("ML Out", text: $mlOut)
+                    TextField("Total ML Out", text: $mlOut)
                         .keyboardType(.decimalPad)
                 } header: {
                     Text("Information")
@@ -54,6 +55,29 @@ struct CreateRecipeView: View {
                         isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
                         searchTerm: $searchTerm
                     )
+                }
+                
+                Section("Pours") {
+                    if !phases.isEmpty {
+                        ForEach(phases.indices, id: \.self) { index in
+                            PhaseRowView(
+                                phaseNum: .constant(index + 1),
+                                phase: $phases[index]
+                            )
+                        }
+                        .onDelete { indexSet in
+                            phases.remove(atOffsets: indexSet)
+                        }
+                    }
+                    Button {
+                        let newPhase = SwitchRecipe.RecipeInfo.Phase(open: true, time: 0, amount: 0)
+                        phases.append(newPhase)
+                    } label: {
+                        Label("Add Pour...", systemImage: "plus")
+                            .font(.system(size: 15))
+                            .bold()
+                            .padding(.trailing, 30)
+                    }
                 }
             }
             .sheet(isPresented: $isShowingCreateCoffeeView) {
