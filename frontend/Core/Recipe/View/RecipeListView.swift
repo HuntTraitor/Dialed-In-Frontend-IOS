@@ -12,6 +12,8 @@ struct RecipeListView: View {
     @StateObject var viewModel = RecipeViewModel()
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
+    @State private var isShowingCreateRecipeView = false
+    @State private var refreshData = false
     let curMethod: Method
     
     var filteredRecipes: [SwitchRecipe] {
@@ -31,6 +33,19 @@ struct RecipeListView: View {
                         .padding(.bottom, 10)
                         .padding(.leading, 30)
                     Spacer()
+                    Button {
+                        isShowingCreateRecipeView = true
+                    } label: {
+                        Label("Add New Recipe", systemImage: "plus")
+                            .font(.system(size: 15))
+                            .bold()
+                            .padding(.trailing, 30)
+                    }
+                    .padding(.top, 40)
+                    .italic()
+                    .sheet(isPresented: $isShowingCreateRecipeView) {
+                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(), refreshData: $refreshData)
+                    }
                 }
                 SearchBar(text: $searchTerm, placeholder: "Search Recipes")
                     .padding(.horizontal, 10)
@@ -60,10 +75,18 @@ struct RecipeListView: View {
         .addNavigationSupport()
         .task {
             do {
-                try Task.checkCancellation()
-                try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: curMethod.id)
+                try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: 2)
             } catch {
                 print("Error getting recipes: \(error)")
+            }
+        }
+        .onChange(of: refreshData) {
+            Task {
+                do {
+                    try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: 2)
+                } catch {
+                    print("Error refreshing recipes: \(error)")
+                }
             }
         }
     }

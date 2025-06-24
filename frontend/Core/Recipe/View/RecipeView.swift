@@ -15,7 +15,6 @@ struct RecipeView: View {
     @State private var showAnimation = false
     
     private var sortedPhases: [SwitchRecipe.RecipeInfo.Phase] {
-        // Assuming phases are already sorted by order in the array
         recipe.info.phases
     }
     

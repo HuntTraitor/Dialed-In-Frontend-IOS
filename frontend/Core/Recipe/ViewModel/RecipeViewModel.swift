@@ -12,6 +12,7 @@ class RecipeViewModel: ObservableObject {
     
     func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws {
         do {
+            print(token)
             let endpoint = "http://localhost:3000/v1/recipes?method_id=\(methodId)"
             let headers = ["Authorization": "Bearer \(token)"]
             

@@ -96,7 +96,7 @@ struct CreateCoffeeView: View {
                                         print("❌ No image selected or failed to convert to Data")
                                         return
                                     }
-                                    
+                                
                                     let coffeeInput = CoffeeInput(
                                         id: nil,
                                         name: coffeeName,
@@ -152,7 +152,6 @@ extension UIImage {
 }
 
 #Preview {
-
     struct PreviewWrapper: View {
         @State private var refreshData: Bool = false
         var body: some View {
@@ -161,6 +160,5 @@ extension UIImage {
                 .environmentObject(keyChainManager)
         }
     }
-
     return PreviewWrapper()
 }
