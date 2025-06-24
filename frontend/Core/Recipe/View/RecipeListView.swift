@@ -33,6 +33,7 @@ struct RecipeListView: View {
                     Spacer()
                 }
                 SearchBar(text: $searchTerm, placeholder: "Search Recipes")
+                    .padding(.horizontal, 10)
                 ScrollView {
                     ForEach(filteredRecipes, id: \.self) { recipe in
                         NavigationLink(

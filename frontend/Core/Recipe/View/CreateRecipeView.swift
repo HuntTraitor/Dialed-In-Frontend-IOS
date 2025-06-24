@@ -17,9 +17,17 @@ struct CreateRecipeView: View {
     @State private var mlOut: String = ""
     @State private var selectedCoffeeId: Int?
     @State private var showCoffeePicker = false
+    @State private var searchTerm: String = ""
+    @State private var isShowingCreateCoffeeView = false
+    @State public var refreshData: Bool = false
     
     var selectedCoffee: Coffee? {
         coffeeViewModel.coffees.first { $0.id == selectedCoffeeId }
+    }
+    
+    var filteredCoffees: [Coffee] {
+        guard !searchTerm.isEmpty else { return coffeeViewModel.coffees }
+        return coffeeViewModel.coffees.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -39,34 +47,17 @@ struct CreateRecipeView: View {
                 .headerProminence(.increased)
                 
                 Section("Coffee") {
-                    Button(action: {
-                        showCoffeePicker.toggle()
-                    }) {
-                        HStack {
-                            if let coffee = selectedCoffee {
-                                CoffeeChoice(coffee: coffee)
-                            } else {
-                                Text("Select Coffee")
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
-                            Image(systemName: "chevron.down")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    if showCoffeePicker {
-                        ForEach(coffeeViewModel.coffees) { coffee in
-                            Button(action: {
-                                selectedCoffeeId = coffee.id
-                                showCoffeePicker = false
-                            }) {
-                                CoffeeChoice(coffee: coffee)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
+                    CoffeePickerView(
+                        viewModel: coffeeViewModel,
+                        selectedCoffeeId: $selectedCoffeeId,
+                        showCoffeePicker: $showCoffeePicker,
+                        isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
+                        searchTerm: $searchTerm
+                    )
                 }
+            }
+            .sheet(isPresented: $isShowingCreateCoffeeView) {
+                CreateCoffeeView(viewModel: coffeeViewModel, refreshData: $refreshData)
             }
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)

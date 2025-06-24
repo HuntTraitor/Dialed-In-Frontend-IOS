@@ -107,5 +107,29 @@ extension Coffee {
             description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
             img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
         ),
+        Coffee(
+            id: 4,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
+        Coffee(
+            id: 5,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
+        Coffee(
+            id: 6,
+            name: "Milky Cake",
+            region: "Colombia",
+            process: "Thermal Shock",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
+        ),
     ]
 }

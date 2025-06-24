@@ -52,6 +52,7 @@ struct CoffeeView: View {
                 }
                 
                 SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+                    .padding(.horizontal, 10)
 
                 ScrollView {
                     ForEach(filteredCoffees, id: \.id) { coffee in

@@ -11,24 +11,24 @@ struct CoffeeChoice: View {
     var coffee: Coffee
     
     var body: some View {
-        HStack() {
+        HStack(spacing: 8) {
             ImageView(URL(string: coffee.img!))
-                .frame(width: 60, height: 60)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .shadow(radius: 2)
-            
+                .frame(width: 40, height: 40)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .shadow(radius: 1)
+
             Text(coffee.name)
-                .font(.headline)
+                .font(.subheadline)
                 .lineLimit(1)
-            
+                .truncationMode(.tail)
+
             Spacer()
         }
-        .padding(.horizontal)
-        .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(10)
-        
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
     }
 }
+
 
 #Preview {
     CoffeeChoice(coffee: Coffee.MOCK_COFFEE)
