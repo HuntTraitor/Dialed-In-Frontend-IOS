@@ -23,6 +23,11 @@ struct CreateRecipeView: View {
     @Binding public var refreshData: Bool
     @State private var phases: [SwitchRecipeInput.RecipeInfo.Phase] = []
     @State private var isUploading: Bool = false
+    @State private var validationError: String? = nil
+    
+    var isFormValid: Bool {
+        return validateRecipeInput() == nil
+    }
     
     var selectedCoffee: Coffee? {
         coffeeViewModel.coffees.first { $0.id == selectedCoffeeId }
@@ -110,9 +115,18 @@ struct CreateRecipeView: View {
                             saveRecipe()
                             presentationMode.wrappedValue.dismiss()
                         }
-                        .disabled(recipeName.isEmpty || gramsIn.isEmpty || mlOut.isEmpty || selectedCoffeeId == nil)
+                        .disabled(!isFormValid)
                     }
                 }
+                .alert("Validation Error", isPresented: .constant(validationError != nil), actions: {
+                    Button("OK", role: .cancel) {
+                        validationError = nil
+                    }
+                }, message: {
+                    if let message = validationError {
+                        Text(message)
+                    }
+                })
             }
             if isUploading {
                 LoadingCircle()
@@ -120,19 +134,67 @@ struct CreateRecipeView: View {
         }
     }
     
+    private func validateRecipeInput() -> String? {
+        guard !recipeName.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return "Recipe name must be provided."
+        }
+        if recipeName.count > 100 {
+            return "Recipe name must not be more than 100 characters."
+        }
+        
+        guard let gramsInInt = Int(gramsIn) else {
+            return "Grams In must be a number."
+        }
+        guard let mlOutInt = Int(mlOut) else {
+            return "ML Out must be a number."
+        }
+        
+        if gramsInInt <= 0 {
+            return "Grams In must be greater than zero."
+        }
+        if gramsInInt >= 10000 {
+            return "Grams In must be less than ten thousand."
+        }
+        if mlOutInt <= 0 {
+            return "ML Out must be greater than zero."
+        }
+        if mlOutInt >= 1000 {
+            return "ML Out must be less than a thousand."
+        }
+        
+        for (index, phase) in phases.enumerated() {
+            if phase.open {
+                return "Phase \(index + 1): Open must be provided."
+            }
+            if phase.time <= 0 {
+                return "Phase \(index + 1): Time must be greater than zero."
+            }
+            if phase.amount < 0 {
+                return "Phase \(index + 1): Amount must be zero or more."
+            }
+        }
+        
+        return nil // Validation succcessful
+    }
+
+    
     private func saveRecipe() {
         Task {
             isUploading = true
             defer { isUploading = false }
             
+            if let validationError = validateRecipeInput() {
+                self.validationError = validationError
+                return
+            }
+
             do {
-                
                 guard
                     let gramsInInt = Int(gramsIn),
                     let mlOutInt = Int(mlOut),
                     let coffeeId = selectedCoffeeId
                 else {
-                    print("Invalid input")
+                    self.validationError = "Invalid input format."
                     return
                 }
                 
@@ -149,17 +211,17 @@ struct CreateRecipeView: View {
                     info: recipeInfo
                 )
                 
-                
                 print("📤 Uploading Recipe...")
                 
                 try await viewModel.postSwitchRecipe(withToken: keychainManager.getToken(), recipe: newRecipe)
                 presentationMode.wrappedValue.dismiss()
                 refreshData.toggle()
             } catch {
-                print("❌ Failed to upload recipe: \(error)")
+                self.validationError = "❌ Failed to upload recipe: \(error.localizedDescription)"
             }
         }
     }
+
 
 }
 
