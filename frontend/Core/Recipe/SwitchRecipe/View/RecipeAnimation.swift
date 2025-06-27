@@ -33,7 +33,6 @@ struct RecipeAnimation: View {
 
     private func startAnimation() {
         guard currentPhase < recipe.info.phases.count else {
-            print("All phases completed.")
             onComplete()
             return
         }

@@ -8,17 +8,30 @@
 import SwiftUI
 
 struct RecipeListView: View {
-    @EnvironmentObject var keychainManager: KeychainManager
-    @StateObject var viewModel = RecipeViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var viewModel: SwitchRecipeViewModel
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
-    @State private var refreshData = false
     let curMethod: Method
     
+    init(curMethod: Method) {
+        self.curMethod = curMethod
+        let service: any SwitchRecipeService
+        
+        switch curMethod.name {
+        case "Hario Switch":
+            service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
+        default:
+            fatalError("Unsupported method: \(curMethod.name)")
+        }
+        
+        _viewModel = StateObject(wrappedValue: SwitchRecipeViewModel(recipeService: service))
+    }
+    
     var filteredRecipes: [SwitchRecipe] {
-        guard !searchTerm.isEmpty else { return viewModel.switchRecipes }
-        return viewModel.switchRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+        guard !searchTerm.isEmpty else { return viewModel.recipes }
+        return viewModel.recipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -55,7 +68,7 @@ struct RecipeListView: View {
                             destination: RecipeView(
                                 recipe: recipe
                             )
-                            .environmentObject(keychainManager)
+                            .environmentObject(authViewModel)
                         ) {
                             RecipeCard(recipe: recipe)
                                 .frame(maxWidth: .infinity, maxHeight: 120)
@@ -77,27 +90,16 @@ struct RecipeListView: View {
         .addNavigationSupport()
         .task {
             do {
-                try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: 2)
+                try await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
             } catch {
                 print("Error getting recipes: \(error)")
-            }
-        }
-        .onChange(of: refreshData) {
-            Task {
-                do {
-                    try await viewModel.fetchSwitchRecipes(withToken: keychainManager.getToken(), methodId: 2)
-                } catch {
-                    print("Error refreshing recipes: \(error)")
-                }
             }
         }
     }
 }
 
-//struct RecipeListView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let keychainManager = KeychainManager()
-//        RecipeListView(curMethod: Method(id: 1, name: "Pour Over"))
-//            .environmentObject(keychainManager)
-//    }
-//}
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    RecipeListView(curMethod: Method(id: 2, name: "Hario Switch"))
+        .environmentObject(authViewModel)
+}

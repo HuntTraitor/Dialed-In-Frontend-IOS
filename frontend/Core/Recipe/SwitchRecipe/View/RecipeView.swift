@@ -10,7 +10,7 @@ import SwiftUI
 struct RecipeView: View {
     let recipe: SwitchRecipe
     @ObservedObject var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    @EnvironmentObject var keychainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showCountdown = false
     @State private var showAnimation = false
     
@@ -95,7 +95,7 @@ struct RecipeView: View {
                     
                     NavigationLink {
                         CoffeeCard(coffee: recipe.coffee, viewModel: coffeeViewModel)
-                            .environmentObject(keychainManager)
+                            .environmentObject(authViewModel)
                     } label: {
                         CoffeeCardSmall(coffee: recipe.coffee)
                     }
@@ -205,8 +205,8 @@ struct RecipeView: View {
     }
 }
 
-//#Preview {
-//    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
-//        .environmentObject(CoffeeViewModel())
-//        .environmentObject(KeychainManager())
-//}
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+        .environmentObject(authViewModel)
+}

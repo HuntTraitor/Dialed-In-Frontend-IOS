@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CreateRecipeView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var keychainManager: KeychainManager
-    @ObservedObject var viewModel: RecipeViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var viewModel: SwitchRecipeViewModel
     @ObservedObject var coffeeViewModel: CoffeeViewModel
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""
@@ -19,9 +19,7 @@ struct CreateRecipeView: View {
     @State private var showCoffeePicker = false
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
-    @State private var coffeeRefreshData: Bool = false
     @State private var phases: [SwitchRecipeInput.RecipeInfo.Phase] = []
-    @State private var isUploading: Bool = false
     @State private var validationError: String? = nil
     
     var isFormValid: Bool {
@@ -89,7 +87,7 @@ struct CreateRecipeView: View {
                 }
                 .onAppear {
                     Task {
-                        await coffeeViewModel.fetchCoffees(withToken: keychainManager.getToken())
+                        await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
                     }
                 }
                 .sheet(isPresented: $isShowingCreateCoffeeView) {
@@ -122,7 +120,7 @@ struct CreateRecipeView: View {
                     }
                 })
             }
-            if isUploading {
+            if viewModel.isLoading {
                 LoadingCircle()
             }
         }
@@ -174,9 +172,6 @@ struct CreateRecipeView: View {
     
     private func saveRecipe() {
         Task {
-            isUploading = true
-            defer { isUploading = false }
-            
             if let validationError = validateRecipeInput() {
                 self.validationError = validationError
                 return
@@ -207,26 +202,20 @@ struct CreateRecipeView: View {
                 
                 print("📤 Uploading Recipe...")
                 
-                try await viewModel.postSwitchRecipe(withToken: keychainManager.getToken(), recipe: newRecipe)
+                try await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
                 presentationMode.wrappedValue.dismiss()
             } catch {
                 self.validationError = "❌ Failed to upload recipe: \(error.localizedDescription)"
             }
         }
     }
-
-
 }
 
-//#Preview {
-//    struct PreviewWrapper: View {
-//        @State private var refreshData: Bool = false
-//        var body: some View {
-//            let keyChainManager = KeychainManager()
-//            CreateRecipeView(viewModel: RecipeViewModel(), coffeeViewModel: CoffeeViewModel(), refreshData: $refreshData)
-//                .environmentObject(keyChainManager)
-//        }
-//    }
-//    return PreviewWrapper()
-//}
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    let coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = SwitchRecipeViewModel(recipeService: DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL))
+    CreateRecipeView(viewModel: viewModel, coffeeViewModel: coffeeViewModel)
+        .environmentObject(authViewModel)
+}
 

@@ -48,16 +48,22 @@ struct SwitchRecipeInput: Codable, Hashable {
     }
 }
 
-struct V60Recipe: Identifiable, Codable, Hashable {
-    var id: Int
-    var coffeeId: Int
-    var methodId: Int
-    var info: RecipeInfo
-    
-    struct RecipeInfo: Codable, Hashable {
-        var time: Int
-        var amount: Int
-    }
+struct MultiSwitchRecipeResponse: Codable {
+    var recipes: [SwitchRecipe]
+}
+
+struct SingleSwitchRecipeResponse: Codable {
+    var recipe: SwitchRecipe
+}
+
+enum FetchSwitchRecipeResult {
+    case recipes([SwitchRecipe])
+    case error([String: Any])
+}
+
+enum PostSwitchRecipeResult {
+    case recipe(SwitchRecipe)
+    case error([String: Any])
 }
 
 extension SwitchRecipe {
