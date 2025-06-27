@@ -19,8 +19,6 @@ struct CreateCoffeeView: View {
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
     @State private var coffeeImageData: Data?
-    @State private var isUploading: Bool = false
-    @Binding public var refreshData: Bool
     
     private var isFormValid: Bool {
         return (
@@ -89,8 +87,6 @@ struct CreateCoffeeView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             Task {
-                                isUploading = true
-                                defer { isUploading = false }
                                 do {
                                     guard let imageData = coffeeImageData else {
                                         print("❌ No image selected or failed to convert to Data")
@@ -109,7 +105,6 @@ struct CreateCoffeeView: View {
                                     print("📤 Uploading CoffeeInput with compressed image...")
                                     try await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                                     presentationMode.wrappedValue.dismiss()
-                                    refreshData.toggle()                                    
                                 } catch {
                                     print("❌ Failed to upload coffee: \(error)")
                                 }
@@ -124,7 +119,7 @@ struct CreateCoffeeView: View {
                     }
                 }
             }
-            if isUploading {
+            if viewModel.isLoading {
                 LoadingCircle()
             }
         }
@@ -149,4 +144,11 @@ extension UIImage {
             return nil
         }
     }
+}
+
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+    CreateCoffeeView(viewModel: viewModel)
+        .environmentObject(authViewModel)
 }

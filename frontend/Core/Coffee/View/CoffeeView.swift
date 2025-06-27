@@ -49,7 +49,7 @@ struct CoffeeView: View {
                             .padding(.trailing, 30)
                     }
                     .sheet(isPresented: $isShowingCreateCoffeeView) {
-                        CreateCoffeeView(viewModel: viewModel, refreshData: $refreshData)
+                        CreateCoffeeView(viewModel: viewModel)
                     }
                     .padding(.top, 40)
                     .italic()
@@ -61,7 +61,7 @@ struct CoffeeView: View {
 
                 ScrollView {
                     ForEach(filteredCoffees, id: \.id) { coffee in
-                        CoffeeRow(coffee: coffee, viewModel: viewModel, pressedItemId: $pressedItemId)
+                        CoffeeRow(coffee: coffee, viewModel: viewModel)
                 }
                     .padding()
                 }
@@ -71,15 +71,6 @@ struct CoffeeView: View {
             .task {
                 await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
             }
-//            .onChange(of: refreshData) { oldValue, newValue in
-//                print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
-//                if newValue {
-//                    Task {
-//                        await viewModel.fetchCoffees(withToken: authViewModel.token)
-//                        refreshData = false
-//                    }
-//                }
-//            }
         }
     }
 }

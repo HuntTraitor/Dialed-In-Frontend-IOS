@@ -32,7 +32,7 @@ struct CoffeeCardSmall: View {
                     .padding()
                     .padding(.trailing, 10)
             }
-            .frame(width: 300, height: 75)
+            .frame(height: 75)
             .overlay(
                 RoundedRectangle(cornerRadius: 15)
                     .stroke(Color.black, lineWidth: 1)

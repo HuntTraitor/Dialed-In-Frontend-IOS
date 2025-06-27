@@ -10,57 +10,22 @@ import SwiftUI
 struct CoffeeRow: View {
     var coffee: Coffee
     @ObservedObject var viewModel: CoffeeViewModel
-    @Binding var pressedItemId: Int?
     @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationLink(
-            destination: CoffeeCard(coffee: coffee, coffeeViewModel: viewModel)
+            destination: CoffeeCard(coffee: coffee, viewModel: viewModel)
                 .environmentObject(authViewModel)
         ) {
             CoffeeCardSmall(coffee: coffee)
-                .opacity(pressedItemId == coffee.id ? 0.8 : 1)
-                .contentShape(Rectangle())
-                .pressEvent(onPress: {
-                    withAnimation(.easeIn(duration: 0.2)) {
-                        pressedItemId = coffee.id
-                    }
-                }, onRelease: {
-                    withAnimation {
-                        pressedItemId = nil
-                    }
-                })
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
 
-struct ButtonPress: ViewModifier {
-    var onPress: () -> Void
-    var onRelease: () -> Void
-    
-    func body(content: Content) -> some View {
-        content
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onPress()
-                    })
-                    .onEnded ({ _ in
-                        onRelease()
-                    })
-            )
-    }
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+    CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: viewModel)
+        .environmentObject(authViewModel)
 }
-
-extension View {
-    func pressEvent(onPress: @escaping (() -> Void), onRelease: @escaping (() -> Void)) ->
-    some View {
-        modifier(ButtonPress(onPress: {onPress()}, onRelease: {onRelease()}))
-    }
-}
-
-//#Preview {
-//    CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: CoffeeViewModel(), pressedItemId: .constant(1))
-//        .environmentObject(KeychainManager())
-//}

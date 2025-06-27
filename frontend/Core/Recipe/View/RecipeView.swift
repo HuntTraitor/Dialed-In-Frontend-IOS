@@ -94,7 +94,7 @@ struct RecipeView: View {
                         .padding(.bottom, 5)
                     
                     NavigationLink {
-                        CoffeeCard(coffee: recipe.coffee, coffeeViewModel: coffeeViewModel)
+                        CoffeeCard(coffee: recipe.coffee, viewModel: coffeeViewModel)
                             .environmentObject(keychainManager)
                     } label: {
                         CoffeeCardSmall(coffee: recipe.coffee)

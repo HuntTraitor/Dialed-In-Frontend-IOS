@@ -92,7 +92,7 @@ final class DefaultCoffeeService: CoffeeService {
     }
     
     func deleteCoffee(coffeeId: Int, token: String) async throws -> DeleteCoffeeResult {
-        let url = baseURL.appendingPathComponent("coffee/\(coffeeId)")
+        let url = baseURL.appendingPathComponent("coffees/\(coffeeId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -128,7 +128,7 @@ final class DefaultCoffeeService: CoffeeService {
     }
     
     func updateCoffee(input: CoffeeInput, token: String) async throws -> UpdateCoffeeResult {
-        let url = baseURL.appendingPathComponent("coffees")
+        let url = baseURL.appendingPathComponent("coffees/\(input.id!)")
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
 

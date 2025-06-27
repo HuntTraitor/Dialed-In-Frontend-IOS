@@ -8,22 +8,14 @@
 import SwiftUI
 
 struct CoffeeCard: View {
-    @State private var coffee: Coffee
+    @State var coffee: Coffee
     @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var isLoading = false
     @State var isChoiceDialogActive: Bool = false
     @State var isSuccessDeleteDialogActive: Bool = false
     @State var isFailureDeleteDialogActive: Bool = false
-    @State var errorMessage: String?
-    @State private var refreshData: Bool = false
     @State private var isDetailViewPresented: Bool = false
-    
-    init(coffee: Coffee, coffeeViewModel: CoffeeViewModel) {
-        _coffee = State(initialValue: coffee)
-        self.viewModel = coffeeViewModel
-    }
     
     var body: some View {
         ZStack {
@@ -128,13 +120,13 @@ struct CoffeeCard: View {
                     .padding(.top, 10)
             }
             .sheet(isPresented: $isDetailViewPresented) {
-                EditCoffeeView(coffee: $coffee, refreshData: $refreshData, viewModel: viewModel)
+                EditCoffeeView(coffee: $coffee, viewModel: viewModel)
             }
                 
             if isChoiceDialogActive {
                 ChoiceDialog(isActive: $isChoiceDialogActive, title: "Delete", message: "Are you sure you want to delete this item?", buttonOptions: ["Yes", "No"], action: deleteAction)
             }
-            if isLoading {
+            if viewModel.isLoading {
                 LoadingCircle()
             }
             if isSuccessDeleteDialogActive {
@@ -144,49 +136,28 @@ struct CoffeeCard: View {
                 })
             }
             if isFailureDeleteDialogActive {
-                CustomDialog(isActive: $isFailureDeleteDialogActive, title: "Error", message: "Failed to delete coffee, \(String(describing: errorMessage!))", buttonTitle: "OK", action: {isFailureDeleteDialogActive = false})
+                CustomDialog(isActive: $isFailureDeleteDialogActive, title: "Error", message: viewModel.errorMessage!, buttonTitle: "OK", action: {isFailureDeleteDialogActive = false})
             }
         }
     }
     
     private func deleteAction() {
         Task {
-            isLoading = true
-            defer {isLoading = false}
-            do {
-                try await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
-                isChoiceDialogActive = false
-                isSuccessDeleteDialogActive = true
-            } catch {
-                print("❌ Error deleting coffee, \(error)")
-                switch error {
-                case CustomError.methodError(let message):
-                    if let rangeStart = message.range(of: "\"error\": "),
-                       let rangeEnd = message.range(of: "]", range: rangeStart.upperBound..<message.endIndex) {
-                        let errorDetail = message[rangeStart.upperBound..<rangeEnd.lowerBound]
-                            .trimmingCharacters(in: .whitespacesAndNewlines)
-                            .replacingOccurrences(of: "\"", with: "")
-                        print("Extracted Error: \(errorDetail)")
-                        errorMessage = errorDetail
-                    } else {
-                        print("Could not extract error details from message.")
-                    }
-                default:
-                    print("An unknown error occurred")
-                }
+            try await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
+            if viewModel.errorMessage != nil {
                 isChoiceDialogActive = false
                 isFailureDeleteDialogActive = true
+            } else {
+                isChoiceDialogActive = false
+                isSuccessDeleteDialogActive = true
             }
         }
     }
 }
 
-
-//#Preview {
-//    let keychainManager = KeychainManager()
-//    CoffeeCard(
-//        coffee: Coffee.MOCK_COFFEE,
-//        coffeeViewModel: CoffeeViewModel()
-//    )
-//    .environmentObject(keychainManager)
-//}
+#Preview {
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+    CoffeeCard(coffee: Coffee.MOCK_COFFEE, viewModel: viewModel)
+        .environmentObject(authViewModel)
+}

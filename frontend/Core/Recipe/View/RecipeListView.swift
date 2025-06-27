@@ -44,7 +44,7 @@ struct RecipeListView: View {
                     .padding(.top, 40)
                     .italic()
                     .sheet(isPresented: $isShowingCreateRecipeView) {
-                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)), refreshData: $refreshData)
+                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)))
                     }
                 }
                 SearchBar(text: $searchTerm, placeholder: "Search Recipes")

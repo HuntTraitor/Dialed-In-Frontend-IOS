@@ -20,7 +20,6 @@ struct CreateRecipeView: View {
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
     @State private var coffeeRefreshData: Bool = false
-    @Binding public var refreshData: Bool
     @State private var phases: [SwitchRecipeInput.RecipeInfo.Phase] = []
     @State private var isUploading: Bool = false
     @State private var validationError: String? = nil
@@ -93,13 +92,8 @@ struct CreateRecipeView: View {
                         await coffeeViewModel.fetchCoffees(withToken: keychainManager.getToken())
                     }
                 }
-                .onChange(of: coffeeRefreshData) { _, _ in
-                    Task {
-                        await coffeeViewModel.fetchCoffees(withToken: keychainManager.getToken())
-                    }
-                }
                 .sheet(isPresented: $isShowingCreateCoffeeView) {
-                    CreateCoffeeView(viewModel: coffeeViewModel, refreshData: $coffeeRefreshData)
+                    CreateCoffeeView(viewModel: coffeeViewModel)
                 }
                 .navigationTitle("New Recipe")
                 .navigationBarTitleDisplayMode(.inline)
@@ -215,7 +209,6 @@ struct CreateRecipeView: View {
                 
                 try await viewModel.postSwitchRecipe(withToken: keychainManager.getToken(), recipe: newRecipe)
                 presentationMode.wrappedValue.dismiss()
-                refreshData.toggle()
             } catch {
                 self.validationError = "❌ Failed to upload recipe: \(error.localizedDescription)"
             }

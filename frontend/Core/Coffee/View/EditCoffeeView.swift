@@ -13,11 +13,9 @@ struct EditCoffeeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @Binding var coffee: Coffee
     @ObservedObject var viewModel: CoffeeViewModel
-    @Binding var refreshData: Bool
     @State private var coffeeImageSelection: PhotosPickerItem?
     @State private var coffeeImageObject: UIImage?
     @State private var coffeeImageData: Data?
-    @State private var isUploading: Bool = false
 
     // Local state variables for temporary values
     @State private var tempName: String
@@ -26,10 +24,9 @@ struct EditCoffeeView: View {
     @State private var tempDescription: String
 
     // Initializer to set initial values for local state variables
-    init(coffee: Binding<Coffee>, refreshData: Binding<Bool>, viewModel: CoffeeViewModel) {
+    init(coffee: Binding<Coffee>, viewModel: CoffeeViewModel) {
         self._coffee = coffee
         self.viewModel = viewModel
-        self._refreshData = refreshData
         self._tempName = State(initialValue: coffee.wrappedValue.name)
         self._tempRegion = State(initialValue: coffee.wrappedValue.region)
         self._tempProcess = State(initialValue: coffee.wrappedValue.process)
@@ -101,8 +98,6 @@ struct EditCoffeeView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             Task {
-                                isUploading = true
-                                defer { isUploading = false }
                                 do {
                                     let imageData = coffeeImageData
                                     let coffeeInput = CoffeeInput(
@@ -115,15 +110,14 @@ struct EditCoffeeView: View {
                                     )
                                     
                                     print("📤 Updating CoffeeInput with compressed image...")
-                                    try await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
+                                    let updatedCoffee = try await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                                     
-//                                    coffee.name = updatedCoffee.name
-//                                    coffee.region = updatedCoffee.region
-//                                    coffee.process = updatedCoffee.process
-//                                    coffee.description = updatedCoffee.description
-//                                    coffee.img = updatedCoffee.img
+                                    coffee.name = updatedCoffee.name
+                                    coffee.region = updatedCoffee.region
+                                    coffee.process = updatedCoffee.process
+                                    coffee.description = updatedCoffee.description
+                                    coffee.img = updatedCoffee.img
                                     
-                                    refreshData.toggle()
                                     presentationMode.wrappedValue.dismiss()
                                 } catch {
                                     print("❌ Failed to upload coffee: \(error)")
@@ -140,37 +134,37 @@ struct EditCoffeeView: View {
                     }
                 }
             }
-            if isUploading {
+            if viewModel.isLoading {
                 LoadingCircle()
             }
         }
     }
 }
 
-//#Preview {
-//    struct PreviewWrapper: View {
-//        @State private var refreshData: Bool = false
-//        @State private var sampleCoffee = Coffee(
-//            id: 1,
-//            name: "Ethiopian Yirgacheffe",
-//            region: "Yirgacheffe, Ethiopia",
-//            process: "Washed",
-//            description: "Bright and floral with notes of citrus and jasmine",
-//            img: nil
-//        )
-//        
-//        var body: some View {
-//            let keyChainManager = KeychainManager()
-//            
-//            EditCoffeeView(
-//                coffee: $sampleCoffee,
-//                refreshData: $refreshData,
-//                viewModel: CoffeeViewModel()
-//            )
-//            .environmentObject(keyChainManager)
-//        }
-//    }
-//
-//    return PreviewWrapper()
-//}
+#Preview {
+    struct PreviewWrapper: View {
+        @State private var refreshData: Bool = false
+        @State private var sampleCoffee = Coffee(
+            id: 1,
+            name: "Ethiopian Yirgacheffe",
+            region: "Yirgacheffe, Ethiopia",
+            process: "Washed",
+            description: "Bright and floral with notes of citrus and jasmine",
+            img: nil
+        )
+        
+        var body: some View {
+            let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+            let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+            
+            EditCoffeeView(
+                coffee: $sampleCoffee,
+                viewModel: viewModel
+            )
+            .environmentObject(authViewModel)
+        }
+    }
+
+    return PreviewWrapper()
+}
 
