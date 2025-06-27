@@ -2,36 +2,42 @@
 //  DialedInUITests.swift
 //  DialedInUITests
 //
-//  Created by Hunter Tratar on 1/3/25.
+//  Created by Hunter Tratar on 6/27/25.
 //
 
 import XCTest
 
 final class DialedInUITests: XCTestCase {
-    
-    var app: XCUIApplication!
 
     override func setUpWithError() throws {
-        continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
+        // Put setup code here. This method is called before the invocation of each test method in the class.
 
+        // In UI tests it is usually best to stop immediately when a failure occurs.
+        continueAfterFailure = false
+
+        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
+
+    @MainActor
     func testExample() throws {
-        
+        // UI tests must launch the application that they test.
         let app = XCUIApplication()
-        // expect there to be email address and password on screen
-        // expect there not to be name or confirm password
-        app/*@START_MENU_TOKEN@*/.staticTexts["Sign up"]/*[[".buttons[\"Dont have an account?, Sign up\"].staticTexts[\"Sign up\"]",".staticTexts[\"Sign up\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        // expect there to be name, email, password, confirm password on screen
-        app/*@START_MENU_TOKEN@*/.staticTexts["Sign in"]/*[[".buttons[\"Already have an account?, Sign in\"].staticTexts[\"Sign in\"]",".staticTexts[\"Sign in\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        // same as last one
-        
+        app.launch()
+
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-    
+
+    @MainActor
+    func testLaunchPerformance() throws {
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
+            // This measures how long it takes to launch your application.
+            measure(metrics: [XCTApplicationLaunchMetric()]) {
+                XCUIApplication().launch()
+            }
+        }
+    }
 }

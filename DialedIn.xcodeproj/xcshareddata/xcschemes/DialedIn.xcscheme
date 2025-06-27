@@ -41,6 +41,17 @@
                ReferencedContainer = "container:DialedIn.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FCA862C52E0F48B80061C44C"
+               BuildableName = "DialedInTests.xctest"
+               BlueprintName = "DialedInTests"
+               ReferencedContainer = "container:DialedIn.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

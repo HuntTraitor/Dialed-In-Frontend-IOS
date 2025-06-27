@@ -62,7 +62,7 @@ class CoffeeViewModel: ObservableObject {
             let result = try await coffeeService.deleteCoffee(coffeeId: coffeeId, token: token)
             switch result {
             case .deleted:
-                await fetchCoffees(withToken: token)
+               await fetchCoffees(withToken: token)
             case .error(let errorDict):
                 errorMessage = errorDict["message"] as? String
             }

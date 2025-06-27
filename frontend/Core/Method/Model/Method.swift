@@ -21,4 +21,5 @@ struct MethodResponse: Codable {
 
 extension Method {
     static var MOCK_METHOD = Method(id: 1, name: "Mock Method")
+    static var MOCK_METHODS = [Method(id: 1, name: "Pour Over"), Method(id: 2, name: "Hario Switch")]
 }

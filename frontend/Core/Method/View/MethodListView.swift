@@ -32,7 +32,7 @@ struct MethodListView: View {
             VStack {
                 ForEach(Array(zip(viewModel.methods, imageList)), id: \.0.self) { method, image in
                     NavigationLink {
-                        RecipeListView(curMethod: method)
+                        RecipeListView(curMethod: method) //Metaprogramming
                     } label: {
                         MethodCard(title: method.name, image: image)
                             .padding(5)

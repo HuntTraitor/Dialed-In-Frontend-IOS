@@ -11,7 +11,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FC69BF462D28790E00367B0D /* PBXContainerItemProxy */ = {
+		FCA862CA2E0F48B80061C44C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC19E4712D091EE6003438FE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FC19E4782D091EE6003438FE;
+			remoteInfo = DialedIn;
+		};
+		FCA862D92E0F49150061C44C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FC19E4712D091EE6003438FE /* Project object */;
 			proxyType = 1;
@@ -22,8 +29,9 @@
 
 /* Begin PBXFileReference section */
 		FC19E4792D091EE6003438FE /* DialedIn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DialedIn.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FC69BF402D28790E00367B0D /* DialedInUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DialedInUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCA81CDA2D5B2C8D0065D90D /* DialedIn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "DialedIn-Info.plist"; sourceTree = "<group>"; };
+		FCA862C62E0F48B80061C44C /* DialedInTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DialedInTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCA862D32E0F49150061C44C /* DialedInUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DialedInUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +40,12 @@
 			path = frontend;
 			sourceTree = "<group>";
 		};
-		FC69BF412D28790E00367B0D /* DialedInUITests */ = {
+		FCA862C72E0F48B80061C44C /* DialedInTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DialedInTests;
+			sourceTree = "<group>";
+		};
+		FCA862D42E0F49150061C44C /* DialedInUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DialedInUITests;
 			sourceTree = "<group>";
@@ -48,7 +61,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FC69BF3D2D28790E00367B0D /* Frameworks */ = {
+		FCA862C32E0F48B80061C44C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCA862D02E0F49150061C44C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -63,7 +83,8 @@
 			children = (
 				FCA81CDA2D5B2C8D0065D90D /* DialedIn-Info.plist */,
 				FC19E47B2D091EE6003438FE /* frontend */,
-				FC69BF412D28790E00367B0D /* DialedInUITests */,
+				FCA862C72E0F48B80061C44C /* DialedInTests */,
+				FCA862D42E0F49150061C44C /* DialedInUITests */,
 				FCE09F2E2D7B9F6E00F1C7BC /* Frameworks */,
 				FC19E47A2D091EE6003438FE /* Products */,
 			);
@@ -73,7 +94,8 @@
 			isa = PBXGroup;
 			children = (
 				FC19E4792D091EE6003438FE /* DialedIn.app */,
-				FC69BF402D28790E00367B0D /* DialedInUITests.xctest */,
+				FCA862C62E0F48B80061C44C /* DialedInTests.xctest */,
+				FCA862D32E0F49150061C44C /* DialedInUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,27 +133,50 @@
 			productReference = FC19E4792D091EE6003438FE /* DialedIn.app */;
 			productType = "com.apple.product-type.application";
 		};
-		FC69BF3F2D28790E00367B0D /* DialedInUITests */ = {
+		FCA862C52E0F48B80061C44C /* DialedInTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FC69BF482D28790E00367B0D /* Build configuration list for PBXNativeTarget "DialedInUITests" */;
+			buildConfigurationList = FCA862CC2E0F48B80061C44C /* Build configuration list for PBXNativeTarget "DialedInTests" */;
 			buildPhases = (
-				FC69BF3C2D28790E00367B0D /* Sources */,
-				FC69BF3D2D28790E00367B0D /* Frameworks */,
-				FC69BF3E2D28790E00367B0D /* Resources */,
+				FCA862C22E0F48B80061C44C /* Sources */,
+				FCA862C32E0F48B80061C44C /* Frameworks */,
+				FCA862C42E0F48B80061C44C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FC69BF472D28790E00367B0D /* PBXTargetDependency */,
+				FCA862CB2E0F48B80061C44C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				FC69BF412D28790E00367B0D /* DialedInUITests */,
+				FCA862C72E0F48B80061C44C /* DialedInTests */,
+			);
+			name = DialedInTests;
+			packageProductDependencies = (
+			);
+			productName = DialedInTests;
+			productReference = FCA862C62E0F48B80061C44C /* DialedInTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FCA862D22E0F49150061C44C /* DialedInUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCA862DB2E0F49150061C44C /* Build configuration list for PBXNativeTarget "DialedInUITests" */;
+			buildPhases = (
+				FCA862CF2E0F49150061C44C /* Sources */,
+				FCA862D02E0F49150061C44C /* Frameworks */,
+				FCA862D12E0F49150061C44C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FCA862DA2E0F49150061C44C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FCA862D42E0F49150061C44C /* DialedInUITests */,
 			);
 			name = DialedInUITests;
 			packageProductDependencies = (
 			);
 			productName = DialedInUITests;
-			productReference = FC69BF402D28790E00367B0D /* DialedInUITests.xctest */;
+			productReference = FCA862D32E0F49150061C44C /* DialedInUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -147,7 +192,11 @@
 					FC19E4782D091EE6003438FE = {
 						CreatedOnToolsVersion = 16.1;
 					};
-					FC69BF3F2D28790E00367B0D = {
+					FCA862C52E0F48B80061C44C = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = FC19E4782D091EE6003438FE;
+					};
+					FCA862D22E0F49150061C44C = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = FC19E4782D091EE6003438FE;
 					};
@@ -171,7 +220,8 @@
 			projectRoot = "";
 			targets = (
 				FC19E4782D091EE6003438FE /* DialedIn */,
-				FC69BF3F2D28790E00367B0D /* DialedInUITests */,
+				FCA862C52E0F48B80061C44C /* DialedInTests */,
+				FCA862D22E0F49150061C44C /* DialedInUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -184,7 +234,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FC69BF3E2D28790E00367B0D /* Resources */ = {
+		FCA862C42E0F48B80061C44C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCA862D12E0F49150061C44C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -201,7 +258,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FC69BF3C2D28790E00367B0D /* Sources */ = {
+		FCA862C22E0F48B80061C44C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCA862CF2E0F49150061C44C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -211,10 +275,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FC69BF472D28790E00367B0D /* PBXTargetDependency */ = {
+		FCA862CB2E0F48B80061C44C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FC19E4782D091EE6003438FE /* DialedIn */;
-			targetProxy = FC69BF462D28790E00367B0D /* PBXContainerItemProxy */;
+			targetProxy = FCA862CA2E0F48B80061C44C /* PBXContainerItemProxy */;
+		};
+		FCA862DA2E0F49150061C44C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FC19E4782D091EE6003438FE /* DialedIn */;
+			targetProxy = FCA862D92E0F49150061C44C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -396,13 +465,49 @@
 			};
 			name = Release;
 		};
-		FC69BF492D28790E00367B0D /* Debug */ = {
+		FCA862CD2E0F48B80061C44C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = hunter.dialedin.DialedInTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DialedIn.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DialedIn";
+			};
+			name = Debug;
+		};
+		FCA862CE2E0F48B80061C44C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = hunter.dialedin.DialedInTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DialedIn.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DialedIn";
+			};
+			name = Release;
+		};
+		FCA862DC2E0F49150061C44C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = hunter.dialedin.DialedInUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -413,13 +518,13 @@
 			};
 			name = Debug;
 		};
-		FC69BF4A2D28790E00367B0D /* Release */ = {
+		FCA862DD2E0F49150061C44C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = hunter.dialedin.DialedInUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -451,11 +556,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FC69BF482D28790E00367B0D /* Build configuration list for PBXNativeTarget "DialedInUITests" */ = {
+		FCA862CC2E0F48B80061C44C /* Build configuration list for PBXNativeTarget "DialedInTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FC69BF492D28790E00367B0D /* Debug */,
-				FC69BF4A2D28790E00367B0D /* Release */,
+				FCA862CD2E0F48B80061C44C /* Debug */,
+				FCA862CE2E0F48B80061C44C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCA862DB2E0F49150061C44C /* Build configuration list for PBXNativeTarget "DialedInUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCA862DC2E0F49150061C44C /* Debug */,
+				FCA862DD2E0F49150061C44C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
