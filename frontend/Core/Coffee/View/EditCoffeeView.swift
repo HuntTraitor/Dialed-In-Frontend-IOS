@@ -10,7 +10,7 @@ import PhotosUI
 
 struct EditCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var keyChainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
     @Binding var coffee: Coffee
     @ObservedObject var viewModel: CoffeeViewModel
     @Binding var refreshData: Bool
@@ -115,13 +115,13 @@ struct EditCoffeeView: View {
                                     )
                                     
                                     print("📤 Updating CoffeeInput with compressed image...")
-                                    let updatedCoffee = try await viewModel.updateCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    try await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                                     
-                                    coffee.name = updatedCoffee.name
-                                    coffee.region = updatedCoffee.region
-                                    coffee.process = updatedCoffee.process
-                                    coffee.description = updatedCoffee.description
-                                    coffee.img = updatedCoffee.img
+//                                    coffee.name = updatedCoffee.name
+//                                    coffee.region = updatedCoffee.region
+//                                    coffee.process = updatedCoffee.process
+//                                    coffee.description = updatedCoffee.description
+//                                    coffee.img = updatedCoffee.img
                                     
                                     refreshData.toggle()
                                     presentationMode.wrappedValue.dismiss()
@@ -147,30 +147,30 @@ struct EditCoffeeView: View {
     }
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var refreshData: Bool = false
-        @State private var sampleCoffee = Coffee(
-            id: 1,
-            name: "Ethiopian Yirgacheffe",
-            region: "Yirgacheffe, Ethiopia",
-            process: "Washed",
-            description: "Bright and floral with notes of citrus and jasmine",
-            img: nil
-        )
-        
-        var body: some View {
-            let keyChainManager = KeychainManager()
-            
-            EditCoffeeView(
-                coffee: $sampleCoffee,
-                refreshData: $refreshData,
-                viewModel: CoffeeViewModel()
-            )
-            .environmentObject(keyChainManager)
-        }
-    }
-
-    return PreviewWrapper()
-}
+//#Preview {
+//    struct PreviewWrapper: View {
+//        @State private var refreshData: Bool = false
+//        @State private var sampleCoffee = Coffee(
+//            id: 1,
+//            name: "Ethiopian Yirgacheffe",
+//            region: "Yirgacheffe, Ethiopia",
+//            process: "Washed",
+//            description: "Bright and floral with notes of citrus and jasmine",
+//            img: nil
+//        )
+//        
+//        var body: some View {
+//            let keyChainManager = KeychainManager()
+//            
+//            EditCoffeeView(
+//                coffee: $sampleCoffee,
+//                refreshData: $refreshData,
+//                viewModel: CoffeeViewModel()
+//            )
+//            .environmentObject(keyChainManager)
+//        }
+//    }
+//
+//    return PreviewWrapper()
+//}
 

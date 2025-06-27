@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CoffeeCard: View {
     @State private var coffee: Coffee
-    @EnvironmentObject var keyChainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var isLoading = false
@@ -154,7 +154,7 @@ struct CoffeeCard: View {
             isLoading = true
             defer {isLoading = false}
             do {
-                try await viewModel.deleteCoffee(coffeeId: coffee.id, token: keyChainManager.getToken())
+                try await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
                 isChoiceDialogActive = false
                 isSuccessDeleteDialogActive = true
             } catch {
@@ -182,11 +182,11 @@ struct CoffeeCard: View {
 }
 
 
-#Preview {
-    let keychainManager = KeychainManager()
-    CoffeeCard(
-        coffee: Coffee.MOCK_COFFEE,
-        coffeeViewModel: CoffeeViewModel()
-    )
-    .environmentObject(keychainManager)
-}
+//#Preview {
+//    let keychainManager = KeychainManager()
+//    CoffeeCard(
+//        coffee: Coffee.MOCK_COFFEE,
+//        coffeeViewModel: CoffeeViewModel()
+//    )
+//    .environmentObject(keychainManager)
+//}

@@ -8,13 +8,18 @@
 import SwiftUI
 
 struct CoffeeView: View {
-    @EnvironmentObject var keychainManager: KeychainManager
-    @StateObject var viewModel = CoffeeViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var viewModel: CoffeeViewModel
     @Bindable private var navigator = NavigationManager.nav
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
     @State public var refreshData: Bool = false
+    
+    init() {
+        let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
+        _viewModel = StateObject(wrappedValue: CoffeeViewModel(coffeeService: service))
+    }
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return viewModel.coffees }
@@ -64,23 +69,23 @@ struct CoffeeView: View {
             .addToolbar()
             .addNavigationSupport()
             .task {
-                await viewModel.fetchCoffees(withToken: keychainManager.getToken())
+                await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
             }
-            .onChange(of: refreshData) { oldValue, newValue in
-                print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
-                if newValue {
-                    Task {
-                        await viewModel.fetchCoffees(withToken: keychainManager.getToken())
-                        refreshData = false
-                    }
-                }
-            }
+//            .onChange(of: refreshData) { oldValue, newValue in
+//                print("🔄 onChange triggered: oldValue = \(oldValue), newValue = \(newValue)")
+//                if newValue {
+//                    Task {
+//                        await viewModel.fetchCoffees(withToken: authViewModel.token)
+//                        refreshData = false
+//                    }
+//                }
+//            }
         }
     }
 }
 
 #Preview {
-    let keychainManager = KeychainManager()
-    return CoffeeView()
-        .environmentObject(keychainManager)
+    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    CoffeeView()
+        .environmentObject(authViewModel)
 }

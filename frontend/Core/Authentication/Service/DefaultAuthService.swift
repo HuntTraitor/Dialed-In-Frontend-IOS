@@ -39,9 +39,7 @@ final class DefaultAuthService: AuthService {
                 }
             }
             
-            // Try decoding the success case first
             if let decoded = try? JSONDecoder().decode(AuthenticationTokenResponse.self, from: data) {
-                print(decoded)
                 return .token(decoded.authenticationToken)
             }
             

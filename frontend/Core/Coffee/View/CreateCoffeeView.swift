@@ -10,7 +10,7 @@ import PhotosUI
 
 struct CreateCoffeeView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var keyChainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var viewModel: CoffeeViewModel
     @State private var coffeeName: String = ""
     @State private var coffeeRegion: String = ""
@@ -107,7 +107,7 @@ struct CreateCoffeeView: View {
                                     )
                                     
                                     print("📤 Uploading CoffeeInput with compressed image...")
-                                    try await viewModel.postCoffee(input: coffeeInput, token: keyChainManager.getToken())
+                                    try await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                                     presentationMode.wrappedValue.dismiss()
                                     refreshData.toggle()                                    
                                 } catch {
@@ -149,16 +149,4 @@ extension UIImage {
             return nil
         }
     }
-}
-
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var refreshData: Bool = false
-        var body: some View {
-            let keyChainManager = KeychainManager()
-            CreateCoffeeView(viewModel: CoffeeViewModel(), refreshData: $refreshData)
-                .environmentObject(keyChainManager)
-        }
-    }
-    return PreviewWrapper()
 }

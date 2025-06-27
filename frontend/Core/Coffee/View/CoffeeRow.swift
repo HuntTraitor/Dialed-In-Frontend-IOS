@@ -11,12 +11,12 @@ struct CoffeeRow: View {
     var coffee: Coffee
     @ObservedObject var viewModel: CoffeeViewModel
     @Binding var pressedItemId: Int?
-    @EnvironmentObject var keychainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationLink(
             destination: CoffeeCard(coffee: coffee, coffeeViewModel: viewModel)
-                .environmentObject(keychainManager)
+                .environmentObject(authViewModel)
         ) {
             CoffeeCardSmall(coffee: coffee)
                 .opacity(pressedItemId == coffee.id ? 0.8 : 1)
@@ -60,7 +60,7 @@ extension View {
     }
 }
 
-#Preview {
-    CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: CoffeeViewModel(), pressedItemId: .constant(1))
-        .environmentObject(KeychainManager())
-}
+//#Preview {
+//    CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: CoffeeViewModel(), pressedItemId: .constant(1))
+//        .environmentObject(KeychainManager())
+//}

@@ -83,31 +83,31 @@ struct CoffeePickerView: View {
     }
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        @StateObject var viewModel = CoffeeViewModel()
-        @State var selectedCoffeeId: Int? = nil
-        @State var showCoffeePicker = false
-        @State var isShowingCreateCoffeeView = false
-        @State var searchTerm = ""
-
-        var body: some View {
-            CoffeePickerView(
-                viewModel: viewModel,
-                selectedCoffeeId: $selectedCoffeeId,
-                showCoffeePicker: $showCoffeePicker,
-                isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
-                searchTerm: $searchTerm
-            )
-            .frame(width: 300)
-            .onAppear {
-                viewModel.coffees = Coffee.MOCK_COFFEES
-            }
-        }
-    }
-
-    return PreviewWrapper()
-}
+//#Preview {
+//    struct PreviewWrapper: View {
+//        @StateObject var viewModel = CoffeeViewModel()
+//        @State var selectedCoffeeId: Int? = nil
+//        @State var showCoffeePicker = false
+//        @State var isShowingCreateCoffeeView = false
+//        @State var searchTerm = ""
+//
+//        var body: some View {
+//            CoffeePickerView(
+//                viewModel: viewModel,
+//                selectedCoffeeId: $selectedCoffeeId,
+//                showCoffeePicker: $showCoffeePicker,
+//                isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
+//                searchTerm: $searchTerm
+//            )
+//            .frame(width: 300)
+//            .onAppear {
+//                viewModel.coffees = Coffee.MOCK_COFFEES
+//            }
+//        }
+//    }
+//
+//    return PreviewWrapper()
+//}
 
 
 

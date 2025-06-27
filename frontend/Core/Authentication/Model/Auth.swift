@@ -34,7 +34,7 @@ struct AuthSessionState: Codable {
     let user: User
 }
 
-// RESPONSES & RESULTS ------------------------------------------------------------------------------------------------
+// RESPONSES ------------------------------------------------------------------------------------------------
 struct UserResponse: Codable {
     let user: User
 }
@@ -46,6 +46,8 @@ struct AuthenticationTokenResponse: Codable {
         case authenticationToken = "authentication_token"
     }
 }
+
+// ENUMS ------------------------------------------------------------------------------------------------
 
 enum CreateUserResult {
     case user(User)

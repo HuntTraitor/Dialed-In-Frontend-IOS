@@ -44,7 +44,7 @@ struct RecipeListView: View {
                     .padding(.top, 40)
                     .italic()
                     .sheet(isPresented: $isShowingCreateRecipeView) {
-                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(), refreshData: $refreshData)
+                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)), refreshData: $refreshData)
                     }
                 }
                 SearchBar(text: $searchTerm, placeholder: "Search Recipes")
@@ -61,6 +61,8 @@ struct RecipeListView: View {
                                 .frame(maxWidth: .infinity, maxHeight: 120)
                                 .padding()
                                 .background(Color(.systemBackground))
+                   
+                                
                                 .cornerRadius(15)
                                 .shadow(radius: 2)
                                 .padding(.horizontal, 20)
@@ -92,10 +94,10 @@ struct RecipeListView: View {
     }
 }
 
-struct RecipeListView_Previews: PreviewProvider {
-    static var previews: some View {
-        let keychainManager = KeychainManager()
-        RecipeListView(curMethod: Method(id: 1, name: "Pour Over"))
-            .environmentObject(keychainManager)
-    }
-}
+//struct RecipeListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let keychainManager = KeychainManager()
+//        RecipeListView(curMethod: Method(id: 1, name: "Pour Over"))
+//            .environmentObject(keychainManager)
+//    }
+//}

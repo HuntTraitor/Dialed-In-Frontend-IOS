@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: SwitchRecipe
-    @ObservedObject var coffeeViewModel = CoffeeViewModel()
+    @ObservedObject var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     @EnvironmentObject var keychainManager: KeychainManager
     @State private var showCountdown = false
     @State private var showAnimation = false
@@ -205,8 +205,8 @@ struct RecipeView: View {
     }
 }
 
-#Preview {
-    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
-        .environmentObject(CoffeeViewModel())
-        .environmentObject(KeychainManager())
-}
+//#Preview {
+//    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+//        .environmentObject(CoffeeViewModel())
+//        .environmentObject(KeychainManager())
+//}

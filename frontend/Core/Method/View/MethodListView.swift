@@ -50,6 +50,7 @@ struct MethodListView: View {
 }
 
 #Preview {
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     MethodListView()
-        .environmentObject(KeychainManager())
+        .environmentObject(viewModel)
 }

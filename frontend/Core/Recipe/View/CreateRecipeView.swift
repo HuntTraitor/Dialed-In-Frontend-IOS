@@ -225,15 +225,15 @@ struct CreateRecipeView: View {
 
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var refreshData: Bool = false
-        var body: some View {
-            let keyChainManager = KeychainManager()
-            CreateRecipeView(viewModel: RecipeViewModel(), coffeeViewModel: CoffeeViewModel(), refreshData: $refreshData)
-                .environmentObject(keyChainManager)
-        }
-    }
-    return PreviewWrapper()
-}
+//#Preview {
+//    struct PreviewWrapper: View {
+//        @State private var refreshData: Bool = false
+//        var body: some View {
+//            let keyChainManager = KeychainManager()
+//            CreateRecipeView(viewModel: RecipeViewModel(), coffeeViewModel: CoffeeViewModel(), refreshData: $refreshData)
+//                .environmentObject(keyChainManager)
+//        }
+//    }
+//    return PreviewWrapper()
+//}
 

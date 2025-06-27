@@ -55,8 +55,6 @@ class AuthViewModel: ObservableObject {
                 }
             }
             
-            print(token)
-            
             let user = try await authService.verifyUser(withToken: token.token)
             let session = AuthSessionState(token: token, user: user)
             self.session = session

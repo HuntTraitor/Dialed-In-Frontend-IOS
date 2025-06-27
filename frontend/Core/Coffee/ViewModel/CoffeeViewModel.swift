@@ -7,95 +7,87 @@
 
 import Foundation
 
+@MainActor
 class CoffeeViewModel: ObservableObject {
     @Published var coffees: [Coffee] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
+    private let coffeeService: CoffeeService
+    
+    init(coffeeService: CoffeeService) {
+        self.coffeeService = coffeeService
+    }
     
     func fetchCoffees(withToken token: String) async {
+        isLoading = true
+        errorMessage = nil
         do {
-            let endpoint = "http://localhost:3000/v1/coffees"
-            let headers = ["Authorization": "Bearer \(token)"]
-            
-            let result = try await Get(to: endpoint, with: headers)
-            
-            guard let coffeeDicts = result["coffees"] as? [[String: Any]] else {
-                throw CustomError.methodError(message: "Error when parsing coffees")
-            }
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: coffeeDicts, options: [])
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let coffees = try decoder.decode([Coffee].self, from: jsonData)
-            
-            await MainActor.run {
+            let result = try await coffeeService.fetchCoffees(withToken: token)
+            switch result {
+            case .coffees(let coffees):
                 self.coffees = coffees
+            case .error(let errorDict):
+                errorMessage = errorDict["message"] as? String
             }
         } catch {
-            print("Error fetching coffees: \(error)")
+            errorMessage = "Failed to fetch coffees: \(error.localizedDescription)"
         }
+        isLoading = false
     }
     
     func postCoffee(input: CoffeeInput, token: String) async throws {
-        let url = URL(string: "http://localhost:3000/v1/coffees")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        let boundary = "Boundary-\(UUID().uuidString)"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
-        let postData = input.toMultiPartData(boundary: boundary)
-        request.httpBody = postData
-
-        let (_, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
-            throw CustomError.methodError(message: "Failed to upload coffee")
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let result = try await coffeeService.postCoffee(input: input, token: token)
+            switch result {
+            case .coffee:
+                await fetchCoffees(withToken: token)
+            case .error(let errorDict):
+                errorMessage = errorDict["message"] as? String
+            }
+        } catch {
+            errorMessage = "Failed to post coffee: \(error.localizedDescription)"
         }
+        isLoading = false
     }
     
     func deleteCoffee(coffeeId: Int, token: String) async throws {
-        let endpoint = "http://localhost:3000/v1/coffees/\(coffeeId)"
-        let headers = ["Authorization": "Bearer \(token)"]
+        isLoading = true
+        errorMessage = nil
         
-        let result = try await Delete(to: endpoint, with: headers)
-        
-        if result["message"] as? String != "coffee successfully deleted" {
-            throw CustomError.methodError(message: "Failed to delete coffee, \(result)")
+        do {
+            let result = try await coffeeService.deleteCoffee(coffeeId: coffeeId, token: token)
+            switch result {
+            case .deleted:
+                await fetchCoffees(withToken: token)
+            case .error(let errorDict):
+                errorMessage = errorDict["message"] as? String
+            }
+        } catch {
+            errorMessage = "Failed to delete coffee: \(error.localizedDescription)"
         }
+        isLoading = false
     }
     
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee{
-        let url = URL(string: "http://localhost:3000/v1/coffees/\(String(describing: input.id!))")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "PATCH"
+    func updateCoffee(input: CoffeeInput, token: String) async throws {
+        isLoading = false
+        errorMessage = nil
         
-        let boundary = "Boundary-\(UUID().uuidString)"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        let patchData = input.toMultiPartData(boundary: boundary)
-        request.httpBody = patchData
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw CustomError.methodError(message: "Failed to upload coffee")
+        do {
+            let result = try await coffeeService.updateCoffee(input: input, token: token)
+            switch result {
+            case .coffee:
+                await fetchCoffees(withToken: token)
+            case.error(let errorDict):
+                errorMessage = errorDict["message"] as? String
+            }
+        } catch {
+            errorMessage = "Failed to update coffee: \(error.localizedDescription)"
         }
-
-        guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-            throw URLError(.cannotParseResponse)
-        }
-        
-        
-        guard let coffeeDict = json["coffee"] as? [String: Any] else {
-            throw CustomError.methodError(message: "Error when parsing coffees")
-        }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: coffeeDict, options: [])
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let coffee = try decoder.decode(Coffee.self, from: jsonData)
-        return coffee
+        isLoading = false
     }
     
     func isValidName(name: String) -> Bool {
