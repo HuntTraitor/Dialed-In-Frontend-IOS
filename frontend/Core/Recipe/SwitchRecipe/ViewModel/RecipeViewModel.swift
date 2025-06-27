@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class SwitchRecipeViewModel: ObservableObject {
     @Published var recipes: [SwitchRecipe] = []
     @Published var isLoading = false

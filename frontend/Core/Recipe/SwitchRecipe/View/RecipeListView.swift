@@ -17,14 +17,7 @@ struct RecipeListView: View {
     
     init(curMethod: Method) {
         self.curMethod = curMethod
-        let service: any SwitchRecipeService
-        
-        switch curMethod.name {
-        case "Hario Switch":
-            service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
-        default:
-            fatalError("Unsupported method: \(curMethod.name)")
-        }
+        let service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
         
         _viewModel = StateObject(wrappedValue: SwitchRecipeViewModel(recipeService: service))
     }
@@ -35,59 +28,57 @@ struct RecipeListView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $navigator.mainNavigator) {
-            VStack {
-                HStack {
-                    Text("Recipes")
-                        .font(.title)
-                        .italic()
-                        .underline()
-                        .padding(.top, 40)
-                        .padding(.bottom, 10)
-                        .padding(.leading, 30)
-                    Spacer()
-                    Button {
-                        isShowingCreateRecipeView = true
-                    } label: {
-                        Label("Add New Recipe", systemImage: "plus")
-                            .font(.system(size: 15))
-                            .bold()
-                            .padding(.trailing, 30)
-                    }
-                    .padding(.top, 40)
+        VStack {
+            HStack {
+                Text("Recipes")
+                    .font(.title)
                     .italic()
-                    .sheet(isPresented: $isShowingCreateRecipeView) {
-                        CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)))
-                    }
+                    .underline()
+                    .padding(.top, 40)
+                    .padding(.bottom, 10)
+                    .padding(.leading, 30)
+                Spacer()
+                Button {
+                    isShowingCreateRecipeView = true
+                } label: {
+                    Label("Add New Recipe", systemImage: "plus")
+                        .font(.system(size: 15))
+                        .bold()
+                        .padding(.trailing, 30)
                 }
-                SearchBar(text: $searchTerm, placeholder: "Search Recipes")
-                    .padding(.horizontal, 10)
-                ScrollView {
-                    ForEach(filteredRecipes, id: \.self) { recipe in
-                        NavigationLink(
-                            destination: RecipeView(
-                                recipe: recipe
-                            )
-                            .environmentObject(authViewModel)
-                        ) {
-                            RecipeCard(recipe: recipe)
-                                .frame(maxWidth: .infinity, maxHeight: 120)
-                                .padding()
-                                .background(Color(.systemBackground))
-                   
-                                
-                                .cornerRadius(15)
-                                .shadow(radius: 2)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 3)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
+                .padding(.top, 40)
+                .italic()
+                .sheet(isPresented: $isShowingCreateRecipeView) {
+                    CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)))
                 }
             }
+            SearchBar(text: $searchTerm, placeholder: "Search Recipes")
+                .padding(.horizontal, 10)
+            ScrollView {
+                ForEach(filteredRecipes, id: \.self) { recipe in
+                    NavigationLink(
+                        destination: RecipeView(
+                            recipe: recipe
+                        )
+                        .environmentObject(authViewModel)
+                    ) {
+                        RecipeCard(recipe: recipe)
+                            .frame(maxWidth: .infinity, maxHeight: 120)
+                            .padding()
+                            .background(Color(.systemBackground))
+               
+                            
+                            .cornerRadius(15)
+                            .shadow(radius: 2)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 3)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            
         }
         .addToolbar()
-        .addNavigationSupport()
         .task {
             do {
                 try await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
@@ -100,6 +91,8 @@ struct RecipeListView: View {
 
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    RecipeListView(curMethod: Method(id: 2, name: "Hario Switch"))
-        .environmentObject(authViewModel)
+    NavigationStack {
+        RecipeListView(curMethod: Method(id: 2, name: "Hario Switch"))
+            .environmentObject(authViewModel)
+    }
 }

@@ -11,35 +11,39 @@ import SimpleKeychain
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @Bindable private var navigator = NavigationManager.nav
-    
+
     var body: some View {
         Group {
             if !authViewModel.isAuthenticated {
-                 LoginView()
-             } else {
-                 TabView(selection: navigator.tabHandler) {
-                     HomeView()
-                         .tabItem {
-                             Label("Home", systemImage: "house.fill")
-                         }
-                         .tag(1)
-                     
-                     CoffeeView()
-                         .tabItem {
-                             Label("Coffee", systemImage: "cup.and.saucer.fill")
-                         }
-                         .tag(2)
-                     
-                     SettingsView()
-                         .tabItem {
-                             Label("Settings", systemImage: "gear")
-                         }
-                         .tag(3)
-                 }
-             }
+                LoginView()
+            } else {
+                NavigationStack(path: $navigator.mainNavigator) {
+                    TabView(selection: navigator.tabHandler) {
+                        HomeView()
+                            .tabItem {
+                                Label("Home", systemImage: "house.fill")
+                            }
+                            .tag(1)
+                        
+                        CoffeeView()
+                            .tabItem {
+                                Label("Coffee", systemImage: "cup.and.saucer.fill")
+                            }
+                            .tag(2)
+                        
+                        SettingsView()
+                            .tabItem {
+                                Label("Settings", systemImage: "gear")
+                            }
+                            .tag(3)
+                    }
+                    .addNavigationSupport()
+                }
+            }
         }
     }
 }
+
 
 extension View {
     
