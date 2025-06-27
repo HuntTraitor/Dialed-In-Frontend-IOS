@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct MethodListView: View {
-    @StateObject private var viewModel = MethodViewModel()
+    @StateObject private var viewModel: MethodViewModel
     @State var imageList: [String] = ["v60", "Hario Switch"]
+    
+    init() {
+        let service = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
+        _viewModel = StateObject(wrappedValue: MethodViewModel(methodService: service))
+    }
     
     var body: some View {
         VStack {
@@ -44,10 +49,7 @@ struct MethodListView: View {
     }
 }
 
-struct MethodListView_Previews: PreviewProvider {
-    static var previews: some View {
-        @StateObject var keychainManager = KeychainManager()
-        MethodListView()
-            .environmentObject(keychainManager)
-    }
+#Preview {
+    MethodListView()
+        .environmentObject(KeychainManager())
 }

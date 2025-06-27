@@ -10,20 +10,12 @@ import SimpleKeychain
 
 @main
 struct frontendApp: App {
-    @StateObject var viewModel = AuthViewModel()
     @StateObject private var keychainManager = KeychainManager()
-    @State var methodViewModel = MethodViewModel()
-    @StateObject var coffeeViewModel = CoffeeViewModel()
-    @StateObject var recipeViewModel = RecipeViewModel()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(viewModel)
                 .environmentObject(keychainManager)
-                .environmentObject(methodViewModel)
-                .environmentObject(coffeeViewModel)
-                .environmentObject(recipeViewModel)
         }
     }
 }

@@ -2,7 +2,7 @@
 //  Method.swift
 //  DialedIn
 //
-//  Created by Hunter Tratar on 1/26/25.
+//  Created by Hunter Tratar on 6/26/25.
 //
 
 struct Method: Identifiable, Codable, Hashable {
@@ -13,6 +13,10 @@ struct Method: Identifiable, Codable, Hashable {
         case id
         case name
     }
+}
+
+struct MethodResponse: Codable {
+    let methods: [Method]
 }
 
 extension Method {
