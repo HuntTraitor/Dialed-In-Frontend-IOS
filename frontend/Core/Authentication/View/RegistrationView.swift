@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct RegistrationView: View {
+    @EnvironmentObject var viewModel: AuthViewModel
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var isLoading = false
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: AuthViewModel
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
     @State var errorMessage: String?
@@ -73,26 +73,11 @@ struct RegistrationView: View {
                 Button {
                     isLoading = true
                     Task {
-                        let result: CreateUserResult
                         do {
-                            result = try await viewModel.createUser(withEmail: email, password: password, name: name)
-                        } catch {
-                            errorMessage = "An unknown error occured."
-                            isErrorDialogActive = true
-                            isLoading = false
-                            return
-                        }
-                    
-                        switch result {
-                        case .user:
-                            isLoading = false
+                            try await viewModel.createUser(email: email, password: password, name: name)
                             isSuccessDialogActive = true
-                        case .error(let error):
-                            if let email = error["email"] as? String {
-                                errorMessage = email.prefix(1).uppercased() + email.dropFirst()
-                            } else {
-                                errorMessage = "An unknown error occurred."
-                            }
+                        } catch {
+                            errorMessage = viewModel.errorMessage ?? "An unknown error occurred."
                             isErrorDialogActive = true
                         }
                         isLoading = false
@@ -156,10 +141,10 @@ struct RegistrationView: View {
     }
 }
 
-struct RegistrationView_Previews: PreviewProvider {
-    static var previews: some View {
-        RegistrationView(viewModel: AuthViewModel())
-    }
+#Preview {
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    return RegistrationView()
+        .environmentObject(viewModel)
 }
 
 

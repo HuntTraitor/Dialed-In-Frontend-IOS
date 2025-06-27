@@ -6,72 +6,116 @@
 //
 
 import Foundation
+import SimpleKeychain
 
+@MainActor
 class AuthViewModel: ObservableObject {
-    @Published var currentUser: User?
+    private let authService: AuthService
+    private let keychain = SimpleKeychain()
     
-    func signIn(withEmail email: String, password: String) async throws -> SignInResult {
-        let endpoint = "http://localhost:3000/v1/tokens/authentication"
-        let requestBody = ["email": email, "password": password]
+    @Published private(set) var session: AuthSessionState?
+    @Published var errorMessage: String?
+    @Published var isLoading = false
+    
+    init(authService: AuthService) {
+        self.authService = authService
         
-        let result = try await Post(to: endpoint, with: requestBody, withHeaders: [:])
-                
-        if let tokenDict = result["authentication_token"] as? [String: Any] {
-            let token = try JSONDecoder().decode(Token.self, from: JSONSerialization.data(withJSONObject: tokenDict))
-            return .token(token)
-        } else if let error = result["error"] as? [String: Any] {
-            return .error(error)
-        } else if let error = result["error"] as? String {
-            return .error(["error": error])
-        } else {
-            throw NSError(domain: "UserSignInError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
+        if let data = try? keychain.data(forKey: "auth_session"),
+           let savedSession = try? JSONDecoder().decode(AuthSessionState.self, from: data) {
+            self.session = savedSession
         }
     }
     
-    // createUser sends the network call to POST /users and returns the result
-    func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult  {
-        // set endpoints and request body
-        let endpoint = "http://localhost:3000/v1/users"
-        let requestBody = ["name": name, "email": email, "password": password]
-        
-        // Send post request
-        let result = try await Post(to: endpoint, with: requestBody, withHeaders: [:])
-        
-        // Check the response wrapper
-        if let userDict = result["user"] as? [String: Any] {
-            let user = try JSONDecoder().decode(User.self, from: JSONSerialization.data(withJSONObject: userDict))
-            return .user(user)
-        } else if let error = result["error"] as? [String: Any] {
-            return .error(error)
-        } else {
-            throw NSError(domain: "UserCreationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown Error"])
-        }
+    var isAuthenticated: Bool {
+        return session != nil
     }
     
-    func verifyUser(withToken token: String) async throws {
+    var user: User? {
+        session?.user
+    }
+    
+    var token: String? {
+        session?.token.token
+    }
+    
+    // SignIn signs in the user and sets the session information
+    func signIn(email: String, password: String) async throws {
+        isLoading = true
+        errorMessage = nil
+        
         do {
-            let endpoint = "http://localhost:3000/v1/users/verify"
-            let headers = ["Authorization": "Bearer \(token)"]
-            let result = try await Get(to: endpoint, with: headers)
-
-            var decodedUser: User?
-
-            if let userDict = result["user"] as? [String: Any] {
-                decodedUser = try JSONDecoder().decode(User.self, from: JSONSerialization.data(withJSONObject: userDict))
-            } else if let error = result["error"] as? String {
-                throw CustomError.verifyUserError(message: error)
-            } else {
-                throw NSError(domain: "UserVerificationError", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Unknown Error"])
-            }
-
-            if let user = decodedUser {
-                await MainActor.run {
-                    self.currentUser = user
+            let result = try await authService.signIn(withEmail: email, password: password)
+            guard case .token(let token) = result else {
+                
+                // if there is an error, throw the error in the json
+                if case .error(let errorDict) = result {
+                    throw AuthSessionError.unknown(errorDict["error"] as? String ?? "Unknown error")
+                } else {
+                    throw AuthSessionError.unknown("Unknown auth error")
                 }
             }
+            
+            print(token)
+            
+            let user = try await authService.verifyUser(withToken: token.token)
+            let session = AuthSessionState(token: token, user: user)
+            self.session = session
+            
+            if let data = try? JSONEncoder().encode(session) {
+                try? keychain.set(data, forKey: "auth_session")
+            }
+        } catch {
+            self.errorMessage = error.localizedDescription
         }
+        isLoading = false
     }
-
+    
+    // signOut removes the user session from the keychain
+    func signOut() {
+        isLoading = true
+        session = nil
+        try? keychain.deleteItem(forKey: "auth_session")
+        isLoading = false
+    }
+    
+    // verifySession returns true of false if the users session is still valid
+    func verifySession() async -> Bool {
+        // if there is no token return false
+        guard let token = session?.token.token else { return false }
+        
+        // if the user is verified with the token return true
+        do {
+            let user = try await authService.verifyUser(withToken: token)
+            let newSession = AuthSessionState(token: session!.token, user: user)
+            session = newSession
+            if let data = try? JSONEncoder().encode(newSession) {
+                try? keychain.set(data, forKey: "auth_session")
+            }
+            return true
+        } catch {
+            print("Failed to verify session:", error)
+        }
+        
+        // otherwise signout and return false
+        signOut()
+        return false
+    }
+    
+    func createUser(email: String, password: String, name: String) async throws {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let result = try await authService.createUser(withEmail: email, password: password, name: name)
+            switch result {
+            case .user(let user):
+                print(user)
+            case .error(let error):
+                print(error)
+            }
+        }
+        isLoading = false
+    }
     
     // Name is valid if its not empty
     func isValidName(name: String) -> Bool {
@@ -93,10 +137,4 @@ class AuthViewModel: ObservableObject {
     func isValidConfirmPassword(password: String, confirmPassword: String) -> Bool {
         return password == confirmPassword
     }
-}
-
-enum AuthError: Error {
-    case invalidURL
-    case invalidResponse
-    case invalidData
 }

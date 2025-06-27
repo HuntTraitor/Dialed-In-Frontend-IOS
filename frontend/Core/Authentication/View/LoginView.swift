@@ -9,12 +9,11 @@ import SwiftUI
 
 
 struct LoginView: View {
+    @EnvironmentObject var viewModel: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var isLoading = false
     @State private var signinToken = ""
-    @StateObject var viewModel = AuthViewModel()
-    @EnvironmentObject var keychainManager: KeychainManager
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
     @State var errorMessage: String?
@@ -56,32 +55,16 @@ struct LoginView: View {
                     Button {
                         isLoading = true
                         Task {
-                            let result: SignInResult
                             do {
-                            result = try await viewModel.signIn(withEmail: email, password: password)
-                            } catch {
-                                errorMessage = "An unknown error occured."
-                                isErrorDialogActive = true
-                                isLoading = false
-                                return
-                            }
-                            
-                            
-                            switch result {
-                            case .token(let token):
-                                isLoading = false
-                                isSuccessDialogActive = true
-                                signinToken = token.token
-                            case .error(let error):
-                                if let errorMessageRaw = error["error"] as? String {
-                                    if errorMessageRaw.contains("could not be found") {
-                                        errorMessage = "An account with this email address does not exist."
-                                    } else if errorMessageRaw.contains("invalid authentication") {
-                                        errorMessage = "Incorrect credentials, please try again"
-                                    }
+                                try await viewModel.signIn(email: email, password: password)
+                                if viewModel.session != nil {
+                                    isSuccessDialogActive = true
                                 } else {
-                                    errorMessage = "An unknown error occurred."
+                                    errorMessage = viewModel.errorMessage ?? "An unknown error occured."
+                                    isErrorDialogActive = true
                                 }
+                            } catch {
+                                errorMessage = viewModel.errorMessage ?? "An unexpected error occurred."
                                 isErrorDialogActive = true
                             }
                             isLoading = false
@@ -116,7 +99,7 @@ struct LoginView: View {
                     
                     
                     NavigationLink {
-                        RegistrationView(viewModel: viewModel)
+                        RegistrationView()
                             .navigationBarBackButtonHidden()
                     } label: {
                         HStack(spacing: 3) {
@@ -136,7 +119,6 @@ struct LoginView: View {
                         message: "Your login was successful!",
                         buttonTitle: "Close",
                         action: {
-                            keychainManager.saveToken(signinToken)
                             isSuccessDialogActive = false
                         }
                     )
@@ -158,10 +140,8 @@ struct LoginView: View {
     }
 }
 
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        @StateObject var keychainManager = KeychainManager()
-        LoginView()
-            .environmentObject(keychainManager)
-    }
+#Preview {
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    return LoginView()
+        .environmentObject(viewModel)
 }

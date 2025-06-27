@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct SettingsView: View {
-    @EnvironmentObject var keychainManager: KeychainManager
+    @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
     @State private var isLoading: Bool = false
     @Bindable private var navigator = NavigationManager.nav
@@ -18,10 +20,12 @@ struct SettingsView: View {
             ZStack {
                 VStack {
                     Text("Settings")
-                    Button("logout") {
+                    
+                    Button("Logout") {
                         isLogoutDialogActive = true
                     }
                 }
+                
                 if isLogoutDialogActive {
                     CustomDialog(
                         isActive: $isLogoutDialogActive,
@@ -30,10 +34,15 @@ struct SettingsView: View {
                         buttonTitle: "Close",
                         action: {
                             isLogoutDialogActive = false
-                            keychainManager.deleteToken()
+                            isLoading = true
+                            Task {
+                                viewModel.signOut()
+                                isLoading = false
+                            }
                         }
                     )
                 }
+                
                 if isLoading {
                     LoadingCircle()
                 }
@@ -44,8 +53,9 @@ struct SettingsView: View {
     }
 }
 
+
 #Preview {
-    let keychainManager = KeychainManager()
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     return SettingsView()
-        .environmentObject(keychainManager)
+        .environmentObject(viewModel)
 }

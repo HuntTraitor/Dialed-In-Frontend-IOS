@@ -9,12 +9,12 @@ import SwiftUI
 import SimpleKeychain
 
 struct ContentView: View {
-    @EnvironmentObject var keychainManager: KeychainManager
+    @EnvironmentObject var authViewModel: AuthViewModel
     @Bindable private var navigator = NavigationManager.nav
     
     var body: some View {
         Group {
-            if keychainManager.getToken() == "" {
+            if !authViewModel.isAuthenticated {
                  LoginView()
              } else {
                  TabView(selection: navigator.tabHandler) {
@@ -37,10 +37,6 @@ struct ContentView: View {
                          .tag(3)
                  }
              }
-        }
-        .onAppear {
-            // Print the token when the view appears
-            print("Token: \(keychainManager.getToken())")
         }
     }
 }
@@ -77,10 +73,8 @@ extension View {
 }
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        @StateObject var keychainManager = KeychainManager()
-        ContentView()
-            .environmentObject(keychainManager)
-    }
+#Preview {
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
+    return ContentView()
+        .environmentObject(viewModel)
 }

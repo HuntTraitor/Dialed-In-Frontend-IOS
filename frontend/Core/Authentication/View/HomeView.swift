@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var keychainManager: KeychainManager
-    @StateObject var viewModel = AuthViewModel()
+    @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
     @State private var isLoading: Bool = true
     @Bindable private var navigator = NavigationManager.nav
@@ -20,33 +19,26 @@ struct HomeView: View {
                 }
             }
             .onAppear {
-                if viewModel.currentUser == nil {
-                    fetchUserInfoFromToken()
+                Task {
+                    if viewModel.user == nil {
+                        let success = await viewModel.verifySession()
+                        if !success {
+                            viewModel.signOut()
+                        }
+                    }
+                    isLoading = false
                 }
-                isLoading = false
             }
             .addToolbar()
             .addNavigationSupport()
         }
     }
-    
-    private func fetchUserInfoFromToken() {
-        Task {
-            do {
-                try await viewModel.verifyUser(withToken: keychainManager.getToken())
-            } catch {
-                print(error)
-                keychainManager.deleteToken()
-                return
-            }
-        }
-    }
 }
 
 #Preview {
-    let keychainManager = KeychainManager()
+    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     return HomeView()
-        .environmentObject(keychainManager)
+        .environmentObject(viewModel)
 }
 
 extension View {
