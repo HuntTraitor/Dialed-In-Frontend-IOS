@@ -91,8 +91,6 @@ struct AuthViewModelTests {
         #expect(viewModel.user == nil)
         #expect(viewModel.token == nil)
         #expect(viewModel.errorMessage == nil)
-        
-        
     }
 }
 
