@@ -91,7 +91,7 @@ class AuthViewModel: ObservableObject {
             }
             return true
         } catch {
-            print("Failed to verify session:", error)
+            self.errorMessage = error.localizedDescription
         }
         
         // otherwise signout and return false
@@ -102,18 +102,22 @@ class AuthViewModel: ObservableObject {
     func createUser(email: String, password: String, name: String) async throws {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let result = try await authService.createUser(withEmail: email, password: password, name: name)
             switch result {
             case .user(let user):
                 print(user)
-            case .error(let error):
-                print(error)
+            case .error(let errorDict):
+                errorMessage = errorDict["message"] as? String ?? "An Unexpected Error has Occurred"
             }
+        } catch {
+            errorMessage = error.localizedDescription
         }
+
         isLoading = false
     }
+
     
     // Name is valid if its not empty
     func isValidName(name: String) -> Bool {

@@ -67,7 +67,7 @@ enum SignInResult {
 // EXTENSIONS ------------------------------------------------------------------------------------------------------------------------------
 
 extension User {
-    static var MOCK_USER = User(id: 1, name: "Hunter Tratar", email: "hunterrrisatratar@gmail.com", createdAt: "2024-12-11T23:04:05Z", activated: false)
+    static var MOCK_USER = User(id: 1, name: "Test User", email: "test@example.com", createdAt: "2024-12-11T23:04:05Z", activated: false)
 }
 
 extension Token {

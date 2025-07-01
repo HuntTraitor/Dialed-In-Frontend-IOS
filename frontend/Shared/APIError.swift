@@ -37,13 +37,6 @@ extension APIError: LocalizedError {
     }
 }
 
-enum MockErrorType {
-    case requestFailed
-    case invalidStatusCode
-    case jsonParsingFailure
-    case unknownError
-    case none
-}
 enum DummyError: Error {
     case someError
 }
