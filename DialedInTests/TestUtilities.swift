@@ -9,20 +9,21 @@ import Foundation
 import Testing
 @testable import DialedIn
 
-func testErrorHandling<VM: AnyObject>(
-    for errorType: MockErrorType,
-    createViewModel: (MockMethodService) -> VM,
+func testErrorHandling<VM: AnyObject, Service: MockServiceWithError>(
+    errorType: MockErrorType,
+    createService: () -> Service,
+    createViewModel: (Service) -> VM,
     performFetch: @MainActor (VM) async -> Void,
     verify: @MainActor (VM) -> Void
 ) async {
-    let mockService = MockMethodService()
-    mockService.errorType = errorType
-    let viewModel = createViewModel(mockService)
-
+    var service = createService()
+    service.errorType = errorType
+    let viewModel = createViewModel(service)
     await performFetch(viewModel)
     await MainActor.run {
         verify(viewModel)
     }
 }
+
 
 

@@ -5,7 +5,7 @@
 //  Created by Hunter Tratar on 6/26/25.
 //
 
-final class MockMethodService: MethodService {
+final class MockMethodService: MethodService, MockServiceWithError {
     var errorType: MockErrorType = .none
     func fetchMethods() async throws -> [Method] {
         switch errorType {
