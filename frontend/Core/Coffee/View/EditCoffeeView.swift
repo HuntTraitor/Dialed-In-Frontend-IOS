@@ -112,6 +112,11 @@ struct EditCoffeeView: View {
                                     print("📤 Updating CoffeeInput with compressed image...")
                                     let updatedCoffee = try await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                                     
+                                    guard let updatedCoffee else {
+                                        print("❌ Update failed: no coffee returned")
+                                        return
+                                    }
+                                    
                                     coffee.name = updatedCoffee.name
                                     coffee.region = updatedCoffee.region
                                     coffee.process = updatedCoffee.process

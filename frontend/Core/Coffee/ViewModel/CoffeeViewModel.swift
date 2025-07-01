@@ -72,30 +72,27 @@ class CoffeeViewModel: ObservableObject {
         isLoading = false
     }
     
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
+    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee? {
         isLoading = true
         errorMessage = nil
-        
+        defer { isLoading = false }
+
         do {
             let result = try await coffeeService.updateCoffee(input: input, token: token)
             switch result {
             case .coffee(let coffee):
                 await fetchCoffees(withToken: token)
-                isLoading = false
                 return coffee
             case .error(let errorDict):
                 let message = errorDict["message"] as? String ?? "Unknown error"
                 errorMessage = message
-                isLoading = false
-                throw APIError.requestFailed(description: message)
+                return nil
             }
         } catch {
             errorMessage = "Failed to update coffee: \(error.localizedDescription)"
-            isLoading = false
-            throw error
+            return nil
         }
     }
-
     
     func isValidName(name: String) -> Bool {
         return name != "" || name.count > 500
