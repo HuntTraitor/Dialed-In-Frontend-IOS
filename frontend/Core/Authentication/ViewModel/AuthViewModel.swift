@@ -14,20 +14,24 @@ class AuthViewModel: ObservableObject {
     private let keychain = SimpleKeychain()
     
     @Published private(set) var session: AuthSessionState?
+    @Published var hasVerifiedSession = false
     @Published var errorMessage: String?
     @Published var isLoading = false
     
     init(authService: AuthService) {
         self.authService = authService
-        
+
         if let data = try? keychain.data(forKey: "auth_session"),
            let savedSession = try? JSONDecoder().decode(AuthSessionState.self, from: data) {
             self.session = savedSession
+            verifySessionAfterLaunch()
+        } else {
+            hasVerifiedSession = true
         }
     }
     
     var isAuthenticated: Bool {
-        return session != nil
+        hasVerifiedSession && session != nil
     }
     
     var user: User? {
@@ -36,6 +40,13 @@ class AuthViewModel: ObservableObject {
     
     var token: String? {
         session?.token.token
+    }
+    
+    func verifySessionAfterLaunch() {
+        Task {
+            _ = await verifySession()
+            hasVerifiedSession = true
+        }
     }
     
     // SignIn signs in the user and sets the session information
