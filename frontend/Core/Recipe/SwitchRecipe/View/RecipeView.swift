@@ -80,6 +80,7 @@ struct RecipeView: View {
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 0) // pushes content up from bottom safe area
         }
+        .addToolbar()
     }
     
     private var mainContent: some View {

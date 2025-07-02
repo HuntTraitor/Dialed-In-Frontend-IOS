@@ -21,7 +21,6 @@ struct MethodListView: View {
             Text("Methods")
                 .padding(.bottom, 20)
                 .italic()
-                .underline()
                 .font(.title)
             Text("Select a method you would like to use")
                 .font(.body)

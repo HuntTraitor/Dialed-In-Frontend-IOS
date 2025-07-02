@@ -33,7 +33,6 @@ struct RecipeListView: View {
                 Text("Recipes")
                     .font(.title)
                     .italic()
-                    .underline()
                     .padding(.top, 40)
                     .padding(.bottom, 10)
                     .padding(.leading, 30)

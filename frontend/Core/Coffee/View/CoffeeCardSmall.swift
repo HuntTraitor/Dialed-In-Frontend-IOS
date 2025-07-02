@@ -16,6 +16,7 @@ struct CoffeeCardSmall: View {
                     ImageView(URL(string: coffee.img!))
                 }
                 .frame(maxWidth: 100, minHeight: 75, maxHeight: .infinity)
+                .padding(.leading, 10)
                 .clipShape(
                     .rect(
                         topLeadingRadius: 15,
@@ -26,7 +27,6 @@ struct CoffeeCardSmall: View {
                 )
                 Text(coffee.name)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .overlay(Rectangle().frame(width: 1, height: nil, alignment: .leading).foregroundColor(Color.black), alignment: .leading)
                 Image(systemName: "arrow.right")
                     .foregroundColor(Color("background"))
                     .padding()
@@ -34,8 +34,8 @@ struct CoffeeCardSmall: View {
             }
             .frame(height: 75)
             .overlay(
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(Color.black, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.gray, lineWidth: 0.5)
             )
         }
     }

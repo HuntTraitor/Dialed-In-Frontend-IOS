@@ -36,7 +36,6 @@ struct CoffeeCard: View {
                             .frame(maxWidth: .infinity)
                             .padding(.top, 30)
                             .font(.custom("Italianno-Regular", size: 45))
-                            .underline()
                         VStack {
                             ImageView(URL(string: coffee.img!))
                         }
@@ -59,7 +58,7 @@ struct CoffeeCard: View {
                                     .offset(y: -8)
                                 
                             }
-                            .border(Color.black)
+                            .border(Color.gray)
                             
                             VStack(spacing: 0) {
                                 Text("Process")
@@ -74,7 +73,7 @@ struct CoffeeCard: View {
                                     .font(.system(size: 12))
                                     .offset(y: -8)
                             }
-                            .border(Color.black)
+                            .border(Color.gray)
                         }
                         
                         
@@ -100,7 +99,7 @@ struct CoffeeCard: View {
                     .frame(width: 350, height: 500)
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.black, lineWidth: 1)
+                            .stroke(Color.gray, lineWidth: 1)
                     )
                 }
                     
@@ -139,6 +138,7 @@ struct CoffeeCard: View {
                 CustomDialog(isActive: $isFailureDeleteDialogActive, title: "Error", message: viewModel.errorMessage!, buttonTitle: "OK", action: {isFailureDeleteDialogActive = false})
             }
         }
+        .addToolbar()
     }
     
     private func deleteAction() {

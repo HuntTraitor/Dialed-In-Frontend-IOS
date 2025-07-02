@@ -24,16 +24,23 @@ struct RecipeCard: View {
                 Text(recipe.info.name)
                     .italic()
                     .bold()
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.bottom, 10)
 
                 HStack {
-                    Image(systemName: "cup.and.heat.waves.fill")
-                        .foregroundColor(Color("background"))
-                    Text("\(recipe.info.gramsIn)g")
+                    HStack {
+                        Image(systemName: "cup.and.heat.waves.fill")
+                            .foregroundColor(Color("background"))
+                        Text("\(recipe.info.gramsIn)g")
+                    }
+                    .padding(.leading, 15)
                     Spacer()
-                    Image(systemName: "drop.fill")
-                        .foregroundColor(Color("background"))
-                    Text("\(recipe.info.mlOut)ml")
+                    HStack {
+                        Image(systemName: "drop.fill")
+                            .foregroundColor(Color("background"))
+                        Text("\(recipe.info.mlOut)ml")
+                    }
+                    .padding(.trailing, 10)
                 }
                 .padding(.bottom, 10)
 
@@ -43,6 +50,8 @@ struct RecipeCard: View {
                     Text(String(format: "%d:%02d", totalTime / 60, totalTime % 60))
                         .bold()
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.leading, 10)
             }
         }
     }

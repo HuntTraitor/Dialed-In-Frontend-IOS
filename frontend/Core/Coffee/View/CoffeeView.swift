@@ -33,7 +33,6 @@ struct CoffeeView: View {
                     Text("Coffees")
                         .font(.title)
                         .italic()
-                        .underline()
                         .padding(.top, 40)
                         .padding(.bottom, 10)
                         .padding(.leading, 30)
@@ -53,7 +52,6 @@ struct CoffeeView: View {
                     }
                     .padding(.top, 40)
                     .italic()
-
                 }
                 
                 SearchBar(text: $searchTerm, placeholder: "Search Coffees")
