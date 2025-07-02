@@ -68,24 +68,24 @@ struct EditCoffeeView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                         }
                         PhotosPicker("Pick a coffee image", selection: $coffeeImageSelection)
-                            .onChange(of: coffeeImageSelection, initial: false) { oldValue, newValue in
-                                Task(priority: .userInitiated) {
-                                    if let newValue {
-                                        if let loadedImageData = try? await newValue.loadTransferable(type: Data.self),
-                                           let loadedImage = UIImage(data: loadedImageData)
-                                        {
-                                            if let resizedData = loadedImage.compressTo(maxSizeInMB: 1) {
-                                                DispatchQueue.main.async {
-                                                    self.coffeeImageObject = UIImage(data: resizedData)
-                                                    self.coffeeImageData = resizedData
-                                                }
-                                            } else {
-                                                print("❌ Compression failed")
+                        .onChange(of: coffeeImageSelection, initial: false) { oldValue, newValue in
+                            Task(priority: .userInitiated) {
+                                if let newValue {
+                                    if let loadedImageData = try? await newValue.loadTransferable(type: Data.self),
+                                       let loadedImage = UIImage(data: loadedImageData)
+                                    {
+                                        if let resizedData = loadedImage.compressTo(maxSizeInKB: 1000) {
+                                            DispatchQueue.main.async {
+                                                self.coffeeImageObject = UIImage(data: resizedData)
+                                                self.coffeeImageData = resizedData
                                             }
+                                        } else {
+                                            print("❌ Compression failed")
                                         }
                                     }
                                 }
                             }
+                        }
                     }
                     
                     Section("Coffee Description") {

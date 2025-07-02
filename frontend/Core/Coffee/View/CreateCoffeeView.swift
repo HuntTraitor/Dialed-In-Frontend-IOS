@@ -59,16 +59,14 @@ struct CreateCoffeeView: View {
                                 Task(priority: .userInitiated) {
                                     if let newValue {
                                         if let loadedImageData = try? await newValue.loadTransferable(type: Data.self),
-                                           let loadedImage = UIImage(data: loadedImageData)
-                                        {
-                                            if let resizedData = loadedImage.compressTo(maxSizeInMB: 1) {
+                                           let loadedImage = UIImage(data: loadedImageData) {
+                                            if let resizedData = loadedImage.compressTo(maxSizeInKB: 1000) {
                                                 DispatchQueue.main.async {
                                                     self.coffeeImageObject = UIImage(data: resizedData)
                                                     self.coffeeImageData = resizedData
                                                 }
-                                                
                                             } else {
-                                                print("❌ Compression failed")
+                                                print("❌ Compression to 100 KB failed")
                                             }
                                         }
                                     }
@@ -122,26 +120,6 @@ struct CreateCoffeeView: View {
             if viewModel.isLoading {
                 LoadingCircle()
             }
-        }
-    }
-}
-
-extension UIImage {
-    func compressTo(maxSizeInMB: Double) -> Data? {
-        let maxSizeInBytes = Int(maxSizeInMB * 1024 * 1024)
-        var compression: CGFloat = 1.0
-        var imageData = self.jpegData(compressionQuality: compression)
-
-        while let data = imageData, data.count > maxSizeInBytes, compression > 0.1 {
-            compression -= 0.1
-            imageData = self.jpegData(compressionQuality: compression)
-        }
-
-        if let finalData = imageData, finalData.count <= maxSizeInBytes {
-            return finalData
-        } else {
-            print("❌ Compression failed to meet the required size")
-            return nil
         }
     }
 }
