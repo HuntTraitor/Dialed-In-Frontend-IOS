@@ -54,14 +54,30 @@ struct CoffeeView: View {
                     .italic()
                 }
                 
-                SearchBar(text: $searchTerm, placeholder: "Search Coffees")
-                    .padding(.horizontal, 10)
-
-                ScrollView {
-                    ForEach(filteredCoffees, id: \.id) { coffee in
-                        CoffeeRow(coffee: coffee, viewModel: viewModel)
-                }
-                    .padding()
+                if viewModel.coffees.isEmpty {
+                    NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
+                        .scaleEffect(0.8)
+                        .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    VStack {
+                        SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+                            .padding(.horizontal, 10)
+                        
+                        if filteredCoffees.isEmpty && !searchTerm.isEmpty {
+                            NoSearchResultsFound(itemName: "coffee")
+                                .scaleEffect(0.8)
+                                .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        } else {
+                            ScrollView {
+                                ForEach(filteredCoffees, id: \.id) { coffee in
+                                    CoffeeRow(coffee: coffee, viewModel: viewModel)
+                                }
+                                .padding()
+                            }
+                        }
+                    }
                 }
             }
             .addToolbar()

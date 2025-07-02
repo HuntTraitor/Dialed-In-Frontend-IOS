@@ -52,31 +52,47 @@ struct RecipeListView: View {
                     CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)))
                 }
             }
-            SearchBar(text: $searchTerm, placeholder: "Search Recipes")
-                .padding(.horizontal, 10)
-            ScrollView {
-                ForEach(filteredRecipes, id: \.self) { recipe in
-                    NavigationLink(
-                        destination: RecipeView(
-                            recipe: recipe
-                        )
-                        .environmentObject(authViewModel)
-                    ) {
-                        RecipeCard(recipe: recipe)
-                            .frame(maxWidth: .infinity, maxHeight: 120)
-                            .padding()
-                            .background(Color(.systemBackground))
-               
-                            
-                            .cornerRadius(15)
-                            .shadow(radius: 2)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 3)
+            
+            if viewModel.recipes.isEmpty {
+                NoResultsFound(itemName: "recipe", systemImage: "book.pages")
+                    .scaleEffect(0.8)
+                    .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                VStack {
+                    SearchBar(text: $searchTerm, placeholder: "Search Recipes")
+                        .padding(.horizontal, 10)
+                    if filteredRecipes.isEmpty && !searchTerm.isEmpty {
+                        NoSearchResultsFound(itemName: "recipe")
+                            .scaleEffect(0.8)
+                            .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        ScrollView {
+                            ForEach(filteredRecipes, id: \.self) { recipe in
+                                NavigationLink(
+                                    destination: RecipeView(
+                                        recipe: recipe
+                                    )
+                                    .environmentObject(authViewModel)
+                                ) {
+                                    RecipeCard(recipe: recipe)
+                                        .frame(maxWidth: .infinity, maxHeight: 120)
+                                        .padding()
+                                        .background(Color(.systemBackground))
+                                    
+                                    
+                                        .cornerRadius(15)
+                                        .shadow(radius: 2)
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 3)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
             }
-            
         }
         .addToolbar()
         .task {
