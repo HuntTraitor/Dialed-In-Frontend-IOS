@@ -155,9 +155,6 @@ struct CreateRecipeView: View {
         }
         
         for (index, phase) in phases.enumerated() {
-            if phase.open {
-                return "Phase \(index + 1): Open must be provided."
-            }
             if phase.time <= 0 {
                 return "Phase \(index + 1): Time must be greater than zero."
             }
