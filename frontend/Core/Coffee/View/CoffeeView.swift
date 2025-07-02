@@ -14,7 +14,7 @@ struct CoffeeView: View {
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
-    @State public var refreshData: Bool = false
+    @State private var hasAppeared: Bool = false
     
     init() {
         let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
@@ -67,7 +67,10 @@ struct CoffeeView: View {
             .addToolbar()
             .addNavigationSupport()
             .task {
-                await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                if !hasAppeared {
+                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    hasAppeared = true
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ import SwiftUI
 struct MethodListView: View {
     @StateObject private var viewModel: MethodViewModel
     @State var imageList: [String] = ["v60", "Hario Switch"]
+    @State private var hasAppeared: Bool = false
     
     init() {
         let service = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
@@ -41,8 +42,11 @@ struct MethodListView: View {
         }
         .padding()
         .task {
-            do {
-                await viewModel.fetchMethods()
+            if !hasAppeared {
+                do {
+                    await viewModel.fetchMethods()
+                }
+                hasAppeared = true
             }
         }
     }

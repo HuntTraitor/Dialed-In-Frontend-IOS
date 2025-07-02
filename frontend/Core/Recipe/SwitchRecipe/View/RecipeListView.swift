@@ -13,6 +13,7 @@ struct RecipeListView: View {
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
+    @State private var hasApeared: Bool = false
     let curMethod: Method
     
     init(curMethod: Method) {
@@ -79,10 +80,13 @@ struct RecipeListView: View {
         }
         .addToolbar()
         .task {
-            do {
-                try await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
-            } catch {
-                print("Error getting recipes: \(error)")
+            if !hasApeared {
+                do {
+                    try await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
+                } catch {
+                    print("Error getting recipes: \(error)")
+                }
+                hasApeared = true
             }
         }
     }
