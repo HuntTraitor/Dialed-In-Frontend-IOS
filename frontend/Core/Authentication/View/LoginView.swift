@@ -16,7 +16,7 @@ struct LoginView: View {
     @State private var signinToken = ""
     @State var isSuccessDialogActive: Bool = false
     @State var isErrorDialogActive: Bool = false
-    @State var errorMessage: String?
+//    @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
@@ -60,11 +60,9 @@ struct LoginView: View {
                                 if viewModel.session != nil {
                                     isSuccessDialogActive = true
                                 } else {
-                                    errorMessage = viewModel.errorMessage ?? "An unknown error occured."
                                     isErrorDialogActive = true
                                 }
                             } catch {
-                                errorMessage = viewModel.errorMessage ?? "An unexpected error occurred."
                                 isErrorDialogActive = true
                             }
                             isLoading = false
@@ -127,7 +125,7 @@ struct LoginView: View {
                     CustomDialog(
                         isActive: $isSuccessDialogActive,
                         title: "Error",
-                        message: errorMessage ?? "An unexpected error has occured",
+                        message: viewModel.errorMessage ?? "An unexpected error has occured",
                         buttonTitle: "Close",
                         action: {isErrorDialogActive = false}
                     )

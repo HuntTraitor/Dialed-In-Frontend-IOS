@@ -32,10 +32,17 @@ final class DefaultAuthService: AuthService {
             }
             
             guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    return .error(json)
-                } else {
-                    throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+                switch httpResponse.statusCode {
+                case 401:
+                    return .error(["error": "Invalid email or password."])
+                case 404:
+                    return .error(["error": "We couldn't find an account with that email."])
+                default:
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        return .error(json)
+                    } else {
+                        throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+                    }
                 }
             }
             

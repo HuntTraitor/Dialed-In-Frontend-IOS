@@ -69,7 +69,6 @@ class AuthViewModel: ObservableObject {
             let user = try await authService.verifyUser(withToken: token.token)
             let session = AuthSessionState(token: token, user: user)
             self.session = session
-            
             if let data = try? JSONEncoder().encode(session) {
                 try? keychain.set(data, forKey: "auth_session")
             }
