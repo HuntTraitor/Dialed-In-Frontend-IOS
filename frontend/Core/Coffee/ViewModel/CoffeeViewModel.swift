@@ -22,18 +22,20 @@ class CoffeeViewModel: ObservableObject {
     func fetchCoffees(withToken token: String) async {
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
+
         do {
             let coffees = try await coffeeService.fetchCoffees(withToken: token)
             self.coffees = coffees
         } catch {
             errorMessage = "Failed to fetch coffees: \(error.localizedDescription)"
         }
-        isLoading = false
     }
     
-    func postCoffee(input: CoffeeInput, token: String) async throws {
+    func postCoffee(input: CoffeeInput, token: String) async {
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
         
         do {
             _ = try await coffeeService.postCoffee(input: input, token: token)
@@ -41,12 +43,12 @@ class CoffeeViewModel: ObservableObject {
         } catch {
             errorMessage = "Failed to post coffee: \(error.localizedDescription)"
         }
-        isLoading = false
     }
     
-    func deleteCoffee(coffeeId: Int, token: String) async throws {
+    func deleteCoffee(coffeeId: Int, token: String) async {
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
         
         do {
             let deleted = try await coffeeService.deleteCoffee(coffeeId: coffeeId, token: token)
@@ -56,10 +58,9 @@ class CoffeeViewModel: ObservableObject {
         } catch {
             errorMessage = "Failed to delete coffee: \(error.localizedDescription)"
         }
-        isLoading = false
     }
     
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee? {
+    func updateCoffee(input: CoffeeInput, token: String) async -> Coffee? {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }

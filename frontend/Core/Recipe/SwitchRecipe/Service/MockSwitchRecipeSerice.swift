@@ -7,7 +7,7 @@
 
 final class MockSwitchRecipeSerice: SwitchRecipeService {
     var isErrorThrown = false
-    func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> FetchSwitchRecipeResult {
+    func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> [SwitchRecipe] {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if token != Token.MOCK_TOKEN.token {
@@ -15,17 +15,17 @@ final class MockSwitchRecipeSerice: SwitchRecipeService {
         } else if methodId != Method.MOCK_METHOD.id {
             throw APIError.invalidStatusCode(statusCode: 404)
         } else {
-            return .recipes(SwitchRecipe.MOCK_SWITCH_RECIPES)
+            return SwitchRecipe.MOCK_SWITCH_RECIPES
         }
     }
     
-    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws -> PostSwitchRecipeResult {
+    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws -> SwitchRecipe {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if token != Token.MOCK_TOKEN.token {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .recipe(SwitchRecipe.MOCK_SWITCH_RECIPE)
+            return SwitchRecipe.MOCK_SWITCH_RECIPE
         }
     }
 }

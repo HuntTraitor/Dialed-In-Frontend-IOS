@@ -98,35 +98,31 @@ struct EditCoffeeView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             Task {
-                                do {
-                                    let imageData = coffeeImageData
-                                    let coffeeInput = CoffeeInput(
-                                        id: coffee.id,
-                                        name: tempName,
-                                        region: tempRegion,
-                                        process: tempProcess,
-                                        description: tempDescription,
-                                        img: imageData
-                                    )
-                                    
-                                    print("📤 Updating CoffeeInput with compressed image...")
-                                    let updatedCoffee = try await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
-                                    
-                                    guard let updatedCoffee else {
-                                        print("❌ Update failed: no coffee returned")
-                                        return
-                                    }
-                                    
-                                    coffee.name = updatedCoffee.name
-                                    coffee.region = updatedCoffee.region
-                                    coffee.process = updatedCoffee.process
-                                    coffee.description = updatedCoffee.description
-                                    coffee.img = updatedCoffee.img
-                                    
-                                    presentationMode.wrappedValue.dismiss()
-                                } catch {
-                                    print("❌ Failed to upload coffee: \(error)")
+                                let imageData = coffeeImageData
+                                let coffeeInput = CoffeeInput(
+                                    id: coffee.id,
+                                    name: tempName,
+                                    region: tempRegion,
+                                    process: tempProcess,
+                                    description: tempDescription,
+                                    img: imageData
+                                )
+                                
+                                print("📤 Updating CoffeeInput with compressed image...")
+                                let updatedCoffee = await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
+                                
+                                guard let updatedCoffee else {
+                                    print("❌ Update failed: no coffee returned")
+                                    return
                                 }
+                                
+                                coffee.name = updatedCoffee.name
+                                coffee.region = updatedCoffee.region
+                                coffee.process = updatedCoffee.process
+                                coffee.description = updatedCoffee.description
+                                coffee.img = updatedCoffee.img
+                                
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                         .disabled(!isFormValid)

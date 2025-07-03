@@ -143,7 +143,7 @@ struct CoffeeCard: View {
     
     private func deleteAction() {
         Task {
-            try await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
+            await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
             if viewModel.errorMessage != nil {
                 isChoiceDialogActive = false
                 isFailureDeleteDialogActive = true

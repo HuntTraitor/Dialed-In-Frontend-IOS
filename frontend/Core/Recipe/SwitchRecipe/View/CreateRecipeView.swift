@@ -173,37 +173,32 @@ struct CreateRecipeView: View {
                 self.validationError = validationError
                 return
             }
-
-            do {
-                guard
-                    let gramsInInt = Int(gramsIn),
-                    let mlOutInt = Int(mlOut),
-                    let coffeeId = selectedCoffeeId
-                else {
-                    self.validationError = "Invalid input format."
-                    return
-                }
-                
-                let recipeInfo = SwitchRecipeInput.RecipeInfo(
-                    name: recipeName,
-                    gramsIn: gramsInInt,
-                    mlOut: mlOutInt,
-                    phases: phases
-                )
-                
-                let newRecipe = SwitchRecipeInput(
-                    methodId: 2,
-                    coffeeId: coffeeId,
-                    info: recipeInfo
-                )
-                
-                print("📤 Uploading Recipe...")
-                
-                try await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
-                presentationMode.wrappedValue.dismiss()
-            } catch {
-                self.validationError = "❌ Failed to upload recipe: \(error.localizedDescription)"
+            guard
+                let gramsInInt = Int(gramsIn),
+                let mlOutInt = Int(mlOut),
+                let coffeeId = selectedCoffeeId
+            else {
+                self.validationError = "Invalid input format."
+                return
             }
+            
+            let recipeInfo = SwitchRecipeInput.RecipeInfo(
+                name: recipeName,
+                gramsIn: gramsInInt,
+                mlOut: mlOutInt,
+                phases: phases
+            )
+            
+            let newRecipe = SwitchRecipeInput(
+                methodId: 2,
+                coffeeId: coffeeId,
+                info: recipeInfo
+            )
+            
+            print("📤 Uploading Recipe...")
+            
+            await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
+            presentationMode.wrappedValue.dismiss()
         }
     }
 }

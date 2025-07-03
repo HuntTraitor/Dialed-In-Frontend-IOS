@@ -85,27 +85,23 @@ struct CreateCoffeeView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             Task {
-                                do {
-                                    guard let imageData = coffeeImageData else {
-                                        print("❌ No image selected or failed to convert to Data")
-                                        return
-                                    }
-                                
-                                    let coffeeInput = CoffeeInput(
-                                        id: nil,
-                                        name: coffeeName,
-                                        region: coffeeRegion,
-                                        process: coffeeProcess,
-                                        description: coffeeDescription,
-                                        img: imageData
-                                    )
-                                    
-                                    print("📤 Uploading CoffeeInput with compressed image...")
-                                    try await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
-                                    presentationMode.wrappedValue.dismiss()
-                                } catch {
-                                    print("❌ Failed to upload coffee: \(error)")
+                                guard let imageData = coffeeImageData else {
+                                    print("❌ No image selected or failed to convert to Data")
+                                    return
                                 }
+                            
+                                let coffeeInput = CoffeeInput(
+                                    id: nil,
+                                    name: coffeeName,
+                                    region: coffeeRegion,
+                                    process: coffeeProcess,
+                                    description: coffeeDescription,
+                                    img: imageData
+                                )
+                                
+                                print("📤 Uploading CoffeeInput with compressed image...")
+                                await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                         .disabled(!isFormValid)

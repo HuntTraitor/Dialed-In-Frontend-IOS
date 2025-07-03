@@ -53,7 +53,12 @@ struct RecipeListView: View {
                 }
             }
             
-            if viewModel.recipes.isEmpty {
+            if viewModel.errorMessage != nil {
+                FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
+                    .scaleEffect(0.9)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 10)
+            } else if viewModel.recipes.isEmpty {
                 NoResultsFound(itemName: "recipe", systemImage: "book.pages")
                     .scaleEffect(0.8)
                     .offset(y: -(UIScreen.main.bounds.height) * 0.1)
@@ -94,14 +99,12 @@ struct RecipeListView: View {
                 }
             }
         }
+        .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal)
         .addToolbar()
         .task {
             if !hasApeared {
-                do {
-                    try await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
-                } catch {
-                    print("Error getting recipes: \(error)")
-                }
+                await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
                 hasApeared = true
             }
         }

@@ -6,7 +6,7 @@
 //
 
 protocol SwitchRecipeService {
-    func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> FetchSwitchRecipeResult
-    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws -> PostSwitchRecipeResult
+    func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> [SwitchRecipe]
+    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws -> SwitchRecipe
 }
 

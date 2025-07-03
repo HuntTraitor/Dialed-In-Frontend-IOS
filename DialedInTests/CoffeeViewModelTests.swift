@@ -38,7 +38,7 @@ struct CoffeeViewModelTests {
     @Test func posting_coffee_is_successful() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
+        await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
     }
@@ -46,7 +46,7 @@ struct CoffeeViewModelTests {
     @Test func posting_coffee_with_bad_token_returns_401() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: "badtoken")
+        await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: "badtoken")
         #expect(((viewModel.errorMessage?.contains("401")) != nil))
         #expect(viewModel.coffees.isEmpty)
     }
@@ -55,7 +55,7 @@ struct CoffeeViewModelTests {
         let mockCoffeeService = MockCoffeeService()
         mockCoffeeService.isErrorThrown = true
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
+        await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.coffees.isEmpty)
     }
@@ -63,7 +63,7 @@ struct CoffeeViewModelTests {
     @Test func deleting_coffee_is_successful() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: Token.MOCK_TOKEN.token)
+        await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
     }
@@ -71,7 +71,7 @@ struct CoffeeViewModelTests {
     @Test func deleting_coffee_with_unknown_token_fails() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: "badtoken")
+        await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: "badtoken")
         #expect(((viewModel.errorMessage?.contains("401")) != nil))
         #expect(viewModel.coffees.isEmpty)
     }
@@ -79,7 +79,7 @@ struct CoffeeViewModelTests {
     @Test func deleting_coffee_with_unkown_coffeeId_fails() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.deleteCoffee(coffeeId: 999, token: Token.MOCK_TOKEN.token)
+        await viewModel.deleteCoffee(coffeeId: 999, token: Token.MOCK_TOKEN.token)
         #expect(((viewModel.errorMessage?.contains("404")) != nil))
         #expect(viewModel.coffees.isEmpty)
     }
@@ -88,7 +88,7 @@ struct CoffeeViewModelTests {
         let mockCoffeeService = MockCoffeeService()
         mockCoffeeService.isErrorThrown = true
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        try await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: Token.MOCK_TOKEN.token)
+        await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.coffees.isEmpty)
     }
@@ -96,7 +96,7 @@ struct CoffeeViewModelTests {
     @Test func updating_coffee_is_successful() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        let coffee = try await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
+        let coffee = await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(coffee == Coffee.MOCK_COFFEE)
         #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
         #expect(viewModel.errorMessage == nil)
@@ -105,7 +105,7 @@ struct CoffeeViewModelTests {
     @Test func updating_coffee_with_bad_token_fails() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        let coffee = try await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: "badtoken")
+        let coffee = await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: "badtoken")
         #expect(coffee == nil)
         #expect(viewModel.coffees.isEmpty)
         #expect(((viewModel.errorMessage?.contains("401")) != nil))
@@ -115,7 +115,7 @@ struct CoffeeViewModelTests {
         let mockCoffeeService = MockCoffeeService()
         mockCoffeeService.isErrorThrown = true
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-        let coffee = try await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
+        let coffee = await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(coffee == nil)
         #expect(viewModel.coffees.isEmpty)
         #expect(viewModel.errorMessage != nil)

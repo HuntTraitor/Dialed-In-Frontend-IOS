@@ -19,35 +19,25 @@ class SwitchRecipeViewModel: ObservableObject {
         self.recipeService = recipeService
     }
     
-    func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws {
+    func fetchSwitchRecipes(withToken token: String, methodId: Int) async {
         isLoading = true
         errorMessage = nil
         do {
-            let result = try await recipeService.fetchSwitchRecipes(withToken: token, methodId: methodId)
-            switch result {
-            case .recipes(let recipes):
-                self.recipes = recipes
-            case .error(let errorDict):
-                errorMessage = errorDict["error"] as? String
-            }
+            let recipes = try await recipeService.fetchSwitchRecipes(withToken: token, methodId: methodId)
+            self.recipes = recipes
         } catch {
             errorMessage = "Failed to fetch recipes: \(error.localizedDescription)"
         }
         isLoading = false
     }
     
-    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async throws {
+    func postSwitchRecipe(withToken token: String, recipe: SwitchRecipeInput) async {
         isLoading = true
         errorMessage = nil
         
         do {
-            let result = try await recipeService.postSwitchRecipe(withToken: token, recipe: recipe)
-            switch result {
-            case .recipe:
-                try await fetchSwitchRecipes(withToken: token, methodId: recipe.methodId)
-            case .error(let errorDict):
-                errorMessage = errorDict["error"] as? String
-            }
+            _ = try await recipeService.postSwitchRecipe(withToken: token, recipe: recipe)
+            await fetchSwitchRecipes(withToken: token, methodId: recipe.methodId)
         } catch {
             errorMessage = "Failed to post recipe \(error.localizedDescription)"
         }
