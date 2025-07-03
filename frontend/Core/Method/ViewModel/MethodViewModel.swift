@@ -32,3 +32,4 @@ class MethodViewModel: ObservableObject {
         isLoading = false
     }
 }
+

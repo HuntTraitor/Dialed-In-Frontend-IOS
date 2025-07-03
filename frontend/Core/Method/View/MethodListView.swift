@@ -12,9 +12,13 @@ struct MethodListView: View {
     @State var imageList: [String] = ["v60", "Hario Switch"]
     @State private var hasAppeared: Bool = false
     
-    init() {
-        let service = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
-        _viewModel = StateObject(wrappedValue: MethodViewModel(methodService: service))
+    init(viewModel: MethodViewModel? = nil) {
+        if let viewModel {
+            _viewModel = StateObject(wrappedValue: viewModel)
+        } else {
+            let service = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
+            _viewModel = StateObject(wrappedValue: MethodViewModel(methodService: service))
+        }
     }
     
     var body: some View {
@@ -29,13 +33,21 @@ struct MethodListView: View {
                 .multilineTextAlignment(.center)
             
             
-            VStack {
-                ForEach(Array(zip(viewModel.methods, imageList)), id: \.0.self) { method, image in
-                    NavigationLink {
-                        RecipeListView(curMethod: method) //Metaprogramming
-                    } label: {
-                        MethodCard(title: method.name, image: image)
-                            .padding(5)
+            if viewModel.errorMessage != nil {
+                FetchErrorMessageScreen(errorMessage: viewModel.errorMessage ?? "An unexpected error has occurred")
+                    .scaleEffect(0.9)
+                    .frame(maxHeight: 200) // or adjust to taste
+                    .padding(.top, 40)
+                Spacer()
+            } else {
+                VStack {
+                    ForEach(Array(zip(viewModel.methods, imageList)), id: \.0.self) { method, image in
+                        NavigationLink {
+                            RecipeListView(curMethod: method) //Metaprogramming
+                        } label: {
+                            MethodCard(title: method.name, image: image)
+                                .padding(5)
+                        }
                     }
                 }
             }
@@ -43,9 +55,7 @@ struct MethodListView: View {
         .padding()
         .task {
             if !hasAppeared {
-                do {
-                    await viewModel.fetchMethods()
-                }
+                await viewModel.fetchMethods()
                 hasAppeared = true
             }
         }
@@ -54,6 +64,11 @@ struct MethodListView: View {
 
 #Preview {
     let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    MethodListView()
+    
+    let mockMethodService = MockMethodService()
+    mockMethodService.isErrorThrown = true
+    let mockMethodViewModel = MethodViewModel(methodService: mockMethodService)
+    
+    return MethodListView(viewModel: mockMethodViewModel)
         .environmentObject(viewModel)
 }

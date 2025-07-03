@@ -9,7 +9,7 @@ final class MockMethodService: MethodService {
     var isErrorThrown = false
     func fetchMethods() async throws -> [Method] {
         if isErrorThrown {
-            throw APIError.unknownError(error: DummyError.someError)
+            throw APIError.custom(message: "Could not fetch methods, please try again")
         }
         return Method.MOCK_METHODS
     }
