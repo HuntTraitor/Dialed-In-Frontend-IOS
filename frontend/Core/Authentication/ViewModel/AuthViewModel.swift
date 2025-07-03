@@ -50,33 +50,30 @@ class AuthViewModel: ObservableObject {
     }
     
     // SignIn signs in the user and sets the session information
-    func signIn(email: String, password: String) async throws {
+    func signIn(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
-        
+
+        defer { isLoading = false }
+
         do {
             let result = try await authService.signIn(withEmail: email, password: password)
             guard case .token(let token) = result else {
-                
-                // if there is an error, throw the error in the json
-                if case .error(let errorDict) = result {
-                    throw AuthSessionError.unknown(errorDict["error"] as? String ?? "Unknown error")
-                } else {
-                    throw AuthSessionError.unknown("Unknown auth error")
-                }
+                throw AuthSessionError.unknown("Unknown authentication error.")
             }
-            
+
             let user = try await authService.verifyUser(withToken: token.token)
             let session = AuthSessionState(token: token, user: user)
             self.session = session
+
             if let data = try? JSONEncoder().encode(session) {
                 try? keychain.set(data, forKey: "auth_session")
             }
         } catch {
             self.errorMessage = error.localizedDescription
         }
-        isLoading = false
     }
+
     
     // signOut removes the user session from the keychain
     func signOut() {
@@ -109,23 +106,23 @@ class AuthViewModel: ObservableObject {
         return false
     }
     
-    func createUser(email: String, password: String, name: String) async throws {
+    func createUser(email: String, password: String, name: String) async {
         isLoading = true
         errorMessage = nil
+
+        defer { isLoading = false }
 
         do {
             let result = try await authService.createUser(withEmail: email, password: password, name: name)
             switch result {
             case .user(let user):
-                print(user)
-            case .error(let errorDict):
-                errorMessage = errorDict["message"] as? String ?? "An Unexpected Error has Occurred"
+                print("User created: \(user)")
+            default:
+                throw AuthSessionError.unknown("Unexpected response format.")
             }
         } catch {
-            errorMessage = error.localizedDescription
+            self.errorMessage = error.localizedDescription
         }
-
-        isLoading = false
     }
 
     

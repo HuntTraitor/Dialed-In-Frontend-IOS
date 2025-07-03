@@ -15,7 +15,6 @@ final class DefaultAuthService: AuthService {
         self.baseURL = baseURL
     }
     
-    // signIn returns a token identifying the user
     func signIn(withEmail email: String, password: String) async throws -> SignInResult {
         let url = baseURL.appendingPathComponent("tokens/authentication")
         var request = URLRequest(url: url)
@@ -28,34 +27,29 @@ final class DefaultAuthService: AuthService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No Valid Http Request")
+                throw APIError.requestFailed(description: "No valid HTTP response")
             }
-            
+
             guard (200..<300).contains(httpResponse.statusCode) else {
                 switch httpResponse.statusCode {
                 case 401:
-                    return .error(["error": "Invalid email or password."])
+                    throw APIError.custom(message: "Invalid email or password.")
                 case 404:
-                    return .error(["error": "We couldn't find an account with that email."])
+                    throw APIError.custom(message: "We couldn't find an account with that email.")
                 default:
-                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                        return .error(json)
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
                     } else {
                         throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
                     }
                 }
             }
-            
             if let decoded = try? JSONDecoder().decode(AuthenticationTokenResponse.self, from: data) {
                 return .token(decoded.authenticationToken)
+            } else {
+                throw APIError.jsonParsingFailure(error: NSError(domain: "Unable to decode token", code: 0))
             }
-            
-            // If decoding Token fails, try decoding an error
-            if let errorJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return .error(errorJSON)
-            }
-                        
-            throw APIError.jsonParsingFailure(error: NSError(domain: "Invalid response format", code: 0))
         } catch let apiError as APIError {
             throw apiError
         } catch {
@@ -63,7 +57,6 @@ final class DefaultAuthService: AuthService {
         }
     }
     
-    // createUser creates a new user returning a user object
     func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult {
         let url = baseURL.appendingPathComponent("users")
         var request = URLRequest(url: url)
@@ -76,32 +69,32 @@ final class DefaultAuthService: AuthService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No Valid Http Request")
+                throw APIError.requestFailed(description: "No valid HTTP response")
             }
-            
+
             guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    return .error(json)
-                } else {
-                    throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let errorDict = json["error"] as? [String: Any] {
+                    
+                    if let emailError = errorDict["email"] as? String {
+                        throw APIError.custom(message: emailError.prefix(1).capitalized + emailError.dropFirst()) // capitalize first letter
+                    } else if let generalError = errorDict.values.first as? String {
+                        throw APIError.custom(message: generalError)
+                    }
                 }
+                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            do {
-                let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
-                return .user(decoded.user)
-            } catch {
-                throw APIError.jsonParsingFailure(error: error)
-            }
+
+            let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
+            return .user(decoded.user)
+
         } catch let apiError as APIError {
             throw apiError
         } catch {
             throw APIError.unknownError(error: error)
         }
-        
     }
-    
-    // vertifyUser checks if the users token is valid and returns either true or false
+
     func verifyUser(withToken token: String) async throws -> User {
         let url = baseURL.appendingPathComponent("users/verify")
         var request = URLRequest(url: url)
@@ -115,18 +108,16 @@ final class DefaultAuthService: AuthService {
             }
 
             guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("Verification failed with response: \(json)")
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let errorMessage = json["error"] as? String {
+                    throw APIError.custom(message: errorMessage)
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
 
-            do {
-                let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
-                return decoded.user
-            } catch {
-                throw APIError.jsonParsingFailure(error: error)
-            }
+            let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
+            return decoded.user
+
         } catch let apiError as APIError {
             throw apiError
         } catch {

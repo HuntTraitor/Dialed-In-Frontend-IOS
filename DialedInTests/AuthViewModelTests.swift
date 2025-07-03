@@ -13,7 +13,7 @@ struct AuthViewModelTests {
     @Test func user_is_successfully_created() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.createUser(email: "test@example.com", password: "password", name: "Test User")
+        await viewModel.createUser(email: "test@example.com", password: "password", name: "Test User")
         #expect(viewModel.errorMessage == nil)
     }
     
@@ -21,14 +21,14 @@ struct AuthViewModelTests {
         let mockAuthService = MockAuthService()
         mockAuthService.isErrorThrown = true
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.createUser(email: "test@example.com", password: "password", name: "Test User")
+        await viewModel.createUser(email: "test@example.com", password: "password", name: "Test User")
         #expect(viewModel.errorMessage != nil)
     }
     
     @Test func user_sign_in_successful() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "password")
+        await viewModel.signIn(email: "test@example.com", password: "password")
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isAuthenticated)
         #expect(viewModel.user == User.MOCK_USER)
@@ -38,7 +38,7 @@ struct AuthViewModelTests {
     @Test func user_sign_in_fails_with_incorrect_credentials() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "wrongpassword")
+        await viewModel.signIn(email: "test@example.com", password: "wrongpassword")
         #expect(((viewModel.errorMessage?.contains("401")) != nil))
         #expect(viewModel.isAuthenticated == false)
         #expect(viewModel.user == nil)
@@ -49,7 +49,7 @@ struct AuthViewModelTests {
         let mockAuthService = MockAuthService()
         mockAuthService.isErrorThrown = true
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "password")
+        await viewModel.signIn(email: "test@example.com", password: "password")
         #expect(viewModel.errorMessage != nil)
     }
     
@@ -62,14 +62,14 @@ struct AuthViewModelTests {
     @Test func succeeds_to_verify_session_signed_in() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "password")
+        await viewModel.signIn(email: "test@example.com", password: "password")
         #expect(await viewModel.verifySession() == true)
     }
     
     @Test func fails_to_verify_session_error_signs_the_user_out() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "password")
+        await viewModel.signIn(email: "test@example.com", password: "password")
         #expect(await viewModel.verifySession() == true)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isAuthenticated)
@@ -85,7 +85,7 @@ struct AuthViewModelTests {
     @Test func signing_out_user_removes_credentials() async throws {
         let mockAuthService = MockAuthService()
         let viewModel = AuthViewModel(authService: mockAuthService)
-        try await viewModel.signIn(email: "test@example.com", password: "password")
+        await viewModel.signIn(email: "test@example.com", password: "password")
         viewModel.signOut()
         #expect(viewModel.isAuthenticated == false)
         #expect(viewModel.user == nil)

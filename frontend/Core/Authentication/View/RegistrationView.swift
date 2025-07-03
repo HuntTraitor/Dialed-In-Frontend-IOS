@@ -16,8 +16,6 @@ struct RegistrationView: View {
     @State private var isLoading = false
     @Environment(\.dismiss) var dismiss
     @State var isSuccessDialogActive: Bool = false
-    @State var isErrorDialogActive: Bool = false
-    @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
@@ -73,12 +71,9 @@ struct RegistrationView: View {
                 Button {
                     isLoading = true
                     Task {
-                        do {
-                            try await viewModel.createUser(email: email, password: password, name: name)
+                        await viewModel.createUser(email: email, password: password, name: name)
+                        if viewModel.errorMessage == nil {
                             isSuccessDialogActive = true
-                        } catch {
-                            errorMessage = viewModel.errorMessage ?? "An unknown error occurred."
-                            isErrorDialogActive = true
                         }
                         isLoading = false
                     }
@@ -125,13 +120,13 @@ struct RegistrationView: View {
                     }
                 )
             }
-            if isErrorDialogActive {
+            if viewModel.errorMessage != nil {
                 CustomDialog(
                     isActive: $isSuccessDialogActive,
                     title: "Error",
-                    message: errorMessage ?? "An unexpected error has occured",
+                    message: viewModel.errorMessage ?? "An unexpected error has occured",
                     buttonTitle: "Close",
-                    action: {isErrorDialogActive = false}
+                    action: {viewModel.errorMessage = nil}
                 )
             }
             if isLoading {

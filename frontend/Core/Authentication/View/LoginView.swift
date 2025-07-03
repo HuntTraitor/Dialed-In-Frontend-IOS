@@ -15,8 +15,6 @@ struct LoginView: View {
     @State private var isLoading = false
     @State private var signinToken = ""
     @State var isSuccessDialogActive: Bool = false
-    @State var isErrorDialogActive: Bool = false
-//    @State var errorMessage: String?
     
     private var isFormValid: Bool {
         return
@@ -55,15 +53,9 @@ struct LoginView: View {
                     Button {
                         isLoading = true
                         Task {
-                            do {
-                                try await viewModel.signIn(email: email, password: password)
-                                if viewModel.session != nil {
-                                    isSuccessDialogActive = true
-                                } else {
-                                    isErrorDialogActive = true
-                                }
-                            } catch {
-                                isErrorDialogActive = true
+                            await viewModel.signIn(email: email, password: password)
+                            if viewModel.session != nil {
+                                isSuccessDialogActive = true
                             }
                             isLoading = false
                         }
@@ -121,13 +113,13 @@ struct LoginView: View {
                         }
                     )
                 }
-                if isErrorDialogActive {
+                if viewModel.errorMessage != nil {
                     CustomDialog(
                         isActive: $isSuccessDialogActive,
                         title: "Error",
                         message: viewModel.errorMessage ?? "An unexpected error has occured",
                         buttonTitle: "Close",
-                        action: {isErrorDialogActive = false}
+                        action: {viewModel.errorMessage = nil}
                     )
                 }
                 if isLoading {
