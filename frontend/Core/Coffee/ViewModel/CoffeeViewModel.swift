@@ -23,13 +23,8 @@ class CoffeeViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let result = try await coffeeService.fetchCoffees(withToken: token)
-            switch result {
-            case .coffees(let coffees):
-                self.coffees = coffees
-            case .error(let errorDict):
-                errorMessage = errorDict["message"] as? String
-            }
+            let coffees = try await coffeeService.fetchCoffees(withToken: token)
+            self.coffees = coffees
         } catch {
             errorMessage = "Failed to fetch coffees: \(error.localizedDescription)"
         }
@@ -41,13 +36,8 @@ class CoffeeViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let result = try await coffeeService.postCoffee(input: input, token: token)
-            switch result {
-            case .coffee:
-                await fetchCoffees(withToken: token)
-            case .error(let errorDict):
-                errorMessage = errorDict["message"] as? String
-            }
+            _ = try await coffeeService.postCoffee(input: input, token: token)
+            await fetchCoffees(withToken: token)
         } catch {
             errorMessage = "Failed to post coffee: \(error.localizedDescription)"
         }
@@ -59,12 +49,9 @@ class CoffeeViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let result = try await coffeeService.deleteCoffee(coffeeId: coffeeId, token: token)
-            switch result {
-            case .deleted:
-               await fetchCoffees(withToken: token)
-            case .error(let errorDict):
-                errorMessage = errorDict["message"] as? String
+            let deleted = try await coffeeService.deleteCoffee(coffeeId: coffeeId, token: token)
+            if deleted {
+                await fetchCoffees(withToken: token)
             }
         } catch {
             errorMessage = "Failed to delete coffee: \(error.localizedDescription)"
@@ -78,16 +65,9 @@ class CoffeeViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let result = try await coffeeService.updateCoffee(input: input, token: token)
-            switch result {
-            case .coffee(let coffee):
-                await fetchCoffees(withToken: token)
-                return coffee
-            case .error(let errorDict):
-                let message = errorDict["message"] as? String ?? "Unknown error"
-                errorMessage = message
-                return nil
-            }
+            let coffee = try await coffeeService.updateCoffee(input: input, token: token)
+            await fetchCoffees(withToken: token)
+            return coffee
         } catch {
             errorMessage = "Failed to update coffee: \(error.localizedDescription)"
             return nil

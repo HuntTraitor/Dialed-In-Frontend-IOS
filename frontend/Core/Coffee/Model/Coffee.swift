@@ -22,25 +22,25 @@ struct Coffee: Identifiable, Codable, Hashable {
 }
 
 // ENUMS ------------------------------------------------------------------------------------------------------------
-enum FetchCoffeesResult {
-    case coffees([Coffee])
-    case error([String: Any])
-}
-
-enum PostCoffeeResult {
-    case coffee(Coffee)
-    case error([String: Any])
-}
-
-enum DeleteCoffeeResult {
-    case deleted(Bool)
-    case error([String: Any])
-}
-
-enum UpdateCoffeeResult {
-    case coffee(Coffee)
-    case error([String: Any])
-}
+//enum FetchCoffeesResult {
+//    case coffees([Coffee])
+//    case error([String: Any])
+//}
+//
+//enum PostCoffeeResult {
+//    case coffee(Coffee)
+//    case error([String: Any])
+//}
+//
+//enum DeleteCoffeeResult {
+//    case deleted(Bool)
+//    case error([String: Any])
+//}
+//
+//enum UpdateCoffeeResult {
+//    case coffee(Coffee)
+//    case error([String: Any])
+//}
 
 struct MultiCoffeeResponse: Codable {
     var coffees: [Coffee]

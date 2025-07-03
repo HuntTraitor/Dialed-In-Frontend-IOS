@@ -54,7 +54,12 @@ struct CoffeeView: View {
                     .italic()
                 }
                 
-                if viewModel.coffees.isEmpty {
+                if viewModel.errorMessage != nil {
+                    FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
+                        .scaleEffect(0.9)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 10)
+                } else if viewModel.coffees.isEmpty {
                     NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
                         .scaleEffect(0.8)
                         .offset(y: -(UIScreen.main.bounds.height) * 0.1)
@@ -80,6 +85,8 @@ struct CoffeeView: View {
                     }
                 }
             }
+            .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+            .padding(.horizontal)
             .addToolbar()
             .addNavigationSupport()
             .task {

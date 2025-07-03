@@ -7,7 +7,7 @@
 
 final class MockAuthService: AuthService {
     var isErrorThrown = false
-    func signIn(withEmail email: String, password: String) async throws -> SignInResult {
+    func signIn(withEmail email: String, password: String) async throws -> Token {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if email != User.MOCK_USER.email {
@@ -15,15 +15,15 @@ final class MockAuthService: AuthService {
         } else if password != "password" {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .token(Token.MOCK_TOKEN)
+            return Token.MOCK_TOKEN
         }
     }
     
-    func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult {
+    func createUser(withEmail email: String, password: String, name: String) async throws -> User {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else {
-            return .user(User.MOCK_USER)
+            return User.MOCK_USER
         }
     }
         

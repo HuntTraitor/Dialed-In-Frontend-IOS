@@ -6,9 +6,9 @@
 //
 
 protocol CoffeeService {
-    func fetchCoffees(withToken token: String) async throws -> FetchCoffeesResult
-    func postCoffee(input: CoffeeInput, token: String) async throws -> PostCoffeeResult
-    func deleteCoffee(coffeeId: Int, token: String) async throws -> DeleteCoffeeResult
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> UpdateCoffeeResult
+    func fetchCoffees(withToken token: String) async throws -> [Coffee]
+    func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee
+    func deleteCoffee(coffeeId: Int, token: String) async throws -> Bool
+    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee
 }
 

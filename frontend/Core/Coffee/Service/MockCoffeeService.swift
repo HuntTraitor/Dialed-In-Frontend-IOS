@@ -7,27 +7,27 @@
 
 final class MockCoffeeService: CoffeeService {
     var isErrorThrown = false
-    func fetchCoffees(withToken token: String) async throws -> FetchCoffeesResult {
+    func fetchCoffees(withToken token: String) async throws -> [Coffee] {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if token != Token.MOCK_TOKEN.token {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .coffees(Coffee.MOCK_COFFEES)
+            return Coffee.MOCK_COFFEES
         }
     }
     
-    func postCoffee(input: CoffeeInput, token: String) async throws -> PostCoffeeResult {
+    func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if token != Token.MOCK_TOKEN.token {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .coffee(Coffee.MOCK_COFFEE)
+            return Coffee.MOCK_COFFEE
         }
     }
     
-    func deleteCoffee(coffeeId: Int, token: String) async throws -> DeleteCoffeeResult {
+    func deleteCoffee(coffeeId: Int, token: String) async throws -> Bool {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if coffeeId != Coffee.MOCK_COFFEE.id {
@@ -35,17 +35,17 @@ final class MockCoffeeService: CoffeeService {
         } else if token != Token.MOCK_TOKEN.token {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .deleted(true)
+            return true
         }
     }
     
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> UpdateCoffeeResult {
+    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if token != Token.MOCK_TOKEN.token {
             throw APIError.invalidStatusCode(statusCode: 401)
         } else {
-            return .coffee(Coffee.MOCK_COFFEE)
+            return Coffee.MOCK_COFFEE
         }
     }
 }

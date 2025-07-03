@@ -6,8 +6,8 @@
 //
 
 protocol AuthService {
-    func signIn(withEmail email: String, password: String) async throws -> SignInResult
-    func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult
+    func signIn(withEmail email: String, password: String) async throws -> Token
+    func createUser(withEmail email: String, password: String, name: String) async throws -> User
     func verifyUser(withToken token: String) async throws -> User
 }
 

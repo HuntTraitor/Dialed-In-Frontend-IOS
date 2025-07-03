@@ -36,7 +36,7 @@ struct MethodListView: View {
             if viewModel.errorMessage != nil {
                 FetchErrorMessageScreen(errorMessage: viewModel.errorMessage ?? "An unexpected error has occurred")
                     .scaleEffect(0.9)
-                    .frame(maxHeight: 200) // or adjust to taste
+                    .frame(maxHeight: 200)
                     .padding(.top, 40)
                 Spacer()
             } else {

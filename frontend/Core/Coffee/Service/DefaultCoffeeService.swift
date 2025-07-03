@@ -14,43 +14,41 @@ final class DefaultCoffeeService: CoffeeService {
         self.baseURL = baseURL
     }
     
-    func fetchCoffees(withToken token: String) async throws -> FetchCoffeesResult {
+    func fetchCoffees(withToken token: String) async throws -> [Coffee] {
         let url = baseURL.appendingPathComponent("coffees")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
+
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.requestFailed(description: "No valid HTTP response")
             }
-            
+
             guard (200..<300).contains(httpResponse.statusCode) else {
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                     print("Verification failed with response: \(json)")
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            if let decoded = try? JSONDecoder().decode(MultiCoffeeResponse.self, from: data) {
-                return .coffees(decoded.coffees)
+
+            do {
+                let decoded = try JSONDecoder().decode(MultiCoffeeResponse.self, from: data)
+                return decoded.coffees
+            } catch {
+                throw APIError.jsonParsingFailure(error: error)
             }
-            
-            if let errorJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return .error(errorJSON)
-            }
-            
-            throw APIError.jsonParsingFailure(error: NSError(domain: "Invalid response format", code: 0))
-            
+
         } catch let apiError as APIError {
             throw apiError
         } catch {
             throw APIError.unknownError(error: error)
         }
     }
+
     
-    func postCoffee(input: CoffeeInput, token: String) async throws -> PostCoffeeResult {
+    func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
         let url = baseURL.appendingPathComponent("coffees")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -58,11 +56,11 @@ final class DefaultCoffeeService: CoffeeService {
         let boundary = "Boundary-\(UUID().uuidString)"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
         request.httpBody = input.toMultiPartData(boundary: boundary)
-        
+
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
+
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.requestFailed(description: "No valid HTTP response")
             }
@@ -70,19 +68,19 @@ final class DefaultCoffeeService: CoffeeService {
             guard (200..<300).contains(httpResponse.statusCode) else {
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                     print("Upload failed with response: \(json)")
+                    if let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
+                    }
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            if let decoded = try? JSONDecoder().decode(SingleCoffeeResponse.self, from: data) {
-                return .coffee(decoded.coffee)
+
+            do {
+                let decoded = try JSONDecoder().decode(SingleCoffeeResponse.self, from: data)
+                return decoded.coffee
+            } catch {
+                throw APIError.jsonParsingFailure(error: error)
             }
-            
-            if let errorJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return .error(errorJSON)
-            }
-            
-            throw APIError.jsonParsingFailure(error: NSError(domain: "Invalid response format", code: 0))
 
         } catch let apiError as APIError {
             throw apiError
@@ -90,8 +88,9 @@ final class DefaultCoffeeService: CoffeeService {
             throw APIError.unknownError(error: error)
         }
     }
+
     
-    func deleteCoffee(coffeeId: Int, token: String) async throws -> DeleteCoffeeResult {
+    func deleteCoffee(coffeeId: Int, token: String) async throws -> Bool {
         let url = baseURL.appendingPathComponent("coffees/\(coffeeId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -105,20 +104,16 @@ final class DefaultCoffeeService: CoffeeService {
 
             guard (200..<300).contains(httpResponse.statusCode) else {
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("Verification failed with response: \(json)")
+                    print("Delete failed with response: \(json)")
+                    if let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
+                    }
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            if let _ = try? JSONDecoder().decode(DeleteCoffeeResponse.self, from: data) {
-                return .deleted(true)
-            }
-            
-            if let errorJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return .error(errorJSON)
-            }
-            
-            throw APIError.jsonParsingFailure(error: NSError(domain: "Invalid response format", code: 0))
+
+            _ = try? JSONDecoder().decode(DeleteCoffeeResponse.self, from: data)
+            return true
             
         } catch let apiError as APIError {
             throw apiError
@@ -126,18 +121,22 @@ final class DefaultCoffeeService: CoffeeService {
             throw APIError.unknownError(error: error)
         }
     }
+
     
-    func updateCoffee(input: CoffeeInput, token: String) async throws -> UpdateCoffeeResult {
-        let url = baseURL.appendingPathComponent("coffees/\(input.id!)")
+    func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
+        guard let id = input.id else {
+            throw APIError.requestFailed(description: "Missing coffee ID for update.")
+        }
+
+        let url = baseURL.appendingPathComponent("coffees/\(id)")
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
 
         let boundary = "Boundary-\(UUID().uuidString)"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
         request.httpBody = input.toMultiPartData(boundary: boundary)
-        
+
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -146,26 +145,25 @@ final class DefaultCoffeeService: CoffeeService {
 
             guard (200..<300).contains(httpResponse.statusCode) else {
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("Upload failed with response: \(json)")
+                    print("Update failed with response: \(json)")
+                    if let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
+                    }
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            if let decoded = try? JSONDecoder().decode(SingleCoffeeResponse.self, from: data) {
-                return .coffee(decoded.coffee)
+
+            do {
+                let decoded = try JSONDecoder().decode(SingleCoffeeResponse.self, from: data)
+                return decoded.coffee
+            } catch {
+                throw APIError.jsonParsingFailure(error: error)
             }
-            
-            if let errorJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                return .error(errorJSON)
-            }
-            
-            throw APIError.jsonParsingFailure(error: NSError(domain: "Invalid response format", code: 0))
 
         } catch let apiError as APIError {
             throw apiError
         } catch {
             throw APIError.unknownError(error: error)
         }
-        
     }
 }

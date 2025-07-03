@@ -15,7 +15,7 @@ final class DefaultAuthService: AuthService {
         self.baseURL = baseURL
     }
     
-    func signIn(withEmail email: String, password: String) async throws -> SignInResult {
+    func signIn(withEmail email: String, password: String) async throws -> Token {
         let url = baseURL.appendingPathComponent("tokens/authentication")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -46,7 +46,7 @@ final class DefaultAuthService: AuthService {
                 }
             }
             if let decoded = try? JSONDecoder().decode(AuthenticationTokenResponse.self, from: data) {
-                return .token(decoded.authenticationToken)
+                return decoded.authenticationToken
             } else {
                 throw APIError.jsonParsingFailure(error: NSError(domain: "Unable to decode token", code: 0))
             }
@@ -57,7 +57,7 @@ final class DefaultAuthService: AuthService {
         }
     }
     
-    func createUser(withEmail email: String, password: String, name: String) async throws -> CreateUserResult {
+    func createUser(withEmail email: String, password: String, name: String) async throws -> User {
         let url = baseURL.appendingPathComponent("users")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -86,7 +86,7 @@ final class DefaultAuthService: AuthService {
             }
 
             let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
-            return .user(decoded.user)
+            return decoded.user
 
         } catch let apiError as APIError {
             throw apiError

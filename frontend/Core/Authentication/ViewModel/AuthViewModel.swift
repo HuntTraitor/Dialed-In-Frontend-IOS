@@ -49,7 +49,6 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    // SignIn signs in the user and sets the session information
     func signIn(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
@@ -57,11 +56,7 @@ class AuthViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let result = try await authService.signIn(withEmail: email, password: password)
-            guard case .token(let token) = result else {
-                throw AuthSessionError.unknown("Unknown authentication error.")
-            }
-
+            let token = try await authService.signIn(withEmail: email, password: password)
             let user = try await authService.verifyUser(withToken: token.token)
             let session = AuthSessionState(token: token, user: user)
             self.session = session
@@ -73,6 +68,7 @@ class AuthViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
+
 
     
     // signOut removes the user session from the keychain
@@ -113,13 +109,7 @@ class AuthViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let result = try await authService.createUser(withEmail: email, password: password, name: name)
-            switch result {
-            case .user(let user):
-                print("User created: \(user)")
-            default:
-                throw AuthSessionError.unknown("Unexpected response format.")
-            }
+            _ = try await authService.createUser(withEmail: email, password: password, name: name)
         } catch {
             self.errorMessage = error.localizedDescription
         }

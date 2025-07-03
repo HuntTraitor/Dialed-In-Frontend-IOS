@@ -47,23 +47,6 @@ struct AuthenticationTokenResponse: Codable {
     }
 }
 
-// ENUMS ------------------------------------------------------------------------------------------------
-
-enum CreateUserResult {
-    case user(User)
-    case error([String: Any])
-}
-
-enum VerifyUserResponse {
-    case user(User)
-    case error([String: Any])
-}
-
-enum SignInResult {
-    case token(Token)
-    case error([String: Any])
-}
-
 // EXTENSIONS ------------------------------------------------------------------------------------------------------------------------------
 
 extension User {
