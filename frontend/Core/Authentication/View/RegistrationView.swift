@@ -17,6 +17,8 @@ struct RegistrationView: View {
     @Environment(\.dismiss) var dismiss
     @State var isSuccessDialogActive: Bool = false
     
+    private let testingID = UIIdentifiers.RegistrationScreen.self
+    
     private var isFormValid: Bool {
         return
             viewModel.isValidEmail(email: email)
@@ -41,6 +43,7 @@ struct RegistrationView: View {
                         placeholder: "Enter Username"
                     )
                         .autocapitalization(.none)
+                        .accessibilityIdentifier(testingID.nameInput)
                     
                     InputView(
                         text: $email,
@@ -48,6 +51,7 @@ struct RegistrationView: View {
                         placeholder: "Enter Email"
                     )
                         .autocapitalization(.none)
+                        .accessibilityIdentifier(testingID.emailInput)
                     
                     InputView(
                         text: $password,
@@ -57,6 +61,7 @@ struct RegistrationView: View {
                     )
                         .autocapitalization(.none)
                         .textContentType(.none)
+                        .accessibilityIdentifier(testingID.passwordInput)
                     
                     InputView(
                         text: $confirmPassword,
@@ -64,6 +69,7 @@ struct RegistrationView: View {
                         placeholder: "Confirm Password",
                         isSecureField: true
                     )
+                    .accessibilityIdentifier(testingID.confirmPasswordInput)
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -92,6 +98,7 @@ struct RegistrationView: View {
                 .padding(.top, 24)
                 .disabled(!isFormValid)
                 .shadow(color: Color.black.opacity(0.2), radius: 8, x: 4, y: 6)
+                .accessibilityIdentifier(testingID.registerButton)
                 
                 Spacer()
                 
@@ -107,6 +114,7 @@ struct RegistrationView: View {
                     .foregroundColor(Color("background"))
                     .font(.system(size: 14))
                 }
+                .accessibilityIdentifier(testingID.loginSwitchButton)
             }
             if isSuccessDialogActive {
                 CustomDialog(
@@ -119,6 +127,7 @@ struct RegistrationView: View {
                         dismiss()
                     }
                 )
+                .accessibilityIdentifier(testingID.successDialogButton)
             }
             if viewModel.errorMessage != nil {
                 CustomDialog(
@@ -128,6 +137,7 @@ struct RegistrationView: View {
                     buttonTitle: "Close",
                     action: {viewModel.errorMessage = nil}
                 )
+                .accessibilityIdentifier(testingID.errorDialogButton)
             }
             if isLoading {
                 LoadingCircle()

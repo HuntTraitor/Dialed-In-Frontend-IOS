@@ -6,38 +6,136 @@
 //
 
 import XCTest
+import SimpleKeychain
 
 final class DialedInUITests: XCTestCase {
-
+    
+    var app: XCUIApplication!
+    
+    let loginScreen = UIIdentifiers.LoginScreen.self
+    let registrationScreen = UIIdentifiers.RegistrationScreen.self
+    let homeScreen = UIIdentifiers.HomeScreen.self
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
+        app.launchArguments.append("--reset-keychain")
+        app.launchArguments.append("--use-dev-server")
+        app.launch()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        app = nil
     }
-
+    
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
+    func test_user_logs_in_successfully() throws {
+        
+        // type email
+        let emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // type password
+        let passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        // tap the signin button
+        app.buttons[loginScreen.singinButton].tap()
+        
+        // check to see signin was successful
+        let methodList = app.buttons[homeScreen.methodList]
+        XCTAssertTrue(methodList.waitForExistence(timeout: 5), "Method list should exist on screen")
     }
-
+    
     @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
+    func test_user_logs_in_with_incorrect_email() throws {
+        // type email
+        let emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("unknown@gmail.com")
+
+        // type password
+        let passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        // tap the signin button
+        app.buttons[loginScreen.singinButton].tap()
+        
+        // check to see signin was successful
+        let errorDialog = app.buttons[loginScreen.errorDialogButton]
+        XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
+        let allStaticTexts = app.staticTexts.allElementsBoundByIndex
+        let found = allStaticTexts.contains { element in
+            element.label.contains("account with that email")
         }
+        XCTAssertTrue(found, "Expected substring not found in any static text")
+    }
+    
+    @MainActor
+    func test_user_logs_in_with_incorrect_password() throws {
+        // type email
+        let emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
+
+        // type password
+        let passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("incorrectpassword")
+        
+        // tap the signin button
+        app.buttons[loginScreen.singinButton].tap()
+        
+        // check to see signin was successful
+        let errorDialog = app.buttons[loginScreen.errorDialogButton]
+        XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
+        let allStaticTexts = app.staticTexts.allElementsBoundByIndex
+        let found = allStaticTexts.contains { element in
+            element.label.contains("Invalid")
+        }
+        XCTAssertTrue(found, "Expected substring not found in any static text")
+    }
+    
+    @MainActor
+    func test_disabled_signin_button() throws {
+        let signInButton = app.buttons[loginScreen.singinButton]
+        
+        let emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
+        
+        let passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        XCTAssertTrue(signInButton.isEnabled, "Sign In button should be enabled")
+        
+        // hunter@gmail. should not work
+        clearText(emailTextField)
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.")
+        XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
+        
+        // huntergmail.com should not work
+        clearText(emailTextField)
+        emailTextField.tap()
+        emailTextField.typeText("huntergmail.com")
+        XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
+        
+        // pass should not work
+        clearText(emailTextField)
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
+        clearText(passwordSecureTextField)
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("pass")
+        XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
+
+        clearText(passwordSecureTextField)
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        XCTAssertTrue(signInButton.isEnabled, "Sign In button should be enabled")
     }
 }

@@ -5,6 +5,8 @@ struct HomeView: View {
     @State private var isLogoutDialogActive: Bool = false
     @State private var isLoading: Bool = true
     @Bindable private var navigator = NavigationManager.nav
+    
+    private let testingID = UIIdentifiers.HomeScreen.self
 
     var body: some View {
         NavigationStack(path: $navigator.mainNavigator) {
@@ -15,6 +17,7 @@ struct HomeView: View {
                     VStack {
                         MethodListView()
                             .padding(.bottom, 70)
+                            .accessibilityIdentifier(testingID.methodList)
                     }
                 }
             }

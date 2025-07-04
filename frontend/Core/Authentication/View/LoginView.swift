@@ -16,6 +16,8 @@ struct LoginView: View {
     @State private var signinToken = ""
     @State var isSuccessDialogActive: Bool = false
     
+    private let testingID = UIIdentifiers.LoginScreen.self
+    
     private var isFormValid: Bool {
         return
             viewModel.isValidEmail(email: email)
@@ -39,6 +41,7 @@ struct LoginView: View {
                             placeholder: "Enter Email"
                         )
                         .autocapitalization(.none)
+                        .accessibilityIdentifier(testingID.emailInput)
                         
                         InputView(
                             text: $password,
@@ -46,6 +49,7 @@ struct LoginView: View {
                             placeholder: "Enter Password",
                             isSecureField: true
                         )
+                        .accessibilityIdentifier(testingID.passwordInput)
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
@@ -74,6 +78,7 @@ struct LoginView: View {
                     .padding(.top, 24)
                     .disabled(!isFormValid)
                     .shadow(color: Color.black.opacity(0.2), radius: 8, x: 4, y: 6)
+                    .accessibilityIdentifier(testingID.singinButton)
                     
                     NavigationLink {
                         
@@ -84,6 +89,7 @@ struct LoginView: View {
                             .fontWeight(.bold)
                             .foregroundColor(Color("background"))
                     }
+                    .accessibilityIdentifier(testingID.forgotPasswordButton)
                     
                     Spacer()
                     
@@ -101,17 +107,7 @@ struct LoginView: View {
                         .foregroundColor(Color("background"))
                         .font(.system(size: 14))
                     }
-                }
-                if isSuccessDialogActive {
-                    CustomDialog(
-                        isActive: $isSuccessDialogActive,
-                        title: "Success",
-                        message: "Your login was successful!",
-                        buttonTitle: "Close",
-                        action: {
-                            isSuccessDialogActive = false
-                        }
-                    )
+                    .accessibilityIdentifier(testingID.registrationSwitchButton)
                 }
                 if viewModel.errorMessage != nil {
                     CustomDialog(
@@ -121,6 +117,7 @@ struct LoginView: View {
                         buttonTitle: "Close",
                         action: {viewModel.errorMessage = nil}
                     )
+                    .accessibilityIdentifier(testingID.errorDialogButton)
                 }
                 if isLoading {
                     LoadingCircle()

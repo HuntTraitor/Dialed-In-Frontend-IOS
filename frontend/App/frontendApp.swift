@@ -11,6 +11,14 @@ import SimpleKeychain
 
 @main
 struct MyApp: App {
+    
+    init() {
+        if CommandLine.arguments.contains("--reset-keychain") {
+            let keychain = SimpleKeychain()
+            try? keychain.deleteItem(forKey: "auth_session")
+        }
+    }
+    
     @StateObject private var authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
 
     var body: some Scene {

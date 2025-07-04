@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC8CF4212E17B43F00DA510D /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FC8CF4202E17B43F00DA510D /* SimpleKeychain */; };
+		FC8CF4272E17C13D00DA510D /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = FC8CF4262E17C13D00DA510D /* Swifter */; };
 		FCE09F332D7BA0B200F1C7BC /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */; };
 /* End PBXBuildFile section */
 
@@ -34,9 +36,22 @@
 		FCA862D32E0F49150061C44C /* DialedInUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DialedInUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FC8CF41F2E17AD9800DA510D /* Exceptions for "frontend" folder in "DialedInUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/UIIdentifiers.swift,
+			);
+			target = FCA862D22E0F49150061C44C /* DialedInUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FC19E47B2D091EE6003438FE /* frontend */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FC8CF41F2E17AD9800DA510D /* Exceptions for "frontend" folder in "DialedInUITests" target */,
+			);
 			path = frontend;
 			sourceTree = "<group>";
 		};
@@ -72,6 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8CF4212E17B43F00DA510D /* SimpleKeychain in Frameworks */,
+				FC8CF4272E17C13D00DA510D /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +191,8 @@
 			);
 			name = DialedInUITests;
 			packageProductDependencies = (
+				FC8CF4202E17B43F00DA510D /* SimpleKeychain */,
+				FC8CF4262E17C13D00DA510D /* Swifter */,
 			);
 			productName = DialedInUITests;
 			productReference = FCA862D32E0F49150061C44C /* DialedInUITests.xctest */;
@@ -213,6 +232,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+				FC8CF4252E17C11000DA510D /* XCRemoteSwiftPackageReference "swifter" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC19E47A2D091EE6003438FE /* Products */;
@@ -577,6 +597,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		FC8CF4252E17C11000DA510D /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
 		FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
@@ -588,6 +616,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FC8CF4202E17B43F00DA510D /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
+		};
+		FC8CF4262E17C13D00DA510D /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC8CF4252E17C11000DA510D /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
 		FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
