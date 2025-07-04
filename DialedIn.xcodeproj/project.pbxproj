@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		FC8CF4212E17B43F00DA510D /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FC8CF4202E17B43F00DA510D /* SimpleKeychain */; };
 		FC8CF4272E17C13D00DA510D /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = FC8CF4262E17C13D00DA510D /* Swifter */; };
+		FCC34F4B2E189462009E6D04 /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = FCC34F4A2E189462009E6D04 /* XCTestApp */; };
+		FCC34F4D2E189462009E6D04 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = FCC34F4C2E189462009E6D04 /* XCTestExtensions */; };
 		FCE09F332D7BA0B200F1C7BC /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +91,8 @@
 			files = (
 				FC8CF4212E17B43F00DA510D /* SimpleKeychain in Frameworks */,
 				FC8CF4272E17C13D00DA510D /* Swifter in Frameworks */,
+				FCC34F4B2E189462009E6D04 /* XCTestApp in Frameworks */,
+				FCC34F4D2E189462009E6D04 /* XCTestExtensions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +197,8 @@
 			packageProductDependencies = (
 				FC8CF4202E17B43F00DA510D /* SimpleKeychain */,
 				FC8CF4262E17C13D00DA510D /* Swifter */,
+				FCC34F4A2E189462009E6D04 /* XCTestApp */,
+				FCC34F4C2E189462009E6D04 /* XCTestExtensions */,
 			);
 			productName = DialedInUITests;
 			productReference = FCA862D32E0F49150061C44C /* DialedInUITests.xctest */;
@@ -233,6 +239,7 @@
 			packageReferences = (
 				FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
 				FC8CF4252E17C11000DA510D /* XCRemoteSwiftPackageReference "swifter" */,
+				FCC34F492E189462009E6D04 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC19E47A2D091EE6003438FE /* Products */;
@@ -605,6 +612,14 @@
 				minimumVersion = 1.5.0;
 			};
 		};
+		FCC34F492E189462009E6D04 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
 		FCE09F312D7BA0AA00F1C7BC /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
@@ -625,6 +640,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FC8CF4252E17C11000DA510D /* XCRemoteSwiftPackageReference "swifter" */;
 			productName = Swifter;
+		};
+		FCC34F4A2E189462009E6D04 /* XCTestApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FCC34F492E189462009E6D04 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			productName = XCTestApp;
+		};
+		FCC34F4C2E189462009E6D04 /* XCTestExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FCC34F492E189462009E6D04 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			productName = XCTestExtensions;
 		};
 		FCE09F322D7BA0B200F1C7BC /* SimpleKeychain */ = {
 			isa = XCSwiftPackageProductDependency;

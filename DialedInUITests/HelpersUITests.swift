@@ -7,16 +7,17 @@
 
 import XCTest
 
-func clearText(_ textField: XCUIElement) {
+func replaceText(_ textField: XCUIElement, with newText: String) {
     guard textField.exists else { return }
     textField.tap()
-    
-    // Select all (optional, if your keyboard supports it)
-    // textField.press(forDuration: 1.0)
-    // app.menuItems["Select All"].tap()  // sometimes available
-    
-    // Delete existing text by sending delete keys (adjust count as needed)
+
+    // Get the current text
     let currentValue = textField.value as? String ?? ""
+    
+    // Send delete keys to remove it
     let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count)
     textField.typeText(deleteString)
+    
+    // Type the new text
+    textField.typeText(newText)
 }

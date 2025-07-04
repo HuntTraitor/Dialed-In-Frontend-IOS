@@ -1,5 +1,5 @@
 {
-  "originHash" : "ce2ca99bc425a548ad1f4146de0121f8de5601deae3e25439b93db39e3aac041",
+  "originHash" : "e1539a73e9b5f1e217e6ba0a878ba558105b88d1500347047729a5f8bca8826b",
   "pins" : [
     {
       "identity" : "simplekeychain",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "9483a5d459b45c3ffd059f7b55f9638e268632fd",
         "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "xctestextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordBDHG/XCTestExtensions.git",
+      "state" : {
+        "revision" : "3b44aad358897cf85139b46f32902cd60d9e5cb4",
+        "version" : "1.2.1"
       }
     }
   ],

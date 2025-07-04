@@ -14,7 +14,8 @@ final class AuthUITests: XCTestCase {
     let loginScreen = UIIdentifiers.LoginScreen.self
     let registrationScreen = UIIdentifiers.RegistrationScreen.self
     let homeScreen = UIIdentifiers.HomeScreen.self
-    
+    let components = UIIdentifiers.Components.self
+        
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -65,8 +66,8 @@ final class AuthUITests: XCTestCase {
         app.buttons[loginScreen.singinButton].tap()
         
         // check to see signin was unsuccessful
-        let errorDialog = app.buttons[loginScreen.errorDialogButton]
-        XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
+        let successText = app.staticTexts["Error"]
+        XCTAssertTrue(successText.waitForExistence(timeout: 5), "SuccessDialog should appear on screen")
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
         let found = allStaticTexts.contains { element in
             element.label.contains("account with that email")
@@ -90,8 +91,8 @@ final class AuthUITests: XCTestCase {
         app.buttons[loginScreen.singinButton].tap()
         
         // check to see signin was unsuccessful
-        let errorDialog = app.buttons[loginScreen.errorDialogButton]
-        XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
+        let successText = app.staticTexts["Error"]
+        XCTAssertTrue(successText.waitForExistence(timeout: 5), "SuccessDialog should appear on screen")
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
         let found = allStaticTexts.contains { element in
             element.label.contains("Invalid")
@@ -113,29 +114,179 @@ final class AuthUITests: XCTestCase {
         XCTAssertTrue(signInButton.isEnabled, "Sign In button should be enabled")
         
         // hunter@gmail. should not work
-        clearText(emailTextField)
-        emailTextField.tap()
-        emailTextField.typeText("hunter@gmail.")
+        replaceText(emailTextField, with: "hunter@gmail.")
         XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
         
         // huntergmail.com should not work
-        clearText(emailTextField)
-        emailTextField.tap()
-        emailTextField.typeText("huntergmail.com")
+        replaceText(emailTextField, with: "huntergmail.com")
         XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
         
         // pass should not work
-        clearText(emailTextField)
-        emailTextField.tap()
-        emailTextField.typeText("hunter@gmail.com")
-        clearText(passwordSecureTextField)
-        passwordSecureTextField.tap()
-        passwordSecureTextField.typeText("pass")
+        replaceText(emailTextField, with: "hunter@gmail.com")
+        replaceText(passwordSecureTextField, with: "pass")
         XCTAssertFalse(signInButton.isEnabled, "Sign In button should be disabled")
 
-        clearText(passwordSecureTextField)
-        passwordSecureTextField.tap()
-        passwordSecureTextField.typeText("password")
+        replaceText(passwordSecureTextField, with: "password")
         XCTAssertTrue(signInButton.isEnabled, "Sign In button should be enabled")
     }
+    
+    @MainActor
+    func test_register_user_successful() throws {
+        // switch to registration
+        app.buttons[loginScreen.registrationSwitchButton].tap()
+        XCTAssertTrue(app.buttons[registrationScreen.registerButton].exists)
+        
+        let nameTextField = app.textFields[registrationScreen.nameInput]
+        nameTextField.tap()
+        nameTextField.typeText("Test User")
+        
+        let emailTextField = app.textFields[registrationScreen.emailInput]
+        emailTextField.tap()
+        let uuid = UUID().uuidString.prefix(8)
+        let email = "testuser\(uuid)@gmail.com"
+        emailTextField.typeText(email)
+        
+        let passwordSecureTextField = app.secureTextFields[registrationScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        let confirmPasswordSecureTextField = app.secureTextFields[registrationScreen.confirmPasswordInput]
+        confirmPasswordSecureTextField.tap()
+        confirmPasswordSecureTextField.typeText("password")
+        
+        let registerButton = app.buttons[registrationScreen.registerButton]
+        XCTAssertTrue(registerButton.isEnabled, "Register button should be enabled")
+        app.buttons[registrationScreen.registerButton].tap()
+        
+        let successText = app.staticTexts["Success"]
+        XCTAssertTrue(successText.waitForExistence(timeout: 5), "SuccessDialog should appear on screen")
+        
+        app.buttons[components.confirmDialogButton].tap()
+        
+        XCTAssertTrue(app.buttons[loginScreen.singinButton].exists)
+    }
+    
+    @MainActor
+    func test_register_user_email_already_exists() throws {
+        
+        // -------------- FIRST REGISTRATION SUCCESS
+        app.buttons[loginScreen.registrationSwitchButton].tap()
+        XCTAssertTrue(app.buttons[registrationScreen.registerButton].exists)
+        
+        var nameTextField = app.textFields[registrationScreen.nameInput]
+        nameTextField.tap()
+        nameTextField.typeText("Test User")
+        
+        var emailTextField = app.textFields[registrationScreen.emailInput]
+        emailTextField.tap()
+        let uuid = UUID().uuidString.prefix(8)
+        var email = "testuser\(uuid)@gmail.com"
+        emailTextField.typeText(email)
+        
+        var passwordSecureTextField = app.secureTextFields[registrationScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        var confirmPasswordSecureTextField = app.secureTextFields[registrationScreen.confirmPasswordInput]
+        confirmPasswordSecureTextField.tap()
+        confirmPasswordSecureTextField.typeText("password")
+        
+        var registerButton = app.buttons[registrationScreen.registerButton]
+        XCTAssertTrue(registerButton.isEnabled, "Register button should be enabled")
+        app.buttons[registrationScreen.registerButton].tap()
+        
+        var successText = app.staticTexts["Success"]
+        XCTAssertTrue(successText.waitForExistence(timeout: 5), "Success should appear on screen")
+        
+        app.buttons[components.confirmDialogButton].tap()
+        
+        XCTAssertTrue(app.buttons[loginScreen.singinButton].exists)
+        
+        // -------------- SECOND REGISTRATION FAILS
+        app.buttons[loginScreen.registrationSwitchButton].tap()
+        XCTAssertTrue(app.buttons[registrationScreen.registerButton].exists)
+        
+        nameTextField = app.textFields[registrationScreen.nameInput]
+        nameTextField.tap()
+        nameTextField.typeText("Test User")
+        
+        emailTextField = app.textFields[registrationScreen.emailInput]
+        emailTextField.tap()
+        email = "testuser\(uuid)@gmail.com"
+        emailTextField.typeText(email)
+        
+        passwordSecureTextField = app.secureTextFields[registrationScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        confirmPasswordSecureTextField = app.secureTextFields[registrationScreen.confirmPasswordInput]
+        confirmPasswordSecureTextField.tap()
+        confirmPasswordSecureTextField.typeText("password")
+        
+        registerButton = app.buttons[registrationScreen.registerButton]
+        XCTAssertTrue(registerButton.isEnabled, "Register button should be enabled")
+        app.buttons[registrationScreen.registerButton].tap()
+        
+        successText = app.staticTexts["Error"]
+        XCTAssertTrue(successText.waitForExistence(timeout: 5), "Error should appear on screen")
+        
+        app.buttons[components.confirmDialogButton].tap()
+        
+        XCTAssertFalse(app.buttons[loginScreen.singinButton].exists)
+    }
+    
+    @MainActor
+    func test_register_user_button_disabled_at_validation_failure() throws {
+        
+        let registrationButton = app.buttons[registrationScreen.registerButton]
+        
+        app.buttons[loginScreen.registrationSwitchButton].tap()
+        XCTAssertTrue(app.buttons[registrationScreen.registerButton].exists)
+        
+        let nameTextField = app.textFields[registrationScreen.nameInput]
+        nameTextField.tap()
+        nameTextField.typeText("Test User")
+        
+        let emailTextField = app.textFields[registrationScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("testuser@gmail.com")
+        
+        let passwordSecureTextField = app.secureTextFields[registrationScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        let confirmPasswordSecureTextField = app.secureTextFields[registrationScreen.confirmPasswordInput]
+        confirmPasswordSecureTextField.tap()
+        confirmPasswordSecureTextField.typeText("password")
+        
+        XCTAssertTrue(registrationButton.isEnabled, "Registration button should be enabled")
+        
+        //testuser@gmail.
+        replaceText(emailTextField, with: "testuser@gmail.")
+        XCTAssertFalse(registrationButton.isEnabled, "Registration button should not be enabled")
+        
+        //testusergmail.com
+        replaceText(emailTextField, with: "testusergmail.com")
+        XCTAssertFalse(registrationButton.isEnabled, "Registration button should not be enabled")
+        
+        //RESET
+        replaceText(emailTextField, with: "testuser@gmail.com")
+        XCTAssertTrue(registrationButton.isEnabled, "Registration button should be enabled")
+        
+        //non same passwords
+        replaceText(confirmPasswordSecureTextField, with: "passwordnotmatch")
+        XCTAssertFalse(registrationButton.isEnabled, "Registration button should not be enabled")
+        
+        //RESET
+        replaceText(confirmPasswordSecureTextField, with: "password")
+        XCTAssertTrue(registrationButton.isEnabled, "Registration button should be enabled")
+        
+        //name is null
+        replaceText(nameTextField, with: "")
+        XCTAssertFalse(registrationButton.isEnabled, "Registration button should not be enabled")
+        
+        replaceText(nameTextField, with: "test name")
+        XCTAssertTrue(registrationButton.isEnabled, "Registration button should be enabled")
+    }
+    
 }

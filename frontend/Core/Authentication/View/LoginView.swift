@@ -117,7 +117,6 @@ struct LoginView: View {
                         buttonTitle: "Close",
                         action: {viewModel.errorMessage = nil}
                     )
-                    .accessibilityIdentifier(testingID.errorDialogButton)
                 }
                 if isLoading {
                     LoadingCircle()

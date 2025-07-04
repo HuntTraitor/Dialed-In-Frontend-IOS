@@ -127,7 +127,6 @@ struct RegistrationView: View {
                         dismiss()
                     }
                 )
-                .accessibilityIdentifier(testingID.successDialogButton)
             }
             if viewModel.errorMessage != nil {
                 CustomDialog(
@@ -137,7 +136,6 @@ struct RegistrationView: View {
                     buttonTitle: "Close",
                     action: {viewModel.errorMessage = nil}
                 )
-                .accessibilityIdentifier(testingID.errorDialogButton)
             }
             if isLoading {
                 LoadingCircle()

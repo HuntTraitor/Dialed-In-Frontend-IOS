@@ -15,6 +15,8 @@ struct CustomDialog: View {
     let action: () -> ()
     @State private var fadeInOut = false
     
+    private let testingID = UIIdentifiers.Components.self
+    
     var body: some View {
         ZStack {
             Color(.black)
@@ -45,6 +47,7 @@ struct CustomDialog: View {
                     }
                     .padding()
                 }
+                .accessibilityIdentifier(testingID.confirmDialogButton)
                 
             }
             .fixedSize(horizontal: false, vertical: true)

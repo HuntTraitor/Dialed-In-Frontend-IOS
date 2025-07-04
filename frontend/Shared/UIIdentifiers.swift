@@ -9,13 +9,17 @@ import Foundation
 
 enum UIIdentifiers {
     
+    enum Components {
+        static let confirmDialogButton = "Components.button.confirmDialogButton"
+    }
+    
     enum LoginScreen {
         static let emailInput = "LoginScreen.emailInput"
         static let passwordInput = "LoginScreen.passwordInput"
         static let singinButton = "LoginScreen.button.singinButton"
         static let forgotPasswordButton = "LoginScreen.button.forgotPasswordButton"
         static let registrationSwitchButton = "LoginScreen.button.registrationSwitchButton"
-        static let errorDialogButton = "LoginScreen.dialog.errorDialogButton"
+        static let errorDialog = "LoginScreen.dialog.errorDialog"
     }
     
     enum RegistrationScreen {
@@ -25,8 +29,8 @@ enum UIIdentifiers {
         static let confirmPasswordInput = "RegistrationScreen.confirmPasswordInput"
         static let registerButton = "RegistrationScreen.button.registerButton"
         static let loginSwitchButton = "RegistrationScreen.button.loginSwitchButton"
-        static let successDialogButton = "LoginScreen.dialog.successDialogButton"
-        static let errorDialogButton = "LoginScreen.dialog.errorDialogButton"
+        static let successDialog = "RegistrationScreen.dialog.successDialog"
+        static let errorDialog = "RegistrationScreen.dialog.errorDialog"
     }
     
     enum HomeScreen {
