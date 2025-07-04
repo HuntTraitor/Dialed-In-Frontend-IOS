@@ -8,31 +8,30 @@
 import Foundation
 
 enum AppEnvironment {
-    case development
     case production
-    case test
-    
+    case custom(URL)
+
     var baseURL: URL {
         switch self {
-        case .development: return URL(string: "http://localhost:3000/v1/")!
-        case .production: return URL(string: "https://dialedincafe.com/v1/")!
-        case .test: return URL(string: "http://localhost:8080")!
+        case .production:
+            return URL(string: "https://dialedincafe.com/v1/")!
+        case .custom(let url):
+            return url
         }
     }
 }
 
+
 enum EnvironmentManager {
     static var current: AppEnvironment {
-        if CommandLine.arguments.contains("--use-dev-server") {
-            print("Uses dev server")
-            return .development
-        } else if CommandLine.arguments.contains("--use-test-server") {
-            print("Uses test server")
-            return .test
-        } else {
-            print("Uses prod server")
-            return .production
+        let env = ProcessInfo.processInfo.environment
+
+        if let rawURL = env["-base-url"], let url = URL(string: rawURL) {
+            print("Using custom base URL: \(rawURL)")
+            return .custom(url)
         }
+        print("Using production URL")
+        return .production
     }
 }
 

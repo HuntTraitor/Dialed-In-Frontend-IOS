@@ -50,12 +50,13 @@
             ReferencedContainer = "container:DialedIn.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "--use-dev-server"
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "-base-url"
+            value = "http://localhost:3000/v1/"
             isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

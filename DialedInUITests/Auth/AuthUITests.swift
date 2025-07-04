@@ -6,9 +6,8 @@
 //
 
 import XCTest
-import SimpleKeychain
 
-final class DialedInUITests: XCTestCase {
+final class AuthUITests: XCTestCase {
     
     var app: XCUIApplication!
     
@@ -20,7 +19,8 @@ final class DialedInUITests: XCTestCase {
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchArguments.append("--reset-keychain")
-        app.launchArguments.append("--use-dev-server")
+        app.launchArguments.append(contentsOf: ["-UITest", "no-animations"])
+        app.launchEnvironment["-base-url"] = "http://localhost:3000/v1/"
         app.launch()
     }
 
@@ -64,7 +64,7 @@ final class DialedInUITests: XCTestCase {
         // tap the signin button
         app.buttons[loginScreen.singinButton].tap()
         
-        // check to see signin was successful
+        // check to see signin was unsuccessful
         let errorDialog = app.buttons[loginScreen.errorDialogButton]
         XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
@@ -89,7 +89,7 @@ final class DialedInUITests: XCTestCase {
         // tap the signin button
         app.buttons[loginScreen.singinButton].tap()
         
-        // check to see signin was successful
+        // check to see signin was unsuccessful
         let errorDialog = app.buttons[loginScreen.errorDialogButton]
         XCTAssertTrue(errorDialog.waitForExistence(timeout: 5), "An error should appear on screen")
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
