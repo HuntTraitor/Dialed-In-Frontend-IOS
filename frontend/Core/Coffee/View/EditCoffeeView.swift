@@ -135,6 +135,15 @@ struct EditCoffeeView: View {
                     }
                 }
             }
+            if viewModel.errorMessage != nil {
+                CustomDialog(
+                    isActive: .constant(true),
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "An unknown error has occured.",
+                    buttonTitle: "Close",
+                    action: {viewModel.errorMessage = nil}
+                )
+            }
             if viewModel.isLoading {
                 LoadingCircle()
             }
