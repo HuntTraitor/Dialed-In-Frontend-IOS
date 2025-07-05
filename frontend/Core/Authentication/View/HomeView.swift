@@ -17,7 +17,6 @@ struct HomeView: View {
                     VStack {
                         MethodListView()
                             .padding(.bottom, 70)
-                            .accessibilityIdentifier(testingID.methodList)
                     }
                 }
             }

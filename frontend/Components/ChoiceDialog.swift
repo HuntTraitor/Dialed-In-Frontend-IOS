@@ -15,6 +15,8 @@ struct ChoiceDialog: View {
     let action: () -> ()
     @State private var fadeInOut = false
     
+    private let testingID = UIIdentifiers.Components.self
+    
     var body: some View {
         ZStack {
             Color(.black)
@@ -45,6 +47,7 @@ struct ChoiceDialog: View {
                         }
                         .padding()
                     }
+                    .accessibilityIdentifier(testingID.choiceDialogAcceptButton)
                     
                     Button {
                         close()
@@ -60,6 +63,7 @@ struct ChoiceDialog: View {
                         }
                         .padding()
                     }
+                    .accessibilityIdentifier(testingID.choiceDialogRejectButton)
                 }
                 
             }

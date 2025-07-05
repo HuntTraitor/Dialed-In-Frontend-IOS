@@ -27,7 +27,6 @@ enum EnvironmentManager {
         let env = ProcessInfo.processInfo.environment
 
         if let rawURL = env["-base-url"], let url = URL(string: rawURL) {
-            print("Using custom base URL: \(rawURL)")
             return .custom(url)
         }
         print("Using production URL")

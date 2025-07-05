@@ -15,6 +15,8 @@ final class AuthUITests: XCTestCase {
     let registrationScreen = UIIdentifiers.RegistrationScreen.self
     let homeScreen = UIIdentifiers.HomeScreen.self
     let components = UIIdentifiers.Components.self
+    let coffeeScreen = UIIdentifiers.CoffeeScreen.self
+    let methodScreen = UIIdentifiers.MethodScreen.self
         
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -46,7 +48,7 @@ final class AuthUITests: XCTestCase {
         app.buttons[loginScreen.singinButton].tap()
         
         // check to see signin was successful
-        let methodList = app.buttons[homeScreen.methodList]
+        let methodList = app.staticTexts[methodScreen.methodTitle]
         XCTAssertTrue(methodList.waitForExistence(timeout: 5), "Method list should exist on screen")
     }
     
@@ -287,6 +289,57 @@ final class AuthUITests: XCTestCase {
         
         replaceText(nameTextField, with: "test name")
         XCTAssertTrue(registrationButton.isEnabled, "Registration button should be enabled")
+    }
+    
+    @MainActor
+    func test_user_logs_out_and_doesnt_save_last_place() throws {
+        // type email
+        var emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
+
+        // type password
+        var passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        // tap the signin button
+        app.buttons[loginScreen.singinButton].tap()
+        
+        // check to see signin was successful
+        var methodList = app.staticTexts[methodScreen.methodTitle]
+        XCTAssertTrue(methodList.waitForExistence(timeout: 5), "Method list should exist on screen")
+        
+        // tap the coffee navigator
+        app.buttons[homeScreen.coffeeNavigationButton].tap()
+        XCTAssertTrue(app.staticTexts[coffeeScreen.coffeesTitle].exists)
+        
+        // tap logout button
+        app.buttons[homeScreen.logoutButton].tap()
+        XCTAssertTrue(app.buttons[components.choiceDialogAcceptButton].exists)
+        
+        // accept logout
+        app.buttons[components.choiceDialogAcceptButton].tap()
+        XCTAssertFalse(app.staticTexts[coffeeScreen.coffeesTitle].exists)
+        XCTAssertTrue(app.buttons[loginScreen.singinButton].exists)
+        
+        // sign in again
+        emailTextField = app.textFields[loginScreen.emailInput]
+        emailTextField.tap()
+        emailTextField.typeText("hunter@gmail.com")
+
+        // type password
+        passwordSecureTextField = app.secureTextFields[loginScreen.passwordInput]
+        passwordSecureTextField.tap()
+        passwordSecureTextField.typeText("password")
+        
+        // tap the signin button
+        app.buttons[loginScreen.singinButton].tap()
+        
+        // check to see signin was successful
+        methodList = app.staticTexts[methodScreen.methodTitle]
+        XCTAssertTrue(methodList.waitForExistence(timeout: 5), "Method list should exist on screen")
+        XCTAssertFalse(app.staticTexts[coffeeScreen.coffeesTitle].exists)
     }
     
 }

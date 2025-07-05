@@ -16,6 +16,8 @@ struct CoffeeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var hasAppeared: Bool = false
     
+    private let testingID = UIIdentifiers.CoffeeScreen.self
+    
     init() {
         let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
         _viewModel = StateObject(wrappedValue: CoffeeViewModel(coffeeService: service))
@@ -36,6 +38,7 @@ struct CoffeeView: View {
                         .padding(.top, 40)
                         .padding(.bottom, 10)
                         .padding(.leading, 30)
+                        .accessibilityIdentifier(testingID.coffeesTitle)
                     
                     Spacer()
                     

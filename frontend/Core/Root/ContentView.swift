@@ -11,6 +11,10 @@ import SimpleKeychain
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @Bindable private var navigator = NavigationManager.nav
+    @State private var isLogoutDialogOpen = false
+    @State private var lastValidTab = 1
+    
+    private let testingID = UIIdentifiers.HomeScreen.self
 
     var body: some View {
         Group {
@@ -18,24 +22,51 @@ struct ContentView: View {
                 LoginView()
             } else {
                 NavigationStack(path: $navigator.mainNavigator) {
-                    TabView(selection: navigator.tabHandler) {
-                        HomeView()
-                            .tabItem {
-                                Label("Home", systemImage: "house.fill")
+                    ZStack {
+                        TabView(selection: navigator.tabHandler) {
+                            HomeView()
+                                .tabItem {
+                                    Label("Home", systemImage: "house.fill")
+                                        .accessibilityIdentifier(testingID.homeNavigationButton)
+                                }
+                                .tag(1)
+                            
+                            CoffeeView()
+                                .tabItem {
+                                    Label("Coffee", systemImage: "cup.and.saucer.fill")
+                                        .accessibilityIdentifier(testingID.coffeeNavigationButton)
+                                }
+                                .tag(2)
+
+                            Color.clear // dummy tab to trigger dialog
+                                .tabItem {
+                                    Label("Logout", systemImage: "rectangle.portrait.and.arrow.forward")
+                                        .accessibilityIdentifier(testingID.logoutButton)
+                                }
+                                .tag(3)
+
+                        }
+                        .onChange(of: navigator.tabHandler.wrappedValue) { oldTab, newTab in
+                            if newTab == 3 {
+                                isLogoutDialogOpen = true
+                                navigator.tabHandler.wrappedValue = lastValidTab
+                            } else {
+                                lastValidTab = newTab
                             }
-                            .tag(1)
-                        
-                        CoffeeView()
-                            .tabItem {
-                                Label("Coffee", systemImage: "cup.and.saucer.fill")
+                        }
+
+                        if isLogoutDialogOpen {
+                            ChoiceDialog(
+                                isActive: $isLogoutDialogOpen,
+                                title: "Log Out",
+                                message: "Are you sure you want to log out?",
+                                buttonOptions: ["Log Out", "Cancel"]
+                            ) {
+                                authViewModel.signOut()
+                                isLogoutDialogOpen = false
+                                navigator.tabHandler.wrappedValue = 1
                             }
-                            .tag(2)
-                        
-                        SettingsView()
-                            .tabItem {
-                                Label("Settings", systemImage: "gear")
-                            }
-                            .tag(3)
+                        }
                     }
                     .addNavigationSupport()
                     .addToolbar()
@@ -44,6 +75,9 @@ struct ContentView: View {
         }
     }
 }
+
+
+
 
 
 extension View {

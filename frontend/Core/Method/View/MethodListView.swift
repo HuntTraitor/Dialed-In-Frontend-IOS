@@ -12,6 +12,8 @@ struct MethodListView: View {
     @State var imageList: [String] = ["v60", "Hario Switch"]
     @State private var hasAppeared: Bool = false
     
+    private let testingID = UIIdentifiers.MethodScreen.self
+    
     init(viewModel: MethodViewModel? = nil) {
         if let viewModel {
             _viewModel = StateObject(wrappedValue: viewModel)
@@ -27,6 +29,7 @@ struct MethodListView: View {
                 .padding(.bottom, 20)
                 .italic()
                 .font(.title)
+                .accessibilityIdentifier(testingID.methodTitle)
             Text("Select a method you would like to use")
                 .font(.body)
                 .foregroundColor(.gray)

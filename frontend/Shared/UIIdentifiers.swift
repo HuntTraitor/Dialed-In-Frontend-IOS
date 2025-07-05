@@ -11,6 +11,8 @@ enum UIIdentifiers {
     
     enum Components {
         static let confirmDialogButton = "Components.button.confirmDialogButton"
+        static let choiceDialogAcceptButton = "Components.button.choiceDialogAcceptButton"
+        static let choiceDialogRejectButton = "Components.button.choiceDialogRejectButton"
     }
     
     enum LoginScreen {
@@ -35,6 +37,17 @@ enum UIIdentifiers {
     
     enum HomeScreen {
         static let methodList = "HomeScreen.methodList"
+        static let coffeeNavigationButton = "HomeScreen.button.coffeeNavigationButton"
+        static let homeNavigationButton = "HomeScreen.button.homeNavigationButton"
+        static let logoutButton = "HomeScreen.button.logoutButton"
+    }
+    
+    enum CoffeeScreen {
+        static let coffeesTitle = "CoffeeScreen.coffeesTitle"
+    }
+    
+    enum MethodScreen {
+        static let methodTitle = "MethodScreen.methodTitle"
     }
 }
 
