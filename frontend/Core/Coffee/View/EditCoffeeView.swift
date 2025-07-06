@@ -28,9 +28,9 @@ struct EditCoffeeView: View {
         self._coffee = coffee
         self.viewModel = viewModel
         self._tempName = State(initialValue: coffee.wrappedValue.name)
-        self._tempRegion = State(initialValue: coffee.wrappedValue.region)
-        self._tempProcess = State(initialValue: coffee.wrappedValue.process)
-        self._tempDescription = State(initialValue: coffee.wrappedValue.description)
+        self._tempRegion = State(initialValue: coffee.wrappedValue.region?.displayName ?? "-")
+        self._tempProcess = State(initialValue: coffee.wrappedValue.process ?? "-")
+        self._tempDescription = State(initialValue: coffee.wrappedValue.description ?? "-")
     }
     
     private var isFormValid: Bool {
@@ -94,46 +94,46 @@ struct EditCoffeeView: View {
                 }
                 .navigationTitle("Edit Coffee")
                 .navigationBarBackButtonHidden(true)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") {
-                            Task {
-                                let imageData = coffeeImageData
-                                let coffeeInput = CoffeeInput(
-                                    id: coffee.id,
-                                    name: tempName,
-                                    region: tempRegion,
-                                    process: tempProcess,
-                                    description: tempDescription,
-                                    img: imageData
-                                )
-                                
-                                print("📤 Updating CoffeeInput with compressed image...")
-                                let updatedCoffee = await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
-                                
-                                guard let updatedCoffee else {
-                                    print("❌ Update failed: no coffee returned")
-                                    return
-                                }
-                                
-                                coffee.name = updatedCoffee.name
-                                coffee.region = updatedCoffee.region
-                                coffee.process = updatedCoffee.process
-                                coffee.description = updatedCoffee.description
-                                coffee.img = updatedCoffee.img
-                                
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        }
-                        .disabled(!isFormValid)
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel", role: .cancel) {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
-                }
+//                .toolbar {
+//                    ToolbarItem(placement: .confirmationAction) {
+//                        Button("Done") {
+//                            Task {
+//                                let imageData = coffeeImageData
+//                                let coffeeInput = CoffeeInput(
+//                                    id: coffee.id,
+//                                    name: tempName,
+//                                    region: tempRegion,
+//                                    process: tempProcess,
+//                                    description: tempDescription,
+//                                    img: imageData
+//                                )
+//                                
+//                                print("📤 Updating CoffeeInput with compressed image...")
+//                                let updatedCoffee = await viewModel.updateCoffee(input: coffeeInput, token: authViewModel.token ?? "")
+//                                
+//                                guard let updatedCoffee else {
+//                                    print("❌ Update failed: no coffee returned")
+//                                    return
+//                                }
+//                                
+//                                coffee.name = updatedCoffee.name
+//                                coffee.region = updatedCoffee.region
+//                                coffee.process = updatedCoffee.process
+//                                coffee.description = updatedCoffee.description
+//                                coffee.img = updatedCoffee.img
+//                                
+//                                presentationMode.wrappedValue.dismiss()
+//                            }
+//                        }
+//                        .disabled(!isFormValid)
+//                    }
+//                    
+//                    ToolbarItem(placement: .navigationBarLeading) {
+//                        Button("Cancel", role: .cancel) {
+//                            presentationMode.wrappedValue.dismiss()
+//                        }
+//                    }
+//                }
             }
             if viewModel.errorMessage != nil {
                 CustomDialog(
@@ -157,7 +157,8 @@ struct EditCoffeeView: View {
         @State private var sampleCoffee = Coffee(
             id: 1,
             name: "Ethiopian Yirgacheffe",
-            region: "Yirgacheffe, Ethiopia",
+            decaf: false,
+            region: .ethiopiaYirgacheffe,
             process: "Washed",
             description: "Bright and floral with notes of citrus and jasmine",
             img: nil

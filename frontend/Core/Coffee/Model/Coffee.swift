@@ -11,19 +11,20 @@ import UIKit
 struct Coffee: Identifiable, Codable, Hashable {
     var id: Int
     var name: String
+    var roaster: String?
     var decaf: Bool
     var region: Region?
     var process: String?
-    var notes: String?
+    var description: String?
     var originType: OriginType?
     var rating: Rating?
     var roastLevel: RoastLevel?
-    var testingNotes: [TestingNote]?
+    var tastingNotes: [TastingNote]?
     var cost: Double?
     var img: String?
     
     private enum CodingKeys: String, CodingKey {
-        case id, name, region, process, notes, decaf, img
+        case id, name, region, process, description, decaf, img
     }
 }
 
@@ -62,7 +63,7 @@ enum Rating: Int, Codable {
     case five = 5
 }
 
-enum TestingNote: String, CaseIterable, Identifiable {
+enum TastingNote: String, CaseIterable, Identifiable {
     case lemon, lime, orange, grapefruit
     case strawberry, raspberry, blueberry
     case raisin, prune
@@ -257,6 +258,7 @@ struct DeleteCoffeeResponse: Codable {
 struct CoffeeInput: Identifiable {
     let id: Int?
     let name: String
+    let roaster: String?
     let region: Region?
     let process: Process?
     let description: String?
@@ -264,7 +266,7 @@ struct CoffeeInput: Identifiable {
     let originType: OriginType?
     let rating: Rating?
     let roastLevel: RoastLevel?
-    let testingNotes: [TestingNote]?
+    let testingNotes: [TastingNote]?
     let cost: Double?
     let img: Data?
 
@@ -283,6 +285,10 @@ struct CoffeeInput: Identifiable {
 
         if let region = region {
             appendField(name: "region", value: region.displayName)
+        }
+        
+        if let roaster = roaster {
+            appendField(name: "roaster", value: roaster)
         }
 
         if let process = process {
@@ -336,14 +342,15 @@ extension Coffee {
     static var MOCK_COFFEE = Coffee(
         id: 1,
         name: "Milky Cake",
+        roaster: "Dak",
         decaf: false,
         region: .colombia,
         process: "Thermal Shock",
-        notes: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+        description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
         originType: .singleOrigin,
-        rating: .five,
+        rating: .four,
         roastLevel: .medium,
-        testingNotes: [.caramelized, .chocolate, .vanilla],
+        tastingNotes: [.caramelized, .chocolate, .vanilla],
         cost: 24.99,
         img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
     )
@@ -351,12 +358,13 @@ extension Coffee {
     static var MOCK_COFFEE_INPUT = CoffeeInput(
         id: nil,
         name: "Milky Cake",
+        roaster: "Dak",
         region: .colombia,
         process: .custom("Thermal Shock"),
         description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
         decaf: false,
         originType: .singleOrigin,
-        rating: .five,
+        rating: .four,
         roastLevel: .medium,
         testingNotes: [.caramelized, .chocolate, .vanilla],
         cost: 24.99,
@@ -369,14 +377,15 @@ extension Coffee {
         Coffee(
             id: 1,
             name: "Milky Cake",
+            roaster: "Dak Coffee",
             decaf: false,
             region: .colombia,
             process: "Thermal Shock",
-            notes: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
+            description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
             originType: .singleOrigin,
             rating: .five,
             roastLevel: .medium,
-            testingNotes: [.caramelized, .chocolate, .vanilla],
+            tastingNotes: [.caramelized, .chocolate, .vanilla],
             cost: 24.99,
             img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
         ),
@@ -386,11 +395,11 @@ extension Coffee {
             decaf: false,
             region: .ethiopiaSidamo,
             process: "Washed",
-            notes: "Bright and floral with hints of jasmine and blueberry.",
+            description: "Bright and floral with hints of jasmine and blueberry.",
             originType: .singleOrigin,
             rating: .four,
             roastLevel: .light,
-            testingNotes: [.jasmine, .blueberry, .lemon],
+            tastingNotes: [.jasmine, .blueberry, .lemon],
             cost: 28.50,
             img: nil
         ),
@@ -400,11 +409,11 @@ extension Coffee {
             decaf: false,
             region: .guatemalaAntigua,
             process: "Dried",
-            notes: "Rich and balanced with notes of chocolate and nuts.",
+            description: "Rich and balanced with notes of chocolate and nuts.",
             originType: .blend,
             rating: .three,
             roastLevel: .mediumDark,
-            testingNotes: [.chocolate, .hazelnut, .almond],
+            tastingNotes: [.chocolate, .hazelnut, .almond],
             cost: 19.99,
             img: nil
         ),
@@ -414,11 +423,11 @@ extension Coffee {
             decaf: true,
             region: .indonesiaSumatra,
             process: "Roasted",
-            notes: "Earthy and bold with smoky undertones.",
+            description: "Earthy and bold with smoky undertones.",
             originType: .singleOrigin,
             rating: .four,
             roastLevel: .dark,
-            testingNotes: [.smoky, .mustyEarthy, .darkChocolate],
+            tastingNotes: [.smoky, .mustyEarthy, .darkChocolate],
             cost: 22.75,
             img: nil
         )

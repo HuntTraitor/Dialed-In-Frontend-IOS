@@ -18,9 +18,13 @@ struct CoffeeView: View {
     
     private let testingID = UIIdentifiers.CoffeeScreen.self
     
-    init() {
-        let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
-        _viewModel = StateObject(wrappedValue: CoffeeViewModel(coffeeService: service))
+    init(viewModel: CoffeeViewModel? = nil) {
+        if let viewModel {
+            _viewModel = StateObject(wrappedValue: viewModel)
+        } else {
+            let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
+            _viewModel = StateObject(wrappedValue: CoffeeViewModel(coffeeService: service))
+        }
     }
     
     var filteredCoffees: [Coffee] {
@@ -30,72 +34,81 @@ struct CoffeeView: View {
     
     var body: some View {
         NavigationStack(path: $navigator.mainNavigator) {
-            VStack {
-                HStack {
-                    Text("Coffees")
-                        .font(.title)
-                        .italic()
-                        .padding(.top, 40)
-                        .padding(.bottom, 10)
-                        .padding(.leading, 30)
-                        .accessibilityIdentifier(testingID.coffeesTitle)
-                    
-                    Spacer()
-                    
-                    Button {
-                        isShowingCreateCoffeeView = true
-                    } label: {
-                        Label("Add New Coffee", systemImage: "plus")
-                            .font(.system(size: 15))
-                            .bold()
-                            .padding(.trailing, 30)
-                    }
-                    .sheet(isPresented: $isShowingCreateCoffeeView) {
-                        CreateCoffeeView(viewModel: viewModel)
-                    }
-                    .padding(.top, 40)
-                    .italic()
-                }
-                
-                if viewModel.errorMessage != nil {
-                    FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
-                        .scaleEffect(0.9)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 10)
-                } else if viewModel.coffees.isEmpty {
-                    NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
-                        .scaleEffect(0.8)
-                        .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        SearchBar(text: $searchTerm, placeholder: "Search Coffees")
-                            .padding(.horizontal, 10)
+            ZStack {
+                Color(.systemGray6) // light gray backdrop
+                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    HStack {
+                        Text("Coffees")
+                            .font(.title)
+                            .italic()
+                            .padding(.top, 40)
+                            .padding(.bottom, 10)
+                            .padding(.leading, 30)
+                            .accessibilityIdentifier(testingID.coffeesTitle)
                         
-                        if filteredCoffees.isEmpty && !searchTerm.isEmpty {
-                            NoSearchResultsFound(itemName: "coffee")
-                                .scaleEffect(0.8)
-                                .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        } else {
-                            ScrollView {
-                                ForEach(filteredCoffees, id: \.id) { coffee in
-                                    CoffeeRow(coffee: coffee, viewModel: viewModel)
+                        Spacer()
+                        
+                        Button {
+                            isShowingCreateCoffeeView = true
+                        } label: {
+                            Label("Add New Coffee", systemImage: "plus")
+                                .font(.system(size: 15))
+                                .bold()
+                                .padding(.trailing, 30)
+                        }
+                        .sheet(isPresented: $isShowingCreateCoffeeView) {
+                            //                        CreateCoffeeView(viewModel: viewModel)
+                        }
+                        .padding(.top, 40)
+                        .italic()
+                    }
+                    
+                    if viewModel.errorMessage != nil {
+                        FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
+                            .scaleEffect(0.9)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 10)
+                    } else if viewModel.coffees.isEmpty {
+                        NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
+                            .scaleEffect(0.8)
+                            .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        VStack {
+                            SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+                                .padding(.horizontal, 10)
+                            
+                            if filteredCoffees.isEmpty && !searchTerm.isEmpty {
+                                NoSearchResultsFound(itemName: "coffee")
+                                    .scaleEffect(0.8)
+                                    .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            } else {
+                                ScrollView {
+                                    ForEach(filteredCoffees, id: \.id) { coffee in
+                                        VStack {
+                                            CoffeeRow(coffee: coffee, viewModel: viewModel)
+                                        }
+                                        .padding(.vertical, 10)
+                                        .background(Color.white)
+                                        .cornerRadius(10)
+                                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                    }
                                 }
-                                .padding()
                             }
                         }
                     }
                 }
-            }
-            .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
-            .padding(.horizontal)
-            .addToolbar()
-            .addNavigationSupport()
-            .task {
-                if !hasAppeared {
-                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
-                    hasAppeared = true
+                .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+                .padding(.horizontal)
+                .addToolbar()
+                .addNavigationSupport()
+                .task {
+                    if !hasAppeared {
+                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                        hasAppeared = true
+                    }
                 }
             }
         }
@@ -104,6 +117,10 @@ struct CoffeeView: View {
 
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    CoffeeView()
+    
+    let mockCoffeeService = MockCoffeeService()
+    let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
+    
+    CoffeeView(viewModel: mockCoffeeViewModel)
         .environmentObject(authViewModel)
 }

@@ -10,8 +10,6 @@ final class MockCoffeeService: CoffeeService {
     func fetchCoffees(withToken token: String) async throws -> [Coffee] {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
-        } else if token != Token.MOCK_TOKEN.token {
-            throw APIError.invalidStatusCode(statusCode: 401)
         } else {
             return Coffee.MOCK_COFFEES
         }
@@ -20,8 +18,6 @@ final class MockCoffeeService: CoffeeService {
     func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
-        } else if token != Token.MOCK_TOKEN.token {
-            throw APIError.invalidStatusCode(statusCode: 401)
         } else {
             return Coffee.MOCK_COFFEE
         }
@@ -32,8 +28,6 @@ final class MockCoffeeService: CoffeeService {
             throw APIError.unknownError(error: DummyError.someError)
         } else if coffeeId != Coffee.MOCK_COFFEE.id {
             throw APIError.invalidStatusCode(statusCode: 404)
-        } else if token != Token.MOCK_TOKEN.token {
-            throw APIError.invalidStatusCode(statusCode: 401)
         } else {
             return true
         }
@@ -42,8 +36,6 @@ final class MockCoffeeService: CoffeeService {
     func updateCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
-        } else if token != Token.MOCK_TOKEN.token {
-            throw APIError.invalidStatusCode(statusCode: 401)
         } else {
             return Coffee.MOCK_COFFEE
         }

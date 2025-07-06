@@ -25,7 +25,7 @@ struct CoffeeRow: View {
 
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
     CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: viewModel)
         .environmentObject(authViewModel)
 }
