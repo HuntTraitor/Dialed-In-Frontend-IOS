@@ -15,6 +15,7 @@ struct CoffeeView: View {
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
     @State private var hasAppeared: Bool = false
+    @State private var isMinimized: Bool = false
     
     private let testingID = UIIdentifiers.CoffeeScreen.self
     
@@ -35,7 +36,7 @@ struct CoffeeView: View {
     var body: some View {
         NavigationStack(path: $navigator.mainNavigator) {
             ZStack {
-                Color(.systemGray6) // light gray backdrop
+                Color(.systemGray6)
                     .edgesIgnoringSafeArea(.all)
                 VStack {
                     HStack {
@@ -76,8 +77,16 @@ struct CoffeeView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         VStack {
-                            SearchBar(text: $searchTerm, placeholder: "Search Coffees")
-                                .padding(.horizontal, 10)
+                            HStack {
+                                SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+                                    .padding(.horizontal, 10)
+                                Button(action: {
+                                    isMinimized.toggle()
+                                }) {
+                                    Image(systemName: isMinimized ? "chevron.down" : "chevron.up")
+                                }
+                            }
+                            .padding(.bottom, 5)
                             
                             if filteredCoffees.isEmpty && !searchTerm.isEmpty {
                                 NoSearchResultsFound(itemName: "coffee")
@@ -88,12 +97,12 @@ struct CoffeeView: View {
                                 ScrollView {
                                     ForEach(filteredCoffees, id: \.id) { coffee in
                                         VStack {
-                                            CoffeeRow(coffee: coffee, viewModel: viewModel)
+                                            CoffeeRow(coffee: coffee, isMinimized: $isMinimized, viewModel: viewModel)
                                         }
                                         .padding(.vertical, 10)
                                         .background(Color.white)
                                         .cornerRadius(10)
-                                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                        .shadow(color: .black.opacity(0.01), radius: 5, x: 0, y: 2)
                                     }
                                 }
                             }

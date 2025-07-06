@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CoffeeRow: View {
     var coffee: Coffee
+    @Binding var isMinimized: Bool
     @ObservedObject var viewModel: CoffeeViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
 
@@ -17,15 +18,22 @@ struct CoffeeRow: View {
             destination: CoffeeCard(coffee: coffee, viewModel: viewModel)
                 .environmentObject(authViewModel)
         ) {
-            CoffeeCardSmall(coffee: coffee)
+            if isMinimized {
+                CoffeeCardExtraSmall(coffee: coffee)
+            } else {
+                CoffeeCardSmall(coffee: coffee)
+            }
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
 
 #Preview {
+    @Previewable @State var isMinimized = true
+
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
-    CoffeeRow(coffee: Coffee.MOCK_COFFEE, viewModel: viewModel)
+
+    return CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized, viewModel: viewModel)
         .environmentObject(authViewModel)
 }

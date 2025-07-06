@@ -13,10 +13,11 @@ struct CoffeeCardSmall: View {
         VStack {
             HStack {
                 Text(coffee.name)
-                    .padding(.leading, 50)
+                    .padding(.leading, 30)
+                    .lineLimit(1)
                 Spacer()
                 StarRatingView(rating: coffee.rating?.rawValue ?? 0)
-                    .padding(.trailing, 50)
+                    .padding(.trailing, 30)
             }
             Divider()
                 .frame(height: 1)
@@ -75,9 +76,6 @@ struct CoffeeCardSmall: View {
             }
             .padding(.vertical, 8)
         }
-//        .background(Color.white)
-//        .cornerRadius(10)
-//        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
 }
 
