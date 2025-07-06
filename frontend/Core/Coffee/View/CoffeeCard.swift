@@ -6,154 +6,172 @@
 //
 
 import SwiftUI
+import WrappingHStack
 
 struct CoffeeCard: View {
     @State var coffee: Coffee
-    @EnvironmentObject var authViewModel: AuthViewModel
+//    @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State var isChoiceDialogActive: Bool = false
-    @State var isSuccessDeleteDialogActive: Bool = false
-    @State var isFailureDeleteDialogActive: Bool = false
+//    @State var isChoiceDialogActive: Bool = false
+//    @State var isSuccessDeleteDialogActive: Bool = false
+//    @State var isFailureDeleteDialogActive: Bool = false
     @State private var isDetailViewPresented: Bool = false
+//    let title: String
+//    let keyValuePairs: [(String, String)]
+    @State private var isGeneralExpanded = true
+    @State private var isRoastExpanded = true
+    @State private var isTasteExpanded = true
     
     var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Button(action: {
-                        isDetailViewPresented = true
-                    }) {
-                        Text("Edit")
-                            .font(.body)
-                    }
-                    Spacer()
-                }
-                .padding(.leading, 40)
-                ZStack {
-                    VStack(spacing: 0){
-                        Text(coffee.name)
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 30)
-                            .font(.custom("Italianno-Regular", size: 45))
-                        VStack {
-                            ImageView(URL(string: coffee.img!))
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                
+                ZStack(alignment: .topTrailing) {
+                    // Image centered horizontally
+                    HStack {
+                        Spacer()
+                        if let imgString = coffee.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                            ImageView(url)
+                                .frame(width: 200, height: 200)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.top, 16)
                         }
-                        .frame(minHeight: 200, maxHeight: 300)
-                        .padding(.bottom, 10)
-                        
-                        HStack(spacing: 0) {
-                            VStack(spacing: 0) {
-                                Text("Region")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.gray)
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                    .padding(.leading, 4)
-                                    .padding(.top, 4)
-                                    .italic()
-                                
-                                Text(coffee.region?.displayName ?? "-")
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .font(.system(size: 12))
-                                    .offset(y: -8)
-                                
-                            }
-                            .border(Color.gray)
-                            
-                            VStack(spacing: 0) {
-                                Text("Process")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.gray)
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                    .padding(.leading, 4)
-                                    .padding(.top, 4)
-                                    .italic()
-                                Text(coffee.process ?? "-")
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .font(.system(size: 12))
-                                    .offset(y: -8)
-                            }
-                            .border(Color.gray)
-                        }
-                        
-                        
-                        ZStack(alignment: .topLeading) {
-                            Text("Description")
-                                .font(.system(size: 10))
-                                .foregroundColor(.gray)
-                                .padding(4)
-                                .italic()
-                            Text(coffee.description ?? "-")
-                                .font(.footnote)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(nil)
-                                .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
-                                .padding()
-                                .padding(.top, 10)
-                        }
-                    
-                        
                         Spacer()
                     }
-                    
-                    .frame(width: 350, height: 500)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                }
-                    
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color("background"))
-                    .frame(height: 40)
-                    .shadow(radius: 3)
-                    .overlay(
-                        Text("Delete")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                    )
-                    .onTapGesture {
-                        isChoiceDialogActive = true
+
+                    // Edit button in top-right corner
+                    Button(action: {
+                        isDetailViewPresented = true
+                        print("edit button clicked")
+                    }) {
+                        Image(systemName: "pencil")
+                            .padding(10)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 2)
                     }
-                    .padding(.horizontal, 22)
-                    .padding(.top, 10)
+                    .padding([.top, .trailing], 16)
+                }
+
+                // General Section
+                DisclosureGroup(isExpanded: $isGeneralExpanded) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        KeyValueView(key: "Name", value: coffee.name)
+                        Divider()
+                        KeyValueView(key: "Roaster", value: coffee.roaster ?? "-")
+                        Divider()
+                        KeyValueView(key: "Cost", value: String(format: "$%.2f", coffee.cost ?? 0.0))
+                    }
+                    .padding()
+                } label: {
+                    Text("General")
+                        .font(.headline)
+                }
+                .cardStyle()
+
+                // Roast Section
+                DisclosureGroup(isExpanded: $isRoastExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        KeyValueView(key: "Process", value: coffee.process ?? "-")
+                        Divider()
+                        KeyValueView(key: "Origin Type", value: coffee.originType?.rawValue ?? "-")
+                        Divider()
+                        KeyValueView(key: "Roast Level", value: coffee.roastLevel?.rawValue ?? "-")
+                        Divider()
+                        HStack {
+                            Text("Decaf?")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            if coffee.decaf == true {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(Color("background"))
+                                    .font(.title2)
+                            } else {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray)
+                                    .font(.title2)
+                            }
+                        }
+                    }
+                    .padding()
+                } label: {
+                    Text("Roast")
+                        .font(.headline)
+                }
+                .cardStyle()
+
+                // Taste Section
+                DisclosureGroup(isExpanded: $isTasteExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("Rating")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            StarRatingView(rating: coffee.rating?.rawValue ?? 0)
+                        }
+                        Divider()
+                        if let notes = coffee.tastingNotes {
+                            HStack(alignment: .top) {
+                                Text("Taste Notes")
+                                    .foregroundColor(.gray)
+                                TastingNotesView(notes: notes)
+                            }
+                        }
+                        Divider()
+                        HStack(alignment: .top) {
+                            Text("Notes")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            ScrollView {
+                                Text(coffee.description ?? "-")
+                                    .font(.caption)
+                                    .foregroundColor(.primary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(8)
+                            }
+                            .frame(width: 210, height: 120)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                        }
+                    }
+                    .padding()
+                } label: {
+                    Text("Taste")
+                        .font(.headline)
+                }
+                .cardStyle()
             }
-            .sheet(isPresented: $isDetailViewPresented) {
-                EditCoffeeView(coffee: $coffee, viewModel: viewModel)
-            }
-                
-            if isChoiceDialogActive {
-                ChoiceDialog(isActive: $isChoiceDialogActive, title: "Delete", message: "Are you sure you want to delete this item?", buttonOptions: ["Yes", "No"], action: deleteAction)
-            }
-            if viewModel.isLoading {
-                LoadingCircle()
-            }
-            if isSuccessDeleteDialogActive {
-                CustomDialog(isActive: $isSuccessDeleteDialogActive, title: "Succcess", message: "Item deleted successfully", buttonTitle: "OK", action: {
-                    isSuccessDeleteDialogActive = false
-                    presentationMode.wrappedValue.dismiss()
-                })
-            }
-            if isFailureDeleteDialogActive {
-                CustomDialog(isActive: $isFailureDeleteDialogActive, title: "Error", message: viewModel.errorMessage!, buttonTitle: "OK", action: {isFailureDeleteDialogActive = false})
-            }
+            .padding()
         }
-        .addToolbar()
+        .background(Color(.systemGray5))
     }
-    
-    private func deleteAction() {
-        Task {
-            await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
-            if viewModel.errorMessage != nil {
-                isChoiceDialogActive = false
-                isFailureDeleteDialogActive = true
-            } else {
-                isChoiceDialogActive = false
-                isSuccessDeleteDialogActive = true
-            }
+
+
+}
+
+struct KeyValueView: View {
+    var key: String
+    var value: String
+    var body: some View {
+        HStack {
+            Text(key)
+                .foregroundColor(.gray)
+            Spacer()
+            Text(value)
         }
     }
 }
+
+extension View {
+    func cardStyle() -> some View {
+        self
+            .padding(8)
+            .background(Color.white)
+            .cornerRadius(8)
+    }
+}
+
 
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))

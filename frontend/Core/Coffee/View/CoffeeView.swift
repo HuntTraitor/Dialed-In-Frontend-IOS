@@ -83,7 +83,7 @@ struct CoffeeView: View {
                                 Button(action: {
                                     isMinimized.toggle()
                                 }) {
-                                    Image(systemName: isMinimized ? "chevron.down" : "chevron.up")
+                                    Image(systemName: isMinimized ? "chevron.up" : "chevron.down")
                                 }
                             }
                             .padding(.bottom, 5)
