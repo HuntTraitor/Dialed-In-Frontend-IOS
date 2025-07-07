@@ -29,6 +29,8 @@ struct CoffeeCardSmall: View {
                 if let imgString = coffee.img, !imgString.isEmpty, let url = URL(string: imgString) {
                     ImageView(url)
                         .frame(width: 100, height: 100)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.leading, 20)
                 } else {
                     Color.clear
                         .frame(width: 50, height: 100)
@@ -37,14 +39,17 @@ struct CoffeeCardSmall: View {
                 // First column of text
                 VStack(alignment: .leading, spacing: 12) {
                     InfoRow(title: "Roaster", value: coffee.roaster ?? "-")
+                    InfoRow(title: "Region", value: coffee.region?.displayName ?? "-")
                     InfoRow(title: "Process", value: coffee.process ?? "-")
-                    InfoRow(title: "Roast Level", value: coffee.roastLevel?.rawValue ?? "-")
+                    
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // Second column of text
                 VStack(alignment: .leading, spacing: 12) {
-                    InfoRow(title: "Roast Type", value: coffee.originType?.rawValue ?? "-")
+//                    InfoRow(title: "Roast Type", value: coffee.originType?.rawValue ?? "-")
+                    InfoRow(title: "Roast Level", value: coffee.roastLevel?.displayName ?? "-")
+
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Decaff?")
@@ -97,6 +102,6 @@ struct InfoRow: View {
 }
 
 #Preview {
-    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEE)
+    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEES[1])
 }
 

@@ -31,29 +31,36 @@ struct Coffee: Identifiable, Codable, Hashable {
 // ENUMS ------------------------------------------------------------------------------------------------------------
 
 // TODO add new processes
-enum Process: Codable, CaseIterable, Identifiable, Equatable {
+enum Process: Codable, Identifiable, CustomOption, Equatable {
     case washed
     case dried
     case roasted
+    case none
     case custom(String)
-
-    var id: String {
+    
+    // MARK: - Identifiable
+    var id: String { displayName }
+    
+    // MARK: - CustomOption
+    var displayName: String {
         switch self {
         case .washed: return "Washed"
         case .dried: return "Dried"
         case .roasted: return "Roasted"
+        case .none: return "None"
         case .custom(let value): return value
         }
     }
-
-    var displayName: String {
-        id
+    
+    static var predefinedOptions: [Process] {
+        [.washed, .dried, .roasted, .none]
     }
-
-    static var allCases: [Process] {
-        [.washed, .dried, .roasted]
+    
+    static func makeCustom(_ value: String) -> Process {
+        .custom(value)
     }
 }
+
 
 enum Rating: Int, Codable {
     case one = 1
@@ -129,8 +136,7 @@ enum TastingNote: String, CaseIterable, Identifiable {
 }
 
 
-// TODO add a custom region
-enum Region: Hashable, Codable, Identifiable {
+enum Region: Hashable, Codable, Identifiable, CustomOption {
     // General countries and known subregions
     case ethiopia, ethiopiaYirgacheffe, ethiopiaSidamo, ethiopiaHarrar
     case kenya, kenyaNyeri, kenyaKiambu
@@ -155,11 +161,13 @@ enum Region: Hashable, Codable, Identifiable {
     case galapagos
     case philippines
 
-    case unknown
+    case none
     case custom(String)
 
+    // MARK: - Identifiable
     var id: String { displayName }
 
+    // MARK: - CustomOption
     var displayName: String {
         switch self {
         case .ethiopia: return "Ethiopia"
@@ -218,30 +226,71 @@ enum Region: Hashable, Codable, Identifiable {
         case .galapagos: return "Ecuador - Galápagos"
         case .philippines: return "Philippines"
 
-        case .unknown: return "Unknown"
+        case .none: return "None"
         case .custom(let value): return value
         }
+    }
+
+    static var predefinedOptions: [Region] {
+        [
+            .ethiopia, .ethiopiaYirgacheffe, .ethiopiaSidamo, .ethiopiaHarrar,
+            .kenya, .kenyaNyeri, .kenyaKiambu,
+            .rwanda, .burundi, .tanzania, .uganda, .drCongo,
+            .guatemala, .guatemalaAntigua, .guatemalaHuehuetenango,
+            .costaRica, .costaRicaTarrazu,
+            .honduras, .elSalvador, .nicaragua,
+            .panama, .panamaBoquete,
+            .colombia, .colombiaHuila, .colombiaNariño, .colombiaAntioquia,
+            .brazil, .brazilSulDeMinas, .brazilCerrado, .brazilMogiana,
+            .peru, .ecuador, .bolivia,
+            .indonesia, .indonesiaSumatra, .indonesiaJava, .indonesiaSulawesi, .indonesiaBali,
+            .vietnam, .india, .papuaNewGuinea, .thailand,
+            .china, .chinaYunnan,
+            .yemen,
+            .hawaii, .hawaiiKona,
+            .jamaica, .jamaicaBlueMountain,
+            .galapagos, .philippines,
+            .none
+        ]
+    }
+
+    static func makeCustom(_ value: String) -> Region {
+        .custom(value)
     }
 }
 
 
-enum OriginType: String, Codable, CaseIterable, Identifiable {
+
+enum OriginType: String, Codable, Identifiable, Equatable, FixedOption {
     case singleOrigin = "Single Origin"
     case blend = "Blend"
     case unknown = "Unknown"
-
+    
     var id: String { rawValue }
+    var displayName: String {rawValue}
+    
+    static var predefinedOptions: [OriginType] {
+        [.singleOrigin, .blend, .unknown]
+    }
 }
 
-enum RoastLevel: String, Codable, CaseIterable, Identifiable {
+
+enum RoastLevel: String, Codable, Identifiable, Equatable, FixedOption {
     case light = "Light"
     case mediumLight = "Medium Light"
     case medium = "Medium"
     case mediumDark = "Medium Dark"
     case dark = "Dark"
-    
+    case unknown = "Unknown"
+
     var id: String { rawValue }
+    var displayName: String { rawValue }
+
+    static var predefinedOptions: [RoastLevel] {
+        [.light, .mediumLight, .medium, .mediumDark, .dark, .unknown]
+    }
 }
+
 
 struct MultiCoffeeResponse: Codable {
     var coffees: [Coffee]
@@ -300,7 +349,7 @@ struct CoffeeInput: Identifiable {
         }
 
         if let originType = originType {
-            appendField(name: "originType", value: originType.rawValue)
+            appendField(name: "originType", value: originType.displayName)
         }
 
         if let rating = rating {
@@ -308,7 +357,7 @@ struct CoffeeInput: Identifiable {
         }
 
         if let roastLevel = roastLevel {
-            appendField(name: "roastLevel", value: roastLevel.rawValue)
+            appendField(name: "roastLevel", value: roastLevel.displayName)
         }
 
         if let testingNotes = testingNotes {
@@ -401,7 +450,7 @@ extension Coffee {
             roastLevel: .light,
             tastingNotes: [.jasmine, .blueberry, .lemon],
             cost: 28.50,
-            img: nil
+            img: "https://images.squarespace-cdn.com/content/v1/55ecfe19e4b01667f1806baa/1709056782338-HWNUY7HUQMQ97XAT4RW1/Custom-Label-Coffee_8-12oz.jpg?format=1000w"
         ),
         Coffee(
             id: 3,

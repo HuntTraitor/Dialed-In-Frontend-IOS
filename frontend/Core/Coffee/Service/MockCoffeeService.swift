@@ -7,9 +7,12 @@
 
 final class MockCoffeeService: CoffeeService {
     var isErrorThrown = false
+    var noCoffeesFound = false
     func fetchCoffees(withToken token: String) async throws -> [Coffee] {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
+        } else if noCoffeesFound {
+            return []
         } else {
             return Coffee.MOCK_COFFEES
         }

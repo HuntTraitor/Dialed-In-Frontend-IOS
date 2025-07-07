@@ -67,9 +67,9 @@ struct CoffeeView: View {
                     
                     if viewModel.errorMessage != nil {
                         FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
-                            .scaleEffect(0.9)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.top, 10)
+                            .scaleEffect(0.8)
+                            .offset(y: -(UIScreen.main.bounds.height) * 0.1)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if viewModel.coffees.isEmpty {
                         NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
                             .scaleEffect(0.8)
@@ -130,6 +130,6 @@ struct CoffeeView: View {
     let mockCoffeeService = MockCoffeeService()
     let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
     
-    CoffeeView(viewModel: mockCoffeeViewModel)
+    return CoffeeView(viewModel: mockCoffeeViewModel)
         .environmentObject(authViewModel)
 }

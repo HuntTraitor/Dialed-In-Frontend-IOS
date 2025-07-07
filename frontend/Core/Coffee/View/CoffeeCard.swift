@@ -73,11 +73,13 @@ struct CoffeeCard: View {
                 // Roast Section
                 DisclosureGroup(isExpanded: $isRoastExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
+                        KeyValueView(key: "Region", value: coffee.region?.displayName ?? "-")
+                        Divider()
                         KeyValueView(key: "Process", value: coffee.process ?? "-")
                         Divider()
-                        KeyValueView(key: "Origin Type", value: coffee.originType?.rawValue ?? "-")
+                        KeyValueView(key: "Origin Type", value: coffee.originType?.displayName ?? "-")
                         Divider()
-                        KeyValueView(key: "Roast Level", value: coffee.roastLevel?.rawValue ?? "-")
+                        KeyValueView(key: "Roast Level", value: coffee.roastLevel?.displayName ?? "-")
                         Divider()
                         HStack {
                             Text("Decaf?")
