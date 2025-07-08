@@ -22,6 +22,7 @@ struct CreateCoffeeView: View {
     @State private var rating: Int = 0
     @State private var roastLevel: RoastLevel = .unknown
     @State private var cost: Double = 0.0
+    @State private var tasteNotes: [TastingNote] = []
     @State private var imageSelection: PhotosPickerItem?
     @State private var imageObject: UIImage?
     @State private var imageData: Data?
@@ -39,45 +40,7 @@ struct CreateCoffeeView: View {
         ZStack {
             NavigationView {
                 ScrollView {
-                    
                     Text("Add Coffee")
-                    
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        if let imageObject {
-                            VStack {
-                                Image(uiImage: imageObject)
-                                    .resizable()
-                                    .frame(width: 200, height: 200)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding(.top, 16)
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                        }
-                        
-                        
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundColor(Color("background"))
-                            PhotosPicker("Add a new image", selection: $imageSelection)
-                            .onChange(of: imageSelection, initial: false) { oldValue, newValue in
-                                Task(priority: .userInitiated) {
-                                    if let newValue {
-                                        if let loadedImageData = try? await newValue.loadTransferable(type: Data.self), let loadedImage = UIImage(data: loadedImageData) {
-                                            if let resizedData = loadedImage.compressTo(maxSizeInKB: 1000) {
-                                                DispatchQueue.main.async {
-                                                    self.imageObject = UIImage(data: resizedData)
-                                                    self.imageData = resizedData
-                                                }
-                                            } else {
-                                                print("❌ Compression to 100 KB failed")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
                         VStack(alignment: .leading, spacing: 12) {
                             Text("General")
                                 .font(.subheadline)
@@ -134,7 +97,48 @@ struct CreateCoffeeView: View {
                         }
                         .cardStyle()
                         .padding(.horizontal)
+                    
+                    VStack(spacing: 16) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(Color("background"))
+                            PhotosPicker("Add a new image", selection: $imageSelection)
+                            .onChange(of: imageSelection, initial: false) { oldValue, newValue in
+                                Task(priority: .userInitiated) {
+                                    if let newValue {
+                                        if let loadedImageData = try? await newValue.loadTransferable(type: Data.self), let loadedImage = UIImage(data: loadedImageData) {
+                                            if let resizedData = loadedImage.compressTo(maxSizeInKB: 1000) {
+                                                DispatchQueue.main.async {
+                                                    self.imageObject = UIImage(data: resizedData)
+                                                    self.imageData = resizedData
+                                                }
+                                            } else {
+                                                print("❌ Compression to 100 KB failed")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if let imageObject {
+                            VStack {
+                                Image(uiImage: imageObject)
+                                    .resizable()
+                                    .frame(width: 200, height: 200)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.top, 16)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        }
                     }
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Taste")
+                            .font(.subheadline)
+                            .foregroundColor(Color("background"))
+                    }
+                    .cardStyle()
+                    .padding(.horizontal)
                 }
 //                Form {
 //                    Section {
