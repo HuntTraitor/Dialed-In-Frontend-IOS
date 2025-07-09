@@ -59,10 +59,9 @@ struct CoffeeView: View {
                                 .padding(.trailing, 30)
                         }
                         .sheet(isPresented: $isShowingCreateCoffeeView) {
-                            //                        CreateCoffeeView(viewModel: viewModel)
+                            CreateCoffeeView(viewModel: viewModel)
                         }
                         .padding(.top, 40)
-                        .italic()
                     }
                     
                     if viewModel.errorMessage != nil {

@@ -12,8 +12,8 @@ struct TastingNotesView: View {
     let notes: [TastingNote]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            WrappingHStack(notes, id: \.self, spacing: .constant(8), lineSpacing: 8) { note in
+        VStack {
+            WrappingHStack(notes, id: \.self, alignment: .leading, spacing: .dynamicIncludingBorders(minSpacing: 8), lineSpacing: 8) { note in
                 Text(note.rawValue)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
@@ -23,8 +23,11 @@ struct TastingNotesView: View {
                     .font(.caption)
             }
         }
-        .padding(.horizontal)
     }
+}
+
+#Preview {
+    TastingNotesView(notes: [.apple, .cherry, .peach, .acidic, .acrid, .anise, .blueberry, .banana])
 }
 
 
