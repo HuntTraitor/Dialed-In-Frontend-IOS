@@ -63,6 +63,7 @@ enum Process: Codable, Identifiable, CustomOption, Equatable {
 
 
 enum Rating: Int, Codable {
+    case zero = 0
     case one = 1
     case two = 2
     case three = 3
@@ -315,7 +316,7 @@ struct CoffeeInput: Identifiable {
     let originType: OriginType?
     let rating: Rating?
     let roastLevel: RoastLevel?
-    let testingNotes: [TastingNote]?
+    let tastingNotes: [TastingNote]?
     let cost: Double?
     let img: Data?
 
@@ -360,9 +361,9 @@ struct CoffeeInput: Identifiable {
             appendField(name: "roastLevel", value: roastLevel.displayName)
         }
 
-        if let testingNotes = testingNotes {
-            for note in testingNotes {
-                appendField(name: "testingNotes[]", value: note.rawValue)
+        if let tastingNotes = tastingNotes {
+            for note in tastingNotes {
+                appendField(name: "tastingNotes[]", value: note.rawValue)
             }
         }
 
@@ -415,7 +416,7 @@ extension Coffee {
         originType: .singleOrigin,
         rating: .four,
         roastLevel: .medium,
-        testingNotes: [.caramelized, .chocolate, .vanilla],
+        tastingNotes: [.caramelized, .chocolate, .vanilla],
         cost: 24.99,
         img: nil
     )
