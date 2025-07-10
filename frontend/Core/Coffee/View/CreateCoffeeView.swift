@@ -273,8 +273,11 @@ struct CreateCoffeeView: View {
                     cost: cost,
                     img: image
                 )
+                
+                await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
+                
+                print(viewModel.errorMessage ?? "No error message")
 
-                print("☕ Coffee Input Created: \(coffeeInput)")
             }
             dismiss()
         }
@@ -303,7 +306,10 @@ private extension View {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let mockCoffeeService = MockCoffeeService()
     let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
+    
+    let coffeeService = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
+    let coffeeViewModel = CoffeeViewModel(coffeeService: coffeeService)
 
-    return CreateCoffeeView(viewModel: mockCoffeeViewModel)
+    return CreateCoffeeView(viewModel: coffeeViewModel)
         .environmentObject(authViewModel)
 }

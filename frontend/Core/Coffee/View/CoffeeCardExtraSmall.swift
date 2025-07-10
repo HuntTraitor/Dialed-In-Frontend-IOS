@@ -11,11 +11,11 @@ struct CoffeeCardExtraSmall: View {
     var coffee: Coffee
     var body: some View {
         HStack {
-            Text(coffee.name)
+            Text(coffee.info.name)
                 .padding(.leading, 30)
                 .lineLimit(1)
             Spacer()
-            StarRatingView(rating: coffee.rating?.rawValue ?? 0)
+            StarRatingView(rating: coffee.info.rating?.rawValue ?? .zero)
                 .padding(.trailing, 30)
         }
     }

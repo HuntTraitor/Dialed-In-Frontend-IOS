@@ -30,7 +30,7 @@ struct CoffeeView: View {
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return viewModel.coffees }
-        return viewModel.coffees.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
+        return viewModel.coffees.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {

@@ -12,11 +12,11 @@ struct CoffeeCardSmall: View {
     var body: some View {
         VStack {
             HStack {
-                Text(coffee.name)
+                Text(coffee.info.name)
                     .padding(.leading, 30)
                     .lineLimit(1)
                 Spacer()
-                StarRatingView(rating: coffee.rating?.rawValue ?? 0)
+                StarRatingView(rating: coffee.info.rating?.rawValue ?? .zero)
                     .padding(.trailing, 30)
             }
             Divider()
@@ -26,7 +26,7 @@ struct CoffeeCardSmall: View {
             
             HStack(alignment: .top, spacing: 16) {
                 // Image on the left
-                if let imgString = coffee.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
                     ImageView(url)
                         .frame(width: 100, height: 100)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -38,9 +38,9 @@ struct CoffeeCardSmall: View {
                 
                 // First column of text
                 VStack(alignment: .leading, spacing: 12) {
-                    InfoRow(title: "Roaster", value: coffee.roaster ?? "-")
-                    InfoRow(title: "Region", value: coffee.region?.displayName ?? "-")
-                    InfoRow(title: "Process", value: coffee.process ?? "-")
+                    InfoRow(title: "Roaster", value: coffee.info.roaster ?? "-")
+                    InfoRow(title: "Region", value: coffee.info.region?.displayName ?? "-")
+                    InfoRow(title: "Process", value: coffee.info.process?.displayName ?? "-")
                     
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -48,14 +48,14 @@ struct CoffeeCardSmall: View {
                 // Second column of text
                 VStack(alignment: .leading, spacing: 12) {
 //                    InfoRow(title: "Roast Type", value: coffee.originType?.rawValue ?? "-")
-                    InfoRow(title: "Roast Level", value: coffee.roastLevel?.displayName ?? "-")
+                    InfoRow(title: "Roast Level", value: coffee.info.roastLevel?.displayName ?? "-")
 
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Decaff?")
                             .font(.caption)
                             .foregroundColor(.gray)
-                        if coffee.decaf == true {
+                        if coffee.info.decaf == true {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(Color("background"))
                                 .font(.title2)
@@ -71,7 +71,7 @@ struct CoffeeCardSmall: View {
                             .font(.caption)
                             .foregroundColor(.gray)
 
-                        Text((coffee.tastingNotes?.map { $0.rawValue }.joined(separator: ", ")) ?? "-")
+                        Text((coffee.info.tastingNotes?.map { $0.rawValue }.joined(separator: ", ")) ?? "-")
                             .font(.system(size: 13))
                             .lineLimit(2)
                             .truncationMode(.tail)

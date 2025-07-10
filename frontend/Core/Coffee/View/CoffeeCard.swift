@@ -31,7 +31,7 @@ struct CoffeeCard: View {
                     // Image centered horizontally
                     HStack {
                         Spacer()
-                        if let imgString = coffee.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                        if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
                             ImageView(url)
                                 .frame(width: 200, height: 200)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -57,11 +57,11 @@ struct CoffeeCard: View {
                 // General Section
                 DisclosureGroup(isExpanded: $isGeneralExpanded) {
                     VStack(alignment: .leading, spacing: 12) {
-                        KeyValueView(key: "Name", value: coffee.name)
+                        KeyValueView(key: "Name", value: coffee.info.name)
                         Divider()
-                        KeyValueView(key: "Roaster", value: coffee.roaster ?? "-")
+                        KeyValueView(key: "Roaster", value: coffee.info.roaster ?? "-")
                         Divider()
-                        KeyValueView(key: "Cost", value: String(format: "$%.2f", coffee.cost ?? 0.0))
+                        KeyValueView(key: "Cost", value: String(format: "$%.2f", coffee.info.cost ?? 0.0))
                     }
                     .padding()
                 } label: {
@@ -73,19 +73,19 @@ struct CoffeeCard: View {
                 // Roast Section
                 DisclosureGroup(isExpanded: $isRoastExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
-                        KeyValueView(key: "Region", value: coffee.region?.displayName ?? "-")
+                        KeyValueView(key: "Region", value: coffee.info.region?.displayName ?? "-")
                         Divider()
-                        KeyValueView(key: "Process", value: coffee.process ?? "-")
+                        KeyValueView(key: "Process", value: coffee.info.process?.displayName ?? "-")
                         Divider()
-                        KeyValueView(key: "Origin Type", value: coffee.originType?.displayName ?? "-")
+                        KeyValueView(key: "Origin Type", value: coffee.info.originType?.displayName ?? "-")
                         Divider()
-                        KeyValueView(key: "Roast Level", value: coffee.roastLevel?.displayName ?? "-")
+                        KeyValueView(key: "Roast Level", value: coffee.info.roastLevel?.displayName ?? "-")
                         Divider()
                         HStack {
                             Text("Decaf?")
                                 .foregroundColor(.gray)
                             Spacer()
-                            if coffee.decaf == true {
+                            if coffee.info.decaf == true {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(Color("background"))
                                     .font(.title2)
@@ -110,10 +110,10 @@ struct CoffeeCard: View {
                             Text("Rating")
                                 .foregroundColor(.gray)
                             Spacer()
-                            StarRatingView(rating: coffee.rating?.rawValue ?? 0)
+                            StarRatingView(rating: coffee.info.rating?.rawValue ?? 0)
                         }
                         Divider()
-                        if let notes = coffee.tastingNotes {
+                        if let notes = coffee.info.tastingNotes {
                             HStack(alignment: .top) {
                                 Text("Taste Notes")
                                     .foregroundColor(.gray)
@@ -126,7 +126,7 @@ struct CoffeeCard: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             ScrollView {
-                                Text(coffee.description ?? "-")
+                                Text(coffee.info.description ?? "-")
                                     .font(.caption)
                                     .foregroundColor(.primary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
