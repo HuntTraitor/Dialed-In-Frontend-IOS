@@ -12,12 +12,12 @@ struct CoffeeChoice: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            ImageView(URL(string: coffee.img!))
+            ImageView(URL(string: coffee.info.img!))
                 .frame(width: 40, height: 40)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
                 .shadow(radius: 1)
 
-            Text(coffee.name)
+            Text(coffee.info.name)
                 .font(.subheadline)
                 .lineLimit(1)
                 .truncationMode(.tail)

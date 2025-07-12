@@ -38,17 +38,20 @@ struct CoffeeCardSmall: View {
                 
                 // First column of text
                 VStack(alignment: .leading, spacing: 12) {
-                    InfoRow(title: "Roaster", value: coffee.info.roaster ?? "-")
-                    InfoRow(title: "Region", value: coffee.info.region?.displayName ?? "-")
-                    InfoRow(title: "Process", value: coffee.info.process?.displayName ?? "-")
+                    InfoRow(title: "Roaster", value: (coffee.info.roaster?.isEmpty == false && coffee.info.roaster?.lowercased() != "unknown") ? coffee.info.roaster! : "-")
+                    InfoRow(title: "Region", value: (coffee.info.region?.isEmpty == false && coffee.info.region?.lowercased() != "unknown") ? coffee.info.region! : "-")
+                    InfoRow(title: "Process", value: (coffee.info.process?.isEmpty == false && coffee.info.process?.lowercased() != "unknown") ? coffee.info.process! : "-")
+
                     
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // Second column of text
                 VStack(alignment: .leading, spacing: 12) {
-//                    InfoRow(title: "Roast Type", value: coffee.originType?.rawValue ?? "-")
-                    InfoRow(title: "Roast Level", value: coffee.info.roastLevel?.displayName ?? "-")
+                    InfoRow(
+                        title: "Roast Level",
+                        value: (coffee.info.roastLevel != .unknown) ? coffee.info.roastLevel?.displayName ?? "-" : "-"
+                    )
 
                     
                     VStack(alignment: .leading, spacing: 3) {
@@ -102,6 +105,6 @@ struct InfoRow: View {
 }
 
 #Preview {
-    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEES[1])
+    CoffeeCardSmall(coffee: Coffee.MOCK_NOTHING_COFFEE)
 }
 

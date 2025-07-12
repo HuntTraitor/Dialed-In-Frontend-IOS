@@ -15,8 +15,8 @@ struct RecipeCard: View {
 
         HStack {
             VStack {
-                ImageView(URL(string: recipe.coffee.img ?? ""))
-                Text(recipe.coffee.name)
+                ImageView(URL(string: recipe.coffee.info.img ?? ""))
+                Text(recipe.coffee.info.name)
                     .bold()
             }
 

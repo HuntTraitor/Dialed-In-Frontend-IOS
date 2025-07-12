@@ -16,8 +16,8 @@ struct CreateCoffeeView: View {
     @State private var isShowingTastingNoteDialog = false
     @State private var name: String = ""
     @State private var roaster: String = ""
-    @State private var region: Region = .none
-    @State private var process: Process = .none
+    @State private var region: String = ""
+    @State private var process: String = ""
     @State private var description: String = ""
     @State private var decaf: Bool = false
     @State private var originType: OriginType = .unknown
@@ -98,9 +98,9 @@ struct CreateCoffeeView: View {
                 .font(.subheadline)
                 .foregroundColor(Color("background"))
 
-            CustomOptionPicker(label: "Region", selection: $region)
+            LabeledTextField(label: "Region", text: $region, placeholder: "Add region")
             Divider()
-            CustomOptionPicker(label: "Process", selection: $process)
+            LabeledTextField(label: "Process", text: $process, placeholder: "Add process")
             Divider()
             FixedOptionPicker(label: "Origin Type", selection: $originType)
             Divider()
@@ -253,11 +253,6 @@ struct CreateCoffeeView: View {
     private var doneButton: some View {
         Button("Done") {
             Task {
-                guard let image = imageData else {
-                    print("❌ No image selected or failed to convert to Data")
-                    return
-                }
-
                 let coffeeInput = CoffeeInput(
                     id: nil,
                     name: name,
@@ -267,12 +262,14 @@ struct CreateCoffeeView: View {
                     description: description,
                     decaf: decaf,
                     originType: originType,
-                    rating: .zero,
+                    rating: rating,
                     roastLevel: roastLevel,
                     tastingNotes: tasteNotes,
                     cost: cost,
-                    img: image
+                    img: imageData
                 )
+                
+                print("posted with \(coffeeInput)")
                 
                 await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                 

@@ -59,7 +59,7 @@ struct CoffeeCard: View {
                     VStack(alignment: .leading, spacing: 12) {
                         KeyValueView(key: "Name", value: coffee.info.name)
                         Divider()
-                        KeyValueView(key: "Roaster", value: coffee.info.roaster ?? "-")
+                        KeyValueView(key: "Roaster", value: (coffee.info.roaster?.isEmpty == false) ? coffee.info.roaster! : "-")
                         Divider()
                         KeyValueView(key: "Cost", value: String(format: "$%.2f", coffee.info.cost ?? 0.0))
                     }
@@ -73,13 +73,21 @@ struct CoffeeCard: View {
                 // Roast Section
                 DisclosureGroup(isExpanded: $isRoastExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
-                        KeyValueView(key: "Region", value: coffee.info.region?.displayName ?? "-")
+                        KeyValueView(key: "Region", value: (coffee.info.region?.isEmpty == false) ? coffee.info.region! : "-")
+
                         Divider()
-                        KeyValueView(key: "Process", value: coffee.info.process?.displayName ?? "-")
+                        KeyValueView(key: "Process", value: (coffee.info.process?.isEmpty == false) ? coffee.info.process! : "-")
+
                         Divider()
-                        KeyValueView(key: "Origin Type", value: coffee.info.originType?.displayName ?? "-")
+                        KeyValueView(
+                            key: "Origin Type",
+                            value: (coffee.info.originType != .unknown) ? coffee.info.originType?.displayName ?? "-" : "-"
+                        )
                         Divider()
-                        KeyValueView(key: "Roast Level", value: coffee.info.roastLevel?.displayName ?? "-")
+                        KeyValueView(
+                            key: "Roast Level",
+                            value: (coffee.info.roastLevel != .unknown) ? coffee.info.roastLevel?.displayName ?? "-" : "-"
+                        )
                         Divider()
                         HStack {
                             Text("Decaf?")
@@ -113,13 +121,12 @@ struct CoffeeCard: View {
                             StarRatingView(rating: coffee.info.rating?.rawValue ?? 0)
                         }
                         Divider()
-                        if let notes = coffee.info.tastingNotes {
-                            HStack(alignment: .top) {
-                                Text("Taste Notes")
-                                    .foregroundColor(.gray)
-                                TastingNotesView(notes: notes)
-                            }
+                        HStack(alignment: .top) {
+                            Text("Taste Notes")
+                                .foregroundColor(.gray)
+                            TastingNotesView(notes: coffee.info.tastingNotes ?? [])
                         }
+                        
                         Divider()
                         HStack(alignment: .top) {
                             Text("Notes")
@@ -178,6 +185,6 @@ extension View {
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    CoffeeCard(coffee: Coffee.MOCK_COFFEE, viewModel: viewModel)
+    CoffeeCard(coffee: Coffee.MOCK_NOTHING_COFFEE, viewModel: viewModel)
         .environmentObject(authViewModel)
 }

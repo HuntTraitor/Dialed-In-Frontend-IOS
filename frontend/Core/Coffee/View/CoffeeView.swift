@@ -129,6 +129,9 @@ struct CoffeeView: View {
     let mockCoffeeService = MockCoffeeService()
     let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
     
-    return CoffeeView(viewModel: mockCoffeeViewModel)
+    let coffeeService = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
+    let coffeeViewModel = CoffeeViewModel(coffeeService: coffeeService)
+    
+    return CoffeeView(viewModel: coffeeViewModel)
         .environmentObject(authViewModel)
 }

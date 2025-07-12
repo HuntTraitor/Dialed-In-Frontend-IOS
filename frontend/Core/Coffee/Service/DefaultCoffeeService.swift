@@ -36,6 +36,20 @@ final class DefaultCoffeeService: CoffeeService {
             do {
                 let decoded = try JSONDecoder().decode(MultiCoffeeResponse.self, from: data)
                 return decoded.coffees
+            }  catch let decodingError as DecodingError {
+                switch decodingError {
+                case .typeMismatch(let type, let context):
+                    print("Type mismatch for type \(type) at \(context.codingPath): \(context.debugDescription)")
+                case .valueNotFound(let type, let context):
+                    print("Value of type \(type) not found at \(context.codingPath): \(context.debugDescription)")
+                case .keyNotFound(let key, let context):
+                    print("Key '\(key)' not found at \(context.codingPath): \(context.debugDescription)")
+                case .dataCorrupted(let context):
+                    print("Data corrupted at \(context.codingPath): \(context.debugDescription)")
+                @unknown default:
+                    print("Unknown decoding error: \(decodingError)")
+                }
+                throw APIError.jsonParsingFailure(error: decodingError)
             } catch {
                 throw APIError.jsonParsingFailure(error: error)
             }
@@ -78,7 +92,23 @@ final class DefaultCoffeeService: CoffeeService {
             do {
                 let decoded = try JSONDecoder().decode(SingleCoffeeResponse.self, from: data)
                 return decoded.coffee
+            } catch let decodingError as DecodingError {
+                switch decodingError {
+                case .typeMismatch(let type, let context):
+                    print("Type mismatch for type \(type) at \(context.codingPath): \(context.debugDescription)")
+                case .valueNotFound(let type, let context):
+                    print("Value of type \(type) not found at \(context.codingPath): \(context.debugDescription)")
+                case .keyNotFound(let key, let context):
+                    print("Key '\(key)' not found at \(context.codingPath): \(context.debugDescription)")
+                case .dataCorrupted(let context):
+                    print("Data corrupted at \(context.codingPath): \(context.debugDescription)")
+                @unknown default:
+                    print("Unknown decoding error: \(decodingError)")
+                }
+                throw APIError.jsonParsingFailure(error: decodingError)
             } catch {
+                // For non-DecodingErrors (e.g., data issues)
+                print("Unexpected error: \(error)")
                 throw APIError.jsonParsingFailure(error: error)
             }
 

@@ -12,7 +12,7 @@ struct Coffee: Identifiable, Codable, Hashable {
     var id: Int
     var userId: Int
     var info: CoffeeInfo
-    var createdAt: Date?
+    var createdAt: String?
     var version: Int?
 
     private enum CodingKeys: String, CodingKey {
@@ -28,8 +28,8 @@ struct CoffeeInfo: Codable, Hashable {
     var name: String
     var roaster: String?
     var decaf: Bool
-    var region: Region?
-    var process: Process?
+    var region: String?
+    var process: String?
     var description: String?
     var originType: OriginType?
     var rating: Rating?
@@ -43,41 +43,6 @@ struct CoffeeInfo: Codable, Hashable {
     }
 }
 
-
-// ENUMS ------------------------------------------------------------------------------------------------------------
-
-// TODO add new processes
-enum Process: Codable, Identifiable, CustomOption, Equatable {
-    case washed
-    case dried
-    case roasted
-    case none
-    case custom(String)
-    
-    // MARK: - Identifiable
-    var id: String { displayName }
-    
-    // MARK: - CustomOption
-    var displayName: String {
-        switch self {
-        case .washed: return "Washed"
-        case .dried: return "Dried"
-        case .roasted: return "Roasted"
-        case .none: return "None"
-        case .custom(let value): return value
-        }
-    }
-    
-    static var predefinedOptions: [Process] {
-        [.washed, .dried, .roasted, .none]
-    }
-    
-    static func makeCustom(_ value: String) -> Process {
-        .custom(value)
-    }
-}
-
-
 enum Rating: Int, Codable {
     case zero = 0
     case one = 1
@@ -85,6 +50,12 @@ enum Rating: Int, Codable {
     case three = 3
     case four = 4
     case five = 5
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(Int.self)
+        self = Rating(rawValue: rawValue) ?? .zero
+    }
 }
 
 enum TastingNote: String, CaseIterable, Identifiable, Codable {
@@ -150,133 +121,21 @@ enum TastingNote: String, CaseIterable, Identifiable, Codable {
             return "Spices"
         }
     }
-}
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
 
-
-enum Region: Hashable, Codable, Identifiable, CustomOption {
-    // General countries and known subregions
-    case ethiopia, ethiopiaYirgacheffe, ethiopiaSidamo, ethiopiaHarrar
-    case kenya, kenyaNyeri, kenyaKiambu
-    case rwanda, burundi, tanzania, uganda, drCongo
-
-    case guatemala, guatemalaAntigua, guatemalaHuehuetenango
-    case costaRica, costaRicaTarrazu
-    case honduras, elSalvador, nicaragua
-    case panama, panamaBoquete
-
-    case colombia, colombiaHuila, colombiaNariño, colombiaAntioquia
-    case brazil, brazilSulDeMinas, brazilCerrado, brazilMogiana
-    case peru, ecuador, bolivia
-
-    case indonesia, indonesiaSumatra, indonesiaJava, indonesiaSulawesi, indonesiaBali
-    case vietnam, india, papuaNewGuinea, thailand
-    case china, chinaYunnan
-
-    case yemen
-    case hawaii, hawaiiKona
-    case jamaica, jamaicaBlueMountain
-    case galapagos
-    case philippines
-
-    case none
-    case custom(String)
-
-    // MARK: - Identifiable
-    var id: String { displayName }
-
-    // MARK: - CustomOption
-    var displayName: String {
-        switch self {
-        case .ethiopia: return "Ethiopia"
-        case .ethiopiaYirgacheffe: return "Ethiopia - Yirgacheffe"
-        case .ethiopiaSidamo: return "Ethiopia - Sidamo"
-        case .ethiopiaHarrar: return "Ethiopia - Harrar"
-        case .kenya: return "Kenya"
-        case .kenyaNyeri: return "Kenya - Nyeri"
-        case .kenyaKiambu: return "Kenya - Kiambu"
-        case .rwanda: return "Rwanda"
-        case .burundi: return "Burundi"
-        case .tanzania: return "Tanzania"
-        case .uganda: return "Uganda"
-        case .drCongo: return "DR Congo"
-
-        case .guatemala: return "Guatemala"
-        case .guatemalaAntigua: return "Guatemala - Antigua"
-        case .guatemalaHuehuetenango: return "Guatemala - Huehuetenango"
-        case .costaRica: return "Costa Rica"
-        case .costaRicaTarrazu: return "Costa Rica - Tarrazú"
-        case .honduras: return "Honduras"
-        case .elSalvador: return "El Salvador"
-        case .nicaragua: return "Nicaragua"
-        case .panama: return "Panama"
-        case .panamaBoquete: return "Panama - Boquete"
-
-        case .colombia: return "Colombia"
-        case .colombiaHuila: return "Colombia - Huila"
-        case .colombiaNariño: return "Colombia - Nariño"
-        case .colombiaAntioquia: return "Colombia - Antioquia"
-        case .brazil: return "Brazil"
-        case .brazilSulDeMinas: return "Brazil - Sul de Minas"
-        case .brazilCerrado: return "Brazil - Cerrado"
-        case .brazilMogiana: return "Brazil - Mogiana"
-        case .peru: return "Peru"
-        case .ecuador: return "Ecuador"
-        case .bolivia: return "Bolivia"
-
-        case .indonesia: return "Indonesia"
-        case .indonesiaSumatra: return "Indonesia - Sumatra"
-        case .indonesiaJava: return "Indonesia - Java"
-        case .indonesiaSulawesi: return "Indonesia - Sulawesi"
-        case .indonesiaBali: return "Indonesia - Bali"
-        case .vietnam: return "Vietnam"
-        case .india: return "India"
-        case .papuaNewGuinea: return "Papua New Guinea"
-        case .thailand: return "Thailand"
-        case .china: return "China"
-        case .chinaYunnan: return "China - Yunnan"
-
-        case .yemen: return "Yemen"
-        case .hawaii: return "Hawaii"
-        case .hawaiiKona: return "Hawaii - Kona"
-        case .jamaica: return "Jamaica"
-        case .jamaicaBlueMountain: return "Jamaica - Blue Mountain"
-        case .galapagos: return "Ecuador - Galápagos"
-        case .philippines: return "Philippines"
-
-        case .none: return "None"
-        case .custom(let value): return value
+        if let matched = TastingNote.allCases.first(where: { $0.rawValue.lowercased() == rawValue.lowercased() }) {
+            self = matched
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid tasting note: \(rawValue)"
+            )
         }
     }
-
-    static var predefinedOptions: [Region] {
-        [
-            .ethiopia, .ethiopiaYirgacheffe, .ethiopiaSidamo, .ethiopiaHarrar,
-            .kenya, .kenyaNyeri, .kenyaKiambu,
-            .rwanda, .burundi, .tanzania, .uganda, .drCongo,
-            .guatemala, .guatemalaAntigua, .guatemalaHuehuetenango,
-            .costaRica, .costaRicaTarrazu,
-            .honduras, .elSalvador, .nicaragua,
-            .panama, .panamaBoquete,
-            .colombia, .colombiaHuila, .colombiaNariño, .colombiaAntioquia,
-            .brazil, .brazilSulDeMinas, .brazilCerrado, .brazilMogiana,
-            .peru, .ecuador, .bolivia,
-            .indonesia, .indonesiaSumatra, .indonesiaJava, .indonesiaSulawesi, .indonesiaBali,
-            .vietnam, .india, .papuaNewGuinea, .thailand,
-            .china, .chinaYunnan,
-            .yemen,
-            .hawaii, .hawaiiKona,
-            .jamaica, .jamaicaBlueMountain,
-            .galapagos, .philippines,
-            .none
-        ]
-    }
-
-    static func makeCustom(_ value: String) -> Region {
-        .custom(value)
-    }
 }
-
-
 
 enum OriginType: String, Codable, Identifiable, Equatable, FixedOption {
     case singleOrigin = "Single Origin"
@@ -288,6 +147,20 @@ enum OriginType: String, Codable, Identifiable, Equatable, FixedOption {
     
     static var predefinedOptions: [OriginType] {
         [.singleOrigin, .blend, .unknown]
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+
+        if let matched = OriginType.predefinedOptions.first(where: { $0.displayName.lowercased() == rawValue.lowercased() }) {
+            self = matched
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid origin type: \(rawValue)"
+            )
+        }
     }
 }
 
@@ -305,6 +178,20 @@ enum RoastLevel: String, Codable, Identifiable, Equatable, FixedOption {
 
     static var predefinedOptions: [RoastLevel] {
         [.light, .mediumLight, .medium, .mediumDark, .dark, .unknown]
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+
+        if let matched = RoastLevel.predefinedOptions.first(where: { $0.displayName.lowercased() == rawValue.lowercased() }) {
+            self = matched
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid roast level: \(rawValue)"
+            )
+        }
     }
 }
 
@@ -325,8 +212,8 @@ struct CoffeeInput: Identifiable {
     let id: Int?
     let name: String
     let roaster: String?
-    let region: Region?
-    let process: Process?
+    let region: String?
+    let process: String?
     let description: String?
     let decaf: Bool
     let originType: OriginType?
@@ -350,7 +237,7 @@ struct CoffeeInput: Identifiable {
         appendField(name: "decaf", value: decaf ? "true" : "false")
 
         if let region = region {
-            appendField(name: "region", value: region.displayName)
+            appendField(name: "region", value: region)
         }
         
         if let roaster = roaster {
@@ -358,7 +245,7 @@ struct CoffeeInput: Identifiable {
         }
 
         if let process = process {
-            appendField(name: "process", value: process.displayName)
+            appendField(name: "process", value: process)
         }
 
         if let description = description {
@@ -379,7 +266,7 @@ struct CoffeeInput: Identifiable {
 
         if let tastingNotes = tastingNotes {
             for note in tastingNotes {
-                appendField(name: "tasting_notes[]", value: note.rawValue)
+                appendField(name: "tasting_notes", value: note.rawValue)
             }
         }
 
@@ -412,8 +299,8 @@ extension Coffee {
             name: "Milky Cake",
             roaster: "Dak",
             decaf: false,
-            region: .colombia,
-            process: .custom("Thermal Shock"),
+            region: "Columbia",
+            process: "Thermal Shock",
             description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
             originType: .singleOrigin,
             rating: .four,
@@ -430,8 +317,8 @@ extension Coffee {
         id: nil,
         name: "Milky Cake",
         roaster: "Dak",
-        region: .colombia,
-        process: .custom("Thermal Shock"),
+        region: "Columbia",
+        process: "Thermal Shock",
         description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
         decaf: false,
         originType: .singleOrigin,
@@ -440,6 +327,27 @@ extension Coffee {
         tastingNotes: [.caramelized, .chocolate, .vanilla],
         cost: 24.99,
         img: nil
+    )
+    
+    static var MOCK_NOTHING_COFFEE = Coffee(
+        id: 1,
+        userId: 123,
+        info: CoffeeInfo(
+            name: "Nothing Coffee",
+            roaster: "",
+            decaf: false,
+            region: "",
+            process: "",
+            description: "",
+            originType: .unknown,
+            rating: .zero,
+            roastLevel: .unknown,
+            tastingNotes: nil,
+            cost: 0,
+            img: ""
+        ),
+        createdAt: nil,
+        version: nil
     )
 }
 
@@ -452,8 +360,8 @@ extension Coffee {
                     name: "Milky Cake",
                     roaster: "Dak Coffee",
                     decaf: false,
-                    region: .colombia,
-                    process: .custom("Thermal Shock"),
+                    region: "Columbia",
+                    process: "Thermal Shock",
                     description: "This is a delicious sweet coffee that has notes of caramel and chocolate.",
                     originType: .singleOrigin,
                     rating: .five,
@@ -472,8 +380,8 @@ extension Coffee {
                     name: "Ethiopian Sunrise",
                     roaster: nil,
                     decaf: false,
-                    region: .ethiopiaSidamo,
-                    process: .washed,
+                    region: "Ethiopia",
+                    process: "Washed",
                     description: "Bright and floral with hints of jasmine and blueberry.",
                     originType: .singleOrigin,
                     rating: .four,
@@ -492,8 +400,8 @@ extension Coffee {
                     name: "Guatemalan Classic",
                     roaster: nil,
                     decaf: false,
-                    region: .guatemalaAntigua,
-                    process: .dried,
+                    region: "Guatemala",
+                    process: "Natural",
                     description: "Rich and balanced with notes of chocolate and nuts.",
                     originType: .blend,
                     rating: .three,
@@ -512,8 +420,8 @@ extension Coffee {
                     name: "Indonesian Earth",
                     roaster: nil,
                     decaf: true,
-                    region: .indonesiaSumatra,
-                    process: .roasted,
+                    region: "Sumatra",
+                    process: "Anaerobic Natural",
                     description: "Earthy and bold with smoky undertones.",
                     originType: .singleOrigin,
                     rating: .four,
