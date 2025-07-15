@@ -288,7 +288,7 @@ struct CreateCoffeeView: View {
 }
 
 // MARK: - Styling Extension
-private extension View {
+extension View {
     func sectionCard() -> some View {
         self
             .padding()

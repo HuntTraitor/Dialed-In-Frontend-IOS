@@ -38,11 +38,9 @@ struct CoffeeCardSmall: View {
                 
                 // First column of text
                 VStack(alignment: .leading, spacing: 12) {
-                    InfoRow(title: "Roaster", value: (coffee.info.roaster?.isEmpty == false && coffee.info.roaster?.lowercased() != "unknown") ? coffee.info.roaster! : "-")
-                    InfoRow(title: "Region", value: (coffee.info.region?.isEmpty == false && coffee.info.region?.lowercased() != "unknown") ? coffee.info.region! : "-")
-                    InfoRow(title: "Process", value: (coffee.info.process?.isEmpty == false && coffee.info.process?.lowercased() != "unknown") ? coffee.info.process! : "-")
-
-                    
+                    InfoRow(title: "Roaster", value: coffee.info.roaster ?? "-")
+                    InfoRow(title: "Region", value: coffee.info.region ?? "-")
+                    InfoRow(title: "Process", value: coffee.info.process ?? "-")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -50,7 +48,9 @@ struct CoffeeCardSmall: View {
                 VStack(alignment: .leading, spacing: 12) {
                     InfoRow(
                         title: "Roast Level",
-                        value: (coffee.info.roastLevel != .unknown) ? coffee.info.roastLevel?.displayName ?? "-" : "-"
+                        value: (coffee.info.roastLevel == .unknown || coffee.info.roastLevel == nil)
+                            ? "-"
+                            : coffee.info.roastLevel!.displayName
                     )
 
                     

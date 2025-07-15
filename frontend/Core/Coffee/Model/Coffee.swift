@@ -334,17 +334,7 @@ extension Coffee {
         userId: 123,
         info: CoffeeInfo(
             name: "Nothing Coffee",
-            roaster: "",
-            decaf: false,
-            region: "",
-            process: "",
-            description: "",
-            originType: .unknown,
-            rating: .zero,
-            roastLevel: .unknown,
-            tastingNotes: nil,
-            cost: 0,
-            img: ""
+            decaf: false
         ),
         createdAt: nil,
         version: nil

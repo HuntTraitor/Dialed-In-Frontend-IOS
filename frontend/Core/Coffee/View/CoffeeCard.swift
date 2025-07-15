@@ -16,12 +16,13 @@ struct CoffeeCard: View {
 //    @State var isChoiceDialogActive: Bool = false
 //    @State var isSuccessDeleteDialogActive: Bool = false
 //    @State var isFailureDeleteDialogActive: Bool = false
-    @State private var isDetailViewPresented: Bool = false
+//    @State private var isDetailViewPresented: Bool = false
 //    let title: String
 //    let keyValuePairs: [(String, String)]
     @State private var isGeneralExpanded = true
     @State private var isRoastExpanded = true
     @State private var isTasteExpanded = true
+    @State private var isShowingEditCoffeeView = false
     
     var body: some View {
         ScrollView {
@@ -40,10 +41,8 @@ struct CoffeeCard: View {
                         Spacer()
                     }
 
-                    // Edit button in top-right corner
                     Button(action: {
-                        isDetailViewPresented = true
-                        print("edit button clicked")
+                        isShowingEditCoffeeView = true
                     }) {
                         Image(systemName: "pencil")
                             .padding(10)
@@ -52,6 +51,10 @@ struct CoffeeCard: View {
                             .shadow(radius: 2)
                     }
                     .padding([.top, .trailing], 16)
+
+                    .sheet(isPresented: $isShowingEditCoffeeView) {
+                        EditCoffeeView(coffee: $coffee, viewModel: viewModel)
+                    }
                 }
 
                 // General Section
@@ -59,7 +62,7 @@ struct CoffeeCard: View {
                     VStack(alignment: .leading, spacing: 12) {
                         KeyValueView(key: "Name", value: coffee.info.name)
                         Divider()
-                        KeyValueView(key: "Roaster", value: (coffee.info.roaster?.isEmpty == false) ? coffee.info.roaster! : "-")
+                        KeyValueView(key: "Roaster", value: coffee.info.roaster ?? "-")
                         Divider()
                         KeyValueView(key: "Cost", value: String(format: "$%.2f", coffee.info.cost ?? 0.0))
                     }
@@ -73,20 +76,24 @@ struct CoffeeCard: View {
                 // Roast Section
                 DisclosureGroup(isExpanded: $isRoastExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
-                        KeyValueView(key: "Region", value: (coffee.info.region?.isEmpty == false) ? coffee.info.region! : "-")
+                        KeyValueView(key: "Region", value: coffee.info.region ?? "-")
 
                         Divider()
-                        KeyValueView(key: "Process", value: (coffee.info.process?.isEmpty == false) ? coffee.info.process! : "-")
+                        KeyValueView(key: "Process", value: coffee.info.process ?? "-")
 
                         Divider()
                         KeyValueView(
                             key: "Origin Type",
-                            value: (coffee.info.originType != .unknown) ? coffee.info.originType?.displayName ?? "-" : "-"
+                            value: (coffee.info.originType == .unknown || coffee.info.originType == nil)
+                                ? "-"
+                                : coffee.info.originType!.displayName
                         )
                         Divider()
                         KeyValueView(
                             key: "Roast Level",
-                            value: (coffee.info.roastLevel != .unknown) ? coffee.info.roastLevel?.displayName ?? "-" : "-"
+                            value: (coffee.info.roastLevel == .unknown || coffee.info.roastLevel == nil)
+                                ? "-"
+                            : coffee.info.roastLevel!.displayName
                         )
                         Divider()
                         HStack {
@@ -118,7 +125,7 @@ struct CoffeeCard: View {
                             Text("Rating")
                                 .foregroundColor(.gray)
                             Spacer()
-                            StarRatingView(rating: coffee.info.rating?.rawValue ?? 0)
+                            StarRatingView(rating: coffee.info.rating?.rawValue ?? .zero)
                         }
                         Divider()
                         HStack(alignment: .top) {
@@ -133,7 +140,7 @@ struct CoffeeCard: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             ScrollView {
-                                Text(coffee.info.description ?? "-")
+                                Text(coffee.info.description ?? "")
                                     .font(.caption)
                                     .foregroundColor(.primary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
