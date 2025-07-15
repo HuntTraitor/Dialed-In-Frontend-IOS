@@ -50,6 +50,19 @@ struct CreateCoffeeView: View {
                     }
                 }
             }
+            if viewModel.isLoading {
+                LoadingCircle()
+            }
+            
+            if viewModel.errorMessage != nil {
+                CustomDialog(
+                    isActive: .constant(viewModel.errorMessage != nil),
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "An unexpected error has occurred",
+                    buttonTitle: "Close",
+                    action: { viewModel.errorMessage = nil }
+                )
+            }
         }
     }
 

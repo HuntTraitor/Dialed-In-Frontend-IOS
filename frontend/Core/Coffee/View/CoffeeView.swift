@@ -119,6 +119,9 @@ struct CoffeeView: View {
                     }
                 }
             }
+            if viewModel.isLoading {
+                LoadingCircle()
+            }
         }
     }
 }
