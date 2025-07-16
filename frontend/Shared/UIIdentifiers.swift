@@ -39,7 +39,7 @@ enum UIIdentifiers {
         static let methodList = "HomeScreen.methodList"
         static let coffeeNavigationButton = "HomeScreen.button.coffeeNavigationButton"
         static let homeNavigationButton = "HomeScreen.button.homeNavigationButton"
-        static let logoutButton = "HomeScreen.button.logoutButton"
+        static let profileNavigationButton = "HomeScreen.button.profileNavigationButton"
     }
     
     enum CoffeeScreen {

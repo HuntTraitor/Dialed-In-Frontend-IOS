@@ -37,35 +37,16 @@ struct ContentView: View {
                                         .accessibilityIdentifier(testingID.coffeeNavigationButton)
                                 }
                                 .tag(2)
-
-                            Color.clear // dummy tab to trigger dialog
+                            
+                            ProfileView()
                                 .tabItem {
-                                    Label("Logout", systemImage: "rectangle.portrait.and.arrow.forward")
-                                        .accessibilityIdentifier(testingID.logoutButton)
+                                    Label("Profile", systemImage: "person.crop.circle")
+                                        .accessibilityIdentifier(testingID.profileNavigationButton)
                                 }
                                 .tag(3)
 
-                        }
-                        .onChange(of: navigator.tabHandler.wrappedValue) { oldTab, newTab in
-                            if newTab == 3 {
-                                isLogoutDialogOpen = true
-                                navigator.tabHandler.wrappedValue = lastValidTab
-                            } else {
-                                lastValidTab = newTab
-                            }
-                        }
 
-                        if isLogoutDialogOpen {
-                            ChoiceDialog(
-                                isActive: $isLogoutDialogOpen,
-                                title: "Log Out",
-                                message: "Are you sure you want to log out?",
-                                buttonOptions: ["Log Out", "Cancel"]
-                            ) {
-                                authViewModel.signOut()
-                                isLogoutDialogOpen = false
-                                navigator.tabHandler.wrappedValue = 1
-                            }
+
                         }
                     }
                     .addNavigationSupport()

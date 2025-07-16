@@ -30,8 +30,6 @@ final class MockAuthService: AuthService {
     func verifyUser(withToken token: String) async throws -> User {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
-        } else if token != Token.MOCK_TOKEN.token {
-            throw APIError.invalidStatusCode(statusCode: 401)
         } else {
             return User.MOCK_USER
         }
