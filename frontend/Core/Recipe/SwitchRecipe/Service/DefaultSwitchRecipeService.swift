@@ -7,11 +7,9 @@
 
 import Foundation
 
-final class DefaultSwitchRecipeService: SwitchRecipeService {
-    private let baseURL: URL
-
-    init(baseURL: URL) {
-        self.baseURL = baseURL
+final class DefaultSwitchRecipeService: DefaultRecipeService, SwitchRecipeService {
+    override init(baseURL: URL) {
+        super.init(baseURL: baseURL)
     }
 
     func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> [SwitchRecipe] {

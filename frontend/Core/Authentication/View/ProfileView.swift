@@ -29,13 +29,6 @@ struct ProfileView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ZStack {
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color("background").opacity(0.8), Color.white.opacity(0.4)]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .frame(height: 200)
-                    
                     VStack(spacing: 16) {
                         Image("logo")
                             .resizable()

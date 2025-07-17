@@ -10,7 +10,7 @@ import SwiftUI
 struct CreateRecipeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: SwitchRecipeViewModel
+    @ObservedObject var viewModel: SwitchRecipeViewModel<DefaultSwitchRecipeService>
     @ObservedObject var coffeeViewModel: CoffeeViewModel
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""

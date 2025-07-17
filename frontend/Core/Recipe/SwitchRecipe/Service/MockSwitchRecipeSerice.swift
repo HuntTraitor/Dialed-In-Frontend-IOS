@@ -5,8 +5,7 @@
 //  Created by Hunter Tratar on 6/27/25.
 //
 
-final class MockSwitchRecipeSerice: SwitchRecipeService {
-    var isErrorThrown = false
+final class MockSwitchRecipeSerice: MockRecipeService, SwitchRecipeService {
     func fetchSwitchRecipes(withToken token: String, methodId: Int) async throws -> [SwitchRecipe] {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)

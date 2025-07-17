@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var viewModel: SwitchRecipeViewModel
+    @StateObject private var viewModel: SwitchRecipeViewModel<DefaultSwitchRecipeService>
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
@@ -19,13 +19,12 @@ struct RecipeListView: View {
     init(curMethod: Method) {
         self.curMethod = curMethod
         let service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
-        
-        _viewModel = StateObject(wrappedValue: SwitchRecipeViewModel(recipeService: service))
+        _viewModel = StateObject(wrappedValue: SwitchRecipeViewModel<DefaultSwitchRecipeService>(recipeService: service))
     }
     
     var filteredRecipes: [SwitchRecipe] {
-        guard !searchTerm.isEmpty else { return viewModel.recipes }
-        return viewModel.recipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+        guard !searchTerm.isEmpty else { return viewModel.switchRecipes }
+        return viewModel.switchRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -58,7 +57,7 @@ struct RecipeListView: View {
                     .scaleEffect(0.9)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10)
-            } else if viewModel.recipes.isEmpty {
+            } else if viewModel.switchRecipes.isEmpty {
                 NoResultsFound(itemName: "recipe", systemImage: "book.pages")
                     .scaleEffect(0.8)
                     .offset(y: -(UIScreen.main.bounds.height) * 0.1)
