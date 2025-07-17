@@ -113,7 +113,7 @@ struct RecipeListView: View {
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     NavigationStack {
-        RecipeListView(curMethod: Method(id: 2, name: "Hario Switch"))
+        RecipeListView(curMethod: Method.MOCK_METHOD)
             .environmentObject(authViewModel)
     }
 }

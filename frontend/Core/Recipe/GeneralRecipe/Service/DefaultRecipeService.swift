@@ -14,6 +14,7 @@ class DefaultRecipeService: RecipeService {
         self.baseURL = baseURL
     }
     
+    // We should create a forMethod parameter that is optional that will query parameter the method
     func fetchAllRecipesAsJSON(withToken token: String) async throws -> [Recipe] {
         let url = baseURL.appendingPathComponent("recipes")
         var request = URLRequest(url: url)

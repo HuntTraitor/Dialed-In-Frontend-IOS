@@ -71,10 +71,7 @@ extension SwitchRecipe {
         id: 1,
         userId: User.MOCK_USER.id,
         coffee: Coffee.MOCK_COFFEE,
-        method: Method(
-            id: 1,
-            name: "Hario Switch"
-        ),
+        method: Method.MOCK_METHOD,
         info: RecipeInfo(
             name: "Classic Switch Recipe",
             gramsIn: 20,
@@ -107,10 +104,7 @@ extension SwitchRecipe {
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
-            method: Method(
-                id: 1,
-                name: "Hario Switch"
-            ),
+            method: Method.MOCK_METHOD,
             info: RecipeInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
@@ -126,10 +120,7 @@ extension SwitchRecipe {
             id: 2,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
-            method: Method(
-                id: 1,
-                name: "Hario Switch"
-            ),
+            method: Method.MOCK_METHOD,
             info: RecipeInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
@@ -145,10 +136,7 @@ extension SwitchRecipe {
             id: 3,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
-            method: Method(
-                id: 1,
-                name: "Hario Switch"
-            ),
+            method: Method.MOCK_METHOD,
             info: RecipeInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
@@ -164,10 +152,7 @@ extension SwitchRecipe {
             id: 4,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
-            method: Method(
-                id: 1,
-                name: "Hario Switch"
-            ),
+            method: Method.MOCK_METHOD,
             info: RecipeInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,

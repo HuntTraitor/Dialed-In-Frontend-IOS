@@ -22,21 +22,22 @@ final class DefaultMethodService: MethodService {
             let (data, response) = try await URLSession.shared.data(from: url)
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response.")
+                throw APIError.requestFailed(description: "Invalid response")
             }
             
             guard (200..<300).contains(httpResponse.statusCode) else {
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
             
+            // Print raw JSON for debugging
+            print("Raw response data:", String(data: data, encoding: .utf8) ?? "Unable to print data")
+            
             do {
-                let decoded = try JSONDecoder().decode(MethodResponse.self, from: data)
-                return decoded.methods
+                return try JSONDecoder().decode(MethodResponse.self, from: data).methods
             } catch {
+                print("Decoding failed with error:", error)
                 throw APIError.jsonParsingFailure(error: error)
             }
-        } catch let apiError as APIError {
-            throw apiError
         } catch {
             throw APIError.unknownError(error: error)
         }
