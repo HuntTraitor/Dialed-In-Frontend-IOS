@@ -7,7 +7,6 @@
 
 import Foundation
 
-// This struct is a generic recipe
 struct Recipe: Identifiable, Decodable {
     var id: Int
     var userId: Int

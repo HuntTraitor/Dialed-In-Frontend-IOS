@@ -75,7 +75,7 @@ struct RecipeListView: View {
                         ScrollView {
                             ForEach(filteredRecipes, id: \.self) { recipe in
                                 NavigationLink(
-                                    destination: RecipeView(
+                                    destination: SwitchRecipeView(
                                         recipe: recipe
                                     )
                                     .environmentObject(authViewModel)

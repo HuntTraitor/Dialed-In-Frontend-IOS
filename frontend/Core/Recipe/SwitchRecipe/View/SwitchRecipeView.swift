@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RecipeView: View {
+struct SwitchRecipeView: View {
     let recipe: SwitchRecipe
     @ObservedObject var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -208,6 +208,6 @@ struct RecipeView: View {
 
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    RecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    SwitchRecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
         .environmentObject(authViewModel)
 }

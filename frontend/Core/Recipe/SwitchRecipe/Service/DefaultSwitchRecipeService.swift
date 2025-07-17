@@ -22,6 +22,7 @@ final class DefaultSwitchRecipeService: DefaultRecipeService, SwitchRecipeServic
             throw URLError(.badURL)
         }
 
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -43,7 +44,6 @@ final class DefaultSwitchRecipeService: DefaultRecipeService, SwitchRecipeServic
 
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-
             return try decoder.decode(MultiSwitchRecipeResponse.self, from: data).recipes
 
         } catch let apiError as APIError {
