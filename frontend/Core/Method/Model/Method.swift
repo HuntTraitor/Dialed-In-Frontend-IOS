@@ -8,7 +8,7 @@
 struct Method: Identifiable, Codable, Hashable {
     let id: Int
     let type: MethodType
-    let createdAt: String
+    let createdAt: String?
 
     var name: String {
         type.rawValue
@@ -25,7 +25,7 @@ struct Method: Identifiable, Codable, Hashable {
         case createdAt = "created_at"
     }
 
-    init(id: Int, type: MethodType, createdAt: String) {
+    init(id: Int, type: MethodType, createdAt: String?) {
         self.id = id
         self.type = type
         self.createdAt = createdAt
@@ -34,7 +34,7 @@ struct Method: Identifiable, Codable, Hashable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
-        createdAt = try container.decode(String.self, forKey: .createdAt)
+        createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
         let name = try container.decode(String.self, forKey: .name)
         guard let methodType = MethodType(rawValue: name) else {
             throw DecodingError.dataCorruptedError(forKey: .name, in: container, debugDescription: "Invalid method name: \(name)")
@@ -45,10 +45,11 @@ struct Method: Identifiable, Codable, Hashable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encode(type.rawValue, forKey: .name)
     }
 }
+
 
 
 struct MethodResponse: Codable {

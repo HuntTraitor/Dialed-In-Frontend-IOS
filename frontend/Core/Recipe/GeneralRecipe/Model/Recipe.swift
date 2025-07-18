@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum AnyRecipe {
+    case generic(Recipe)
+    case switchRecipe(SwitchRecipe)
+}
+
 struct Recipe: Identifiable, Decodable {
     var id: Int
     var userId: Int

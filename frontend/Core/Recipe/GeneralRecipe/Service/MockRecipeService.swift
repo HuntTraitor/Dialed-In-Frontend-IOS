@@ -7,7 +7,7 @@
 
 class MockRecipeService: RecipeService {
     var isErrorThrown = false
-    func fetchAllRecipesAsJSON(withToken token: String) async throws -> [Recipe] {
+    func fetchRecipes(withToken token: String, withMethod method: Method?) async throws -> [AnyRecipe] {
         return []
     }
 }

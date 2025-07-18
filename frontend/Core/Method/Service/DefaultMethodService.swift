@@ -29,9 +29,6 @@ final class DefaultMethodService: MethodService {
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
             
-            // Print raw JSON for debugging
-            print("Raw response data:", String(data: data, encoding: .utf8) ?? "Unable to print data")
-            
             do {
                 return try JSONDecoder().decode(MethodResponse.self, from: data).methods
             } catch {

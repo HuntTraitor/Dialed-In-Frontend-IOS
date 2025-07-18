@@ -10,7 +10,7 @@ import SwiftUI
 struct CreateRecipeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: SwitchRecipeViewModel<DefaultSwitchRecipeService>
+    @ObservedObject var viewModel: RecipeViewModel
     @ObservedObject var coffeeViewModel: CoffeeViewModel
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""
@@ -206,7 +206,7 @@ struct CreateRecipeView: View {
             
             print("📤 Uploading Recipe...")
             
-            await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
+//            await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
             presentationMode.wrappedValue.dismiss()
         }
     }
@@ -215,7 +215,7 @@ struct CreateRecipeView: View {
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    let viewModel = SwitchRecipeViewModel(recipeService: DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL))
+    let viewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
     CreateRecipeView(viewModel: viewModel, coffeeViewModel: coffeeViewModel)
         .environmentObject(authViewModel)
 }

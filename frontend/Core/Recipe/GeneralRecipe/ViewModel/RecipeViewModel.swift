@@ -8,23 +8,33 @@
 import Foundation
 
 @MainActor
-class RecipeViewModel<Service: RecipeService>: ObservableObject {
+class RecipeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var allRecipes: [Recipe] = []
+    @Published var allRecipes: [AnyRecipe] = []
 
-    let recipeService: Service
+    private let recipeService: RecipeService
 
-    init(recipeService: Service) {
+    init(recipeService: RecipeService) {
         self.recipeService = recipeService
     }
+    
+    // Method specific recipes
+    var switchRecipes: [SwitchRecipe] {
+        allRecipes.compactMap { recipe in
+            if case let .switchRecipe(switchRecipe) = recipe {
+                return switchRecipe
+            }
+            return nil
+        }
+    }
 
-    func fetchAllRecipesAsJSON(withToken token: String) async {
+    func fetchRecipes(withToken token: String, withMethod method: Method?) async {
         isLoading = true
         defer { isLoading = false }
         errorMessage = nil
         do {
-            let result = try await recipeService.fetchAllRecipesAsJSON(withToken: token)
+            let result = try await recipeService.fetchRecipes(withToken: token, withMethod: method)
             self.allRecipes = result
         } catch {
             errorMessage = "Failed to fetch all recipes: \(error.localizedDescription)"

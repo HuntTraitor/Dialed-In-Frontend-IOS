@@ -9,17 +9,21 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var viewModel: SwitchRecipeViewModel<DefaultSwitchRecipeService>
+    @StateObject private var viewModel: RecipeViewModel
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
     @State private var hasApeared: Bool = false
     let curMethod: Method
     
-    init(curMethod: Method) {
+    init(curMethod: Method, viewModel: RecipeViewModel? = nil) {
         self.curMethod = curMethod
-        let service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
-        _viewModel = StateObject(wrappedValue: SwitchRecipeViewModel<DefaultSwitchRecipeService>(recipeService: service))
+        if let viewModel {
+            _viewModel = StateObject(wrappedValue: viewModel)
+        } else {
+            let service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
+            _viewModel = StateObject(wrappedValue: RecipeViewModel(recipeService: service))
+        }
     }
     
     var filteredRecipes: [SwitchRecipe] {
@@ -103,7 +107,7 @@ struct RecipeListView: View {
         .addToolbar()
         .task {
             if !hasApeared {
-                await viewModel.fetchSwitchRecipes(withToken: authViewModel.token ?? "", methodId: 2)
+                await viewModel.fetchRecipes(withToken: authViewModel.token ?? "", withMethod: curMethod)
                 hasApeared = true
             }
         }
