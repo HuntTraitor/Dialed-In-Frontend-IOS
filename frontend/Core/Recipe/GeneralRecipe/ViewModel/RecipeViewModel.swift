@@ -11,34 +11,41 @@ import Foundation
 class RecipeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var allRecipes: [AnyRecipe] = []
+    @Published var allRecipes: [Recipe] = []
+    @Published var switchRecipes: [SwitchRecipe] = []
 
     private let recipeService: RecipeService
 
     init(recipeService: RecipeService) {
         self.recipeService = recipeService
     }
-    
-    // Method specific recipes
-    var switchRecipes: [SwitchRecipe] {
-        allRecipes.compactMap { recipe in
-            if case let .switchRecipe(switchRecipe) = recipe {
-                return switchRecipe
-            }
-            return nil
-        }
-    }
 
-    func fetchRecipes(withToken token: String, withMethod method: Method?) async {
+    // why not just have this fetch all recipes and then store it in the switchRecipes variable in a filter
+    func fetchRecipes(withToken token: String) async {
         isLoading = true
         defer { isLoading = false }
         errorMessage = nil
         do {
-            let result = try await recipeService.fetchRecipes(withToken: token, withMethod: method)
-            self.allRecipes = result
+            let fetched = try await recipeService.fetchRecipes(withToken: token)
+            self.allRecipes = fetched
+            self.switchRecipes = fetched.compactMap(mapToSwitchRecipe)
+            print(self.switchRecipes)
+            
         } catch {
             errorMessage = "Failed to fetch all recipes: \(error.localizedDescription)"
         }
+    }
+    
+    func postRecipe(withToken token: String, recipe: Recipe) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            _ = try await recipeService.postRecipe(withToken: token, recipe: recipe)
+            await fetchRecipes(withToken: token)
+        } catch {
+            errorMessage = "Failed to post recipe: \(error.localizedDescription)"
+        }
+        isLoading = false
     }
 }
 

@@ -14,18 +14,33 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
     var coffee: Coffee
     var method: Method
     var info: RecipeInfo
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case coffee
+        case method
+        case info
+    }
 
     struct RecipeInfo: Codable, Hashable {
-        var name: String
-        var gramsIn: Int
-        var mlOut: Int
-        var phases: [Phase]
+       var name: String
+       var gramsIn: Int
+       var mlOut: Int
+       var phases: [Phase]
+       
+       enum CodingKeys: String, CodingKey {
+           case name
+           case gramsIn = "grams_in"
+           case mlOut = "ml_out"
+           case phases
+       }
 
-        struct Phase: Codable, Hashable {
-            var open: Bool
-            var time: Int
-            var amount: Int
-        }
+       struct Phase: Codable, Hashable {
+           var open: Bool
+           var time: Int
+           var amount: Int
+       }
     }
 }
 
@@ -47,6 +62,30 @@ struct SwitchRecipeInput: Codable, Hashable {
         }
     }
 }
+
+func mapToSwitchRecipe(_ recipe: Recipe) -> SwitchRecipe? {
+    print(recipe.method.name.lowercased())
+    guard recipe.method.name.lowercased() == "hario switch" else { return nil }
+    
+    do {
+        let data = try JSONSerialization.data(withJSONObject: recipe.info.value, options: [])
+        let decoder = JSONDecoder()
+//        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let info = try decoder.decode(SwitchRecipe.RecipeInfo.self, from: data)
+
+        return SwitchRecipe(
+            id: recipe.id,
+            userId: recipe.userId,
+            coffee: recipe.coffee,
+            method: recipe.method,
+            info: info
+        )
+    } catch {
+        print("Failed to decode SwitchRecipe info: \(error)")
+        return nil
+    }
+}
+
 
 struct MultiSwitchRecipeResponse: Codable {
     var recipes: [SwitchRecipe]

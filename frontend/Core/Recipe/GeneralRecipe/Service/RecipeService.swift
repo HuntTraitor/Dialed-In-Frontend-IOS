@@ -6,5 +6,6 @@
 //
 
 protocol RecipeService {
-    func fetchRecipes(withToken token: String, withMethod method: Method?) async throws -> [AnyRecipe]
+    func fetchRecipes(withToken token: String) async throws -> [Recipe]
+    func postRecipe(withToken token: String, recipe: Recipe) async throws -> Recipe
 }

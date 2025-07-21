@@ -21,7 +21,7 @@ struct RecipeListView: View {
         if let viewModel {
             _viewModel = StateObject(wrappedValue: viewModel)
         } else {
-            let service = DefaultSwitchRecipeService(baseURL: EnvironmentManager.current.baseURL)
+            let service = DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL)
             _viewModel = StateObject(wrappedValue: RecipeViewModel(recipeService: service))
         }
     }
@@ -107,7 +107,7 @@ struct RecipeListView: View {
         .addToolbar()
         .task {
             if !hasApeared {
-                await viewModel.fetchRecipes(withToken: authViewModel.token ?? "", withMethod: curMethod)
+                await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
                 hasApeared = true
             }
         }

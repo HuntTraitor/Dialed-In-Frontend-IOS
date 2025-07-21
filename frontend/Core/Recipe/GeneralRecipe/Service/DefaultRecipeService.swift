@@ -15,18 +15,8 @@ class DefaultRecipeService: RecipeService {
     }
     
     // We should create a forMethod parameter that is optional that will query parameter the method
-    func fetchRecipes(withToken token: String, withMethod method: Method?) async throws -> [AnyRecipe] {
+    func fetchRecipes(withToken token: String) async throws -> [Recipe] {
         var url = baseURL.appendingPathComponent("recipes")
-        
-        if let method = method {
-            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            components?.queryItems = [
-                URLQueryItem(name: "method_id", value: "\(method.id)")
-            ]
-            if let composedURL = components?.url {
-                url = composedURL
-            }
-        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -46,43 +36,120 @@ class DefaultRecipeService: RecipeService {
                 }
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-            
-            // Print raw JSON for debugging
-            print("Raw response data:", String(data: data, encoding: .utf8) ?? "Unable to print data")
-            let recipes: [AnyRecipe]
-            
+                        
             do {
-                
-                // decode using model depending on the method
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                
-                if let method = method {
-                    switch method.type {
-                    case .harioSwitch:
-                        let wrapper = try decoder.decode(MultiSwitchRecipeResponse.self, from: data)
-                        recipes = wrapper.recipes.map { .switchRecipe($0) }
-                    default:
-                        let wrapper = try decoder.decode(RecipeWrapper.self, from: data)
-                        recipes = wrapper.recipes.map { .generic($0) }
-                    }
-                } else {
-                    let wrapper = try decoder.decode(RecipeWrapper.self, from: data)
-                    recipes = wrapper.recipes.map { .generic($0) }
+                let decoder = JSONDecoder()                
+                let wrapper = try decoder.decode(RecipeWrapper.self, from: data)
+                return wrapper.recipes
+            } catch let error as DecodingError {
+                // Print the raw JSON for debugging (only in debug builds)
+                #if DEBUG
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("📦 Raw JSON Response:\n\(jsonString)")
                 }
+                #endif
+                
+                switch error {
+                case .dataCorrupted(let context):
+                    print("""
+                    🛑 Data corrupted:
+                    - Context: \(context.debugDescription)
+                    - Coding Path: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))
+                    - Underlying Error: \(context.underlyingError?.localizedDescription ?? "none")
+                    """)
+                    
+                case .keyNotFound(let key, let context):
+                    print("""
+                    🔑 Key not found:
+                    - Missing Key: \(key.stringValue)
+                    - Coding Path: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))
+                    - Debug Description: \(context.debugDescription)
+                    - Full Path: \(context.codingPath)
+                    """)
+                    
+                    // Additional debug for key not found
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let recipes = json["recipes"] as? [[String: Any]] {
+                        print("ℹ️ First recipe keys:", recipes.first?.keys ?? "No recipes")
+                    }
+                    
+                case .valueNotFound(let type, let context):
+                    print("""
+                    ❌ Value not found:
+                    - Expected Type: \(type)
+                    - Coding Path: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))
+                    - Debug Description: \(context.debugDescription)
+                    """)
+                    
+                case .typeMismatch(let type, let context):
+                    print("""
+                    ↔️ Type mismatch:
+                    - Expected Type: \(type)
+                    - Coding Path: \(context.codingPath.map { $0.stringValue }.joined(separator: " → "))
+                    - Debug Description: \(context.debugDescription)
+                    """)
+                    
+                @unknown default:
+                    print("❓ Unknown decoding error:", error.localizedDescription)
+                }
+                
+                throw APIError.jsonParsingFailure(error: error)
             } catch {
-                print("Decoding failed with error:", error)
+                print("⚠️ Unexpected error:", error.localizedDescription)
                 throw APIError.jsonParsingFailure(error: error)
             }
-
-            return recipes
-            
         } catch let apiError as APIError {
             throw apiError
         } catch {
             throw APIError.unknownError(error: error)
         }
+    }
+    
+    func postRecipe(withToken token: String, recipe: Recipe) async throws -> Recipe {
+        let url = baseURL.appendingPathComponent("recipes")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+
+        request.httpBody = try encoder.encode(recipe)
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.requestFailed(description: "No valid HTTP response")
+            }
+
+            guard (200..<300).contains(httpResponse.statusCode) else {
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("Upload failed with response: \(json)")
+                }
+                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+            }
+
+            // ✅ Decode depending on expected return
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let result = try decoder.decode(SingleGenericRecipeResponse.self, from: data)
+            return result.recipe
+
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknownError(error: error)
+        }
+    }
+
+    private struct SingleSwitchRecipeResponse: Decodable {
+        let recipe: SwitchRecipe
+    }
+    
+    struct SingleGenericRecipeResponse: Decodable {
+        let recipe: Recipe
     }
     
     private struct RecipeWrapper: Decodable {

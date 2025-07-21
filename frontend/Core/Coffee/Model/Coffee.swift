@@ -14,6 +14,14 @@ struct Coffee: Identifiable, Codable, Hashable {
     var info: CoffeeInfo
     var createdAt: String?
     var version: Int?
+    
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case info
+        case createdAt = "created_at"
+        case version
+    }
 }
 
 struct CoffeeInfo: Codable, Hashable {
