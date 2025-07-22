@@ -10,12 +10,12 @@ import SwiftUI
 struct CoffeeRow: View {
     var coffee: Coffee
     @Binding var isMinimized: Bool
-    @ObservedObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationLink(
-            destination: CoffeeCard(coffee: coffee, viewModel: viewModel)
+            destination: CoffeeCard(coffee: coffee)
                 .environmentObject(authViewModel)
         ) {
             if isMinimized {
@@ -34,6 +34,6 @@ struct CoffeeRow: View {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
 
-    return CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized, viewModel: viewModel)
+    return CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized)
         .environmentObject(authViewModel)
 }

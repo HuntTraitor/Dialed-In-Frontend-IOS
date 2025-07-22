@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CoffeePickerView: View {
-    @ObservedObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
     @Binding var selectedCoffeeId: Int?
     @Binding var showCoffeePicker: Bool
     @Binding var isShowingCreateCoffeeView: Bool

@@ -10,8 +10,8 @@ import SwiftUI
 struct CreateRecipeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: RecipeViewModel
-    @ObservedObject var coffeeViewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: RecipeViewModel
+    @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""
     @State private var mlOut: String = ""
@@ -54,7 +54,6 @@ struct CreateRecipeView: View {
                     
                     Section("Coffee") {
                         CoffeePickerView(
-                            viewModel: coffeeViewModel,
                             selectedCoffeeId: $selectedCoffeeId,
                             showCoffeePicker: $showCoffeePicker,
                             isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
@@ -216,7 +215,7 @@ struct CreateRecipeView: View {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     let viewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
-    CreateRecipeView(viewModel: viewModel, coffeeViewModel: coffeeViewModel)
+    CreateRecipeView()
         .environmentObject(authViewModel)
 }
 

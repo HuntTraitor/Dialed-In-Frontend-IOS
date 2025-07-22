@@ -40,6 +40,7 @@ enum UIIdentifiers {
         static let coffeeNavigationButton = "HomeScreen.button.coffeeNavigationButton"
         static let homeNavigationButton = "HomeScreen.button.homeNavigationButton"
         static let profileNavigationButton = "HomeScreen.button.profileNavigationButton"
+        static let recipeNavigationButton = "HomeScreen.button.recipeNavigationButton"
     }
     
     enum CoffeeScreen {

@@ -9,21 +9,15 @@ import SwiftUI
 
 struct RecipeListView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var viewModel: RecipeViewModel
+    @EnvironmentObject private var viewModel: RecipeViewModel
     @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
     @State private var hasApeared: Bool = false
     let curMethod: Method
     
-    init(curMethod: Method, viewModel: RecipeViewModel? = nil) {
+    init(curMethod: Method) {
         self.curMethod = curMethod
-        if let viewModel {
-            _viewModel = StateObject(wrappedValue: viewModel)
-        } else {
-            let service = DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL)
-            _viewModel = StateObject(wrappedValue: RecipeViewModel(recipeService: service))
-        }
     }
     
     var filteredRecipes: [SwitchRecipe] {
@@ -52,7 +46,7 @@ struct RecipeListView: View {
                 .padding(.top, 40)
                 .italic()
                 .sheet(isPresented: $isShowingCreateRecipeView) {
-                    CreateRecipeView(viewModel: viewModel, coffeeViewModel: CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)))
+                    CreateRecipeView()
                 }
             }
             

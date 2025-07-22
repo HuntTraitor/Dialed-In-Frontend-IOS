@@ -11,7 +11,7 @@ import PhotosUI
 struct EditCoffeeView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
     @Binding var coffee: Coffee
     @State private var imageSelection: PhotosPickerItem?
     @State private var imageObject: UIImage?
@@ -31,9 +31,8 @@ struct EditCoffeeView: View {
     @State private var tempCost: Double
     @State private var tempImg: String
     
-    init(coffee: Binding<Coffee>, viewModel: CoffeeViewModel) {
+    init(coffee: Binding<Coffee>) {
         self._coffee = coffee
-        self.viewModel = viewModel
         self._tempName = State(initialValue: coffee.wrappedValue.info.name)
         self._tempRoaster = State(initialValue: coffee.wrappedValue.info.roaster ?? "")
         self._tempDecaf = State(initialValue: coffee.wrappedValue.info.decaf)
@@ -363,8 +362,7 @@ struct EditCoffeeView: View {
             let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
 
             EditCoffeeView(
-                coffee: $sampleCoffee,
-                viewModel: viewModel
+                coffee: $sampleCoffee
             )
             .environmentObject(authViewModel)
         }

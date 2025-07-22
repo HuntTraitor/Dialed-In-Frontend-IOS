@@ -11,7 +11,7 @@ import PhotosUI
 struct CreateCoffeeView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
 
     @State private var isShowingTastingNoteDialog = false
     @State private var name: String = ""
@@ -314,12 +314,7 @@ extension View {
 // MARK: - Preview
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    let mockCoffeeService = MockCoffeeService()
-    let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-    
-    let coffeeService = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
-    let coffeeViewModel = CoffeeViewModel(coffeeService: coffeeService)
 
-    return CreateCoffeeView(viewModel: coffeeViewModel)
+    return CreateCoffeeView()
         .environmentObject(authViewModel)
 }

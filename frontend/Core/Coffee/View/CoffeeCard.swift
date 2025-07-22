@@ -11,7 +11,7 @@ import WrappingHStack
 struct CoffeeCard: View {
     @State var coffee: Coffee
 //    @EnvironmentObject var authViewModel: AuthViewModel
-    @ObservedObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
 //    @State var isChoiceDialogActive: Bool = false
 //    @State var isSuccessDeleteDialogActive: Bool = false
@@ -53,7 +53,7 @@ struct CoffeeCard: View {
                     .padding([.top, .trailing], 16)
 
                     .sheet(isPresented: $isShowingEditCoffeeView) {
-                        EditCoffeeView(coffee: $coffee, viewModel: viewModel)
+                        EditCoffeeView(coffee: $coffee)
                     }
                 }
 
@@ -192,6 +192,6 @@ extension View {
 #Preview {
     let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
     let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    CoffeeCard(coffee: Coffee.MOCK_NOTHING_COFFEE, viewModel: viewModel)
+    CoffeeCard(coffee: Coffee.MOCK_NOTHING_COFFEE)
         .environmentObject(authViewModel)
 }

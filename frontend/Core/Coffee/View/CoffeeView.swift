@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CoffeeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var viewModel: CoffeeViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
     @Bindable private var navigator = NavigationManager.nav
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
@@ -18,15 +18,6 @@ struct CoffeeView: View {
     @State private var isMinimized: Bool = false
     
     private let testingID = UIIdentifiers.CoffeeScreen.self
-    
-    init(viewModel: CoffeeViewModel? = nil) {
-        if let viewModel {
-            _viewModel = StateObject(wrappedValue: viewModel)
-        } else {
-            let service = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
-            _viewModel = StateObject(wrappedValue: CoffeeViewModel(coffeeService: service))
-        }
-    }
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return viewModel.coffees }
@@ -59,7 +50,7 @@ struct CoffeeView: View {
                                 .padding(.trailing, 30)
                         }
                         .sheet(isPresented: $isShowingCreateCoffeeView) {
-                            CreateCoffeeView(viewModel: viewModel)
+                            CreateCoffeeView()
                         }
                         .padding(.top, 40)
                     }
@@ -96,7 +87,7 @@ struct CoffeeView: View {
                                 ScrollView {
                                     ForEach(filteredCoffees, id: \.id) { coffee in
                                         VStack {
-                                            CoffeeRow(coffee: coffee, isMinimized: $isMinimized, viewModel: viewModel)
+                                            CoffeeRow(coffee: coffee, isMinimized: $isMinimized)
                                         }
                                         .padding(.vertical, 10)
                                         .background(Color.white)
@@ -135,6 +126,6 @@ struct CoffeeView: View {
     let coffeeService = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
     let coffeeViewModel = CoffeeViewModel(coffeeService: coffeeService)
     
-    return CoffeeView(viewModel: coffeeViewModel)
+    return CoffeeView()
         .environmentObject(authViewModel)
 }

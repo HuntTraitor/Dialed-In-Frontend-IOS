@@ -38,12 +38,19 @@ struct ContentView: View {
                                 }
                                 .tag(2)
                             
+                            RecipeView()
+                                .tabItem {
+                                    Label("Recipes", systemImage: "book.pages")
+                                        .accessibilityIdentifier(testingID.recipeNavigationButton)
+                                }
+                                .tag(3)
+                            
                             ProfileView()
                                 .tabItem {
                                     Label("Profile", systemImage: "person.crop.circle")
                                         .accessibilityIdentifier(testingID.profileNavigationButton)
                                 }
-                                .tag(3)
+                                .tag(4)
 
 
 
@@ -94,7 +101,7 @@ extension View {
 
 
 #Preview {
-    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    return ContentView()
-        .environmentObject(viewModel)
+    PreviewWrapper {
+        ContentView()
+    }
 }
