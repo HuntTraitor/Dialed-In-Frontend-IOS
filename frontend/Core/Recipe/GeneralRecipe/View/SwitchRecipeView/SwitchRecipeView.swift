@@ -57,7 +57,7 @@ struct SwitchRecipeView: View {
                 
                 // Full-screen animation
                 if showAnimation {
-                    RecipeAnimation(recipe: recipe) {
+                    SwitchRecipeAnimation(recipe: recipe) {
                         print("Animation Complete")
                     }
                     .edgesIgnoringSafeArea(.all)

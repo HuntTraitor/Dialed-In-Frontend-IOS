@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct RecipeAnimation: View {
+struct SwitchRecipeAnimation: View {
     let recipe: SwitchRecipe
     var onComplete: () -> Void
 
@@ -10,7 +10,7 @@ struct RecipeAnimation: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PhaseView(recipe: recipe, phase: currentPhase, totalWater: totalWater)
+            SwitchPhaseView(recipe: recipe, phase: currentPhase, totalWater: totalWater)
 
             HStack {
                 Image(systemName: "square.fill")
@@ -53,7 +53,7 @@ struct RecipeAnimation: View {
 }
 
 #Preview {
-    RecipeAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE) {
+    SwitchRecipeAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE) {
         print("Animation complete")
     }
 }

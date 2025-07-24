@@ -1,28 +1,22 @@
 //
-//  RecipeListView.swift
+//  AllRecipeView.swift
 //  DialedIn
 //
-//  Created by Hunter Tratar on 1/27/25.
+//  Created by Hunter Tratar on 7/24/25.
 //
 
 import SwiftUI
 
-struct RecipeListView: View {
+struct AllRecipeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject private var viewModel: RecipeViewModel
-    @Bindable private var navigator = NavigationManager.nav
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
     @State private var hasApeared: Bool = false
-    let curMethod: Method
     
-    init(curMethod: Method) {
-        self.curMethod = curMethod
-    }
-    
-    var filteredRecipes: [SwitchRecipe] {
-        guard !searchTerm.isEmpty else { return viewModel.switchRecipes }
-        return viewModel.switchRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+    var filteredRecipes: [Recipe] {
+        guard !searchTerm.isEmpty else { return viewModel.allRecipes }
+        return viewModel.allRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -46,7 +40,7 @@ struct RecipeListView: View {
                 .padding(.top, 40)
                 .italic()
                 .sheet(isPresented: $isShowingCreateRecipeView) {
-                    CreateRecipeView()
+//                    CreateSwitchRecipeView()
                 }
             }
             
@@ -78,7 +72,7 @@ struct RecipeListView: View {
                                     )
                                     .environmentObject(authViewModel)
                                 ) {
-                                    RecipeCard(recipe: recipe)
+                                    SwitchRecipeCard(recipe: recipe)
                                         .frame(maxWidth: .infinity, maxHeight: 120)
                                         .padding()
                                         .background(Color(.systemBackground))
@@ -109,9 +103,7 @@ struct RecipeListView: View {
 }
 
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    NavigationStack {
-        RecipeListView(curMethod: Method.MOCK_METHOD)
-            .environmentObject(authViewModel)
+    PreviewWrapper {
+        AllRecipeView()
     }
 }

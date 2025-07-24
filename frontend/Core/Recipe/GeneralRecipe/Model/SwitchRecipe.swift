@@ -70,7 +70,6 @@ func mapToSwitchRecipe(_ recipe: Recipe) -> SwitchRecipe? {
     do {
         let data = try JSONSerialization.data(withJSONObject: recipe.info.value, options: [])
         let decoder = JSONDecoder()
-//        decoder.keyDecodingStrategy = .convertFromSnakeCase
         let info = try decoder.decode(SwitchRecipe.RecipeInfo.self, from: data)
 
         return SwitchRecipe(

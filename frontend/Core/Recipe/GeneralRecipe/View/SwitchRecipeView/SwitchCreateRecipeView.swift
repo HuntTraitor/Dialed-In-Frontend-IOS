@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CreateRecipeView: View {
+struct CreateSwitchRecipeView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
@@ -212,10 +212,8 @@ struct CreateRecipeView: View {
 }
 
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    let coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    let viewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
-    CreateRecipeView()
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        CreateSwitchRecipeView()
+    }
 }
 

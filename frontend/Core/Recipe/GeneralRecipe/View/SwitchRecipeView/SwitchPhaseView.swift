@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PhaseView: View {
+struct SwitchPhaseView: View {
     let recipe: SwitchRecipe
     let phase: Int
     let totalWater: Int
@@ -48,5 +48,5 @@ struct PhaseView: View {
 }
 
 #Preview {
-    PhaseView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, phase: 1, totalWater: 160)
+    SwitchPhaseView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, phase: 1, totalWater: 160)
 }

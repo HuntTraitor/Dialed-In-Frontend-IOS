@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-struct RecipeCard: View {
+struct SwitchRecipeCard: View {
     var recipe: SwitchRecipe
-
+    
     var body: some View {
-        let totalTime = recipe.info.phases.reduce(0) { $0 + $1.time }
-
         HStack {
             VStack {
                 ImageView(URL(string: recipe.coffee.info.img ?? ""))
@@ -43,20 +41,11 @@ struct RecipeCard: View {
                     .padding(.trailing, 10)
                 }
                 .padding(.bottom, 10)
-
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(Color("background"))
-                    Text(String(format: "%d:%02d", totalTime / 60, totalTime % 60))
-                        .bold()
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.leading, 10)
             }
         }
     }
 }
 
 #Preview {
-    RecipeCard(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    SwitchRecipeCard(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
 }

@@ -46,7 +46,7 @@ struct MethodListView: View {
                     VStack(spacing: 16) {
                         ForEach(viewModel.methods) { method in
                             NavigationLink {
-                                RecipeListView(curMethod: method)
+                                GeneralRecipeView(curMethod: method)
                             } label: {
                                 MethodCard(title: method.name, image: method.name)
                                     .padding(5)

@@ -29,8 +29,6 @@ class RecipeViewModel: ObservableObject {
             let fetched = try await recipeService.fetchRecipes(withToken: token)
             self.allRecipes = fetched
             self.switchRecipes = fetched.compactMap(mapToSwitchRecipe)
-            print(self.switchRecipes)
-            
         } catch {
             errorMessage = "Failed to fetch all recipes: \(error.localizedDescription)"
         }

@@ -38,7 +38,7 @@ struct ContentView: View {
                                 }
                                 .tag(2)
                             
-                            RecipeView()
+                            GeneralRecipeView(curMethod: nil)
                                 .tabItem {
                                     Label("Recipes", systemImage: "book.pages")
                                         .accessibilityIdentifier(testingID.recipeNavigationButton)
