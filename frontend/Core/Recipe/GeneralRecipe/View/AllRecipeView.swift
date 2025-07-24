@@ -16,7 +16,7 @@ struct AllRecipeView: View {
     
     var filteredRecipes: [Recipe] {
         guard !searchTerm.isEmpty else { return viewModel.allRecipes }
-        return viewModel.allRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+        return viewModel.allRecipes.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
     }
     
     var body: some View {
@@ -49,7 +49,7 @@ struct AllRecipeView: View {
                     .scaleEffect(0.9)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10)
-            } else if viewModel.switchRecipes.isEmpty {
+            } else if viewModel.allRecipes.isEmpty {
                 NoResultsFound(itemName: "recipe", systemImage: "book.pages")
                     .scaleEffect(0.8)
                     .offset(y: -(UIScreen.main.bounds.height) * 0.1)
@@ -65,19 +65,14 @@ struct AllRecipeView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         ScrollView {
-                            ForEach(filteredRecipes, id: \.self) { recipe in
+                            ForEach(filteredRecipes, id: \.id) { recipe in
                                 NavigationLink(
-                                    destination: SwitchRecipeView(
-                                        recipe: recipe
-                                    )
-                                    .environmentObject(authViewModel)
+                                    destination: destinationView(for: recipe)
                                 ) {
-                                    SwitchRecipeCard(recipe: recipe)
+                                    recipeCard(for: recipe)
                                         .frame(maxWidth: .infinity, maxHeight: 120)
                                         .padding()
                                         .background(Color(.systemBackground))
-                                    
-                                    
                                         .cornerRadius(15)
                                         .shadow(radius: 2)
                                         .padding(.horizontal, 20)
@@ -102,8 +97,29 @@ struct AllRecipeView: View {
     }
 }
 
+extension AllRecipeView {
+    @ViewBuilder
+    func destinationView(for recipe: Recipe) -> some View {
+        switch recipe {
+        case .switchRecipe(let switchRecipe):
+            SwitchRecipeView(recipe: switchRecipe)
+        }
+    }
+
+    @ViewBuilder
+    func recipeCard(for recipe: Recipe) -> some View {
+        switch recipe {
+        case .switchRecipe(let switchRecipe):
+            RecipeCard(recipe: .switchRecipe(switchRecipe))
+        }
+    }
+}
+
+
 #Preview {
     PreviewWrapper {
-        AllRecipeView()
+        NavigationView {
+            AllRecipeView()
+        }
     }
 }

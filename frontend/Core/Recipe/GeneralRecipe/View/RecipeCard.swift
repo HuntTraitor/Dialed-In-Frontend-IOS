@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SwitchRecipeCard: View {
-    var recipe: SwitchRecipe
+struct RecipeCard: View {
+    var recipe: Recipe
     
     var body: some View {
         HStack {
@@ -19,7 +19,7 @@ struct SwitchRecipeCard: View {
             }
 
             VStack(alignment: .leading) {
-                Text(recipe.info.name)
+                Text(recipe.name)
                     .italic()
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -29,14 +29,14 @@ struct SwitchRecipeCard: View {
                     HStack {
                         Image(systemName: "cup.and.heat.waves.fill")
                             .foregroundColor(Color("background"))
-                        Text("\(recipe.info.gramsIn)g")
+                        Text("\(recipe.gramsIn)g")
                     }
                     .padding(.leading, 15)
                     Spacer()
                     HStack {
                         Image(systemName: "drop.fill")
                             .foregroundColor(Color("background"))
-                        Text("\(recipe.info.mlOut)ml")
+                        Text("\(recipe.mlOut)ml")
                     }
                     .padding(.trailing, 10)
                 }
@@ -47,5 +47,5 @@ struct SwitchRecipeCard: View {
 }
 
 #Preview {
-    SwitchRecipeCard(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    RecipeCard(recipe: Recipe.switchRecipe(SwitchRecipe.MOCK_SWITCH_RECIPE))
 }

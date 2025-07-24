@@ -127,7 +127,7 @@ struct LoginView: View {
 }
 
 #Preview {
-    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    return LoginView()
-        .environmentObject(viewModel)
+    PreviewWrapper {
+        LoginView()
+    }
 }

@@ -18,14 +18,16 @@ public struct GeneralRecipeView: View {
         case .v60:
             Text("V60 recipes")
         default:
-            Text("all recipes?")
+            AllRecipeView()
         }
     }
 }
 
 #Preview {
     PreviewWrapper {
-        GeneralRecipeView(curMethod: Method.MOCK_METHOD)
+        NavigationView {
+            GeneralRecipeView(curMethod: nil)
+        }
     }
 }
 

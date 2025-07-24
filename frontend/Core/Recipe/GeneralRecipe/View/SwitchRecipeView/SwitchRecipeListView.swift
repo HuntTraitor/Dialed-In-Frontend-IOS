@@ -71,14 +71,11 @@ struct SwitchRecipeListView: View {
                                     destination: SwitchRecipeView(
                                         recipe: recipe
                                     )
-                                    .environmentObject(authViewModel)
                                 ) {
-                                    SwitchRecipeCard(recipe: recipe)
+                                    RecipeCard(recipe: .switchRecipe(recipe))
                                         .frame(maxWidth: .infinity, maxHeight: 120)
                                         .padding()
                                         .background(Color(.systemBackground))
-                                    
-                                    
                                         .cornerRadius(15)
                                         .shadow(radius: 2)
                                         .padding(.horizontal, 20)
@@ -105,6 +102,8 @@ struct SwitchRecipeListView: View {
 
 #Preview {
     PreviewWrapper {
-        SwitchRecipeListView()
+        NavigationView {
+            SwitchRecipeListView()
+        }
     }
 }

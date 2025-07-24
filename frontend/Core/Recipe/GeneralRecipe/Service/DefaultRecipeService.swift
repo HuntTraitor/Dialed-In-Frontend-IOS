@@ -16,7 +16,7 @@ class DefaultRecipeService: RecipeService {
     
     // We should create a forMethod parameter that is optional that will query parameter the method
     func fetchRecipes(withToken token: String) async throws -> [Recipe] {
-        var url = baseURL.appendingPathComponent("recipes")
+        let url = baseURL.appendingPathComponent("recipes")
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -144,9 +144,9 @@ class DefaultRecipeService: RecipeService {
         }
     }
 
-    private struct SingleSwitchRecipeResponse: Decodable {
-        let recipe: SwitchRecipe
-    }
+//    private struct SingleSwitchRecipeResponse: Decodable {
+//        let recipe: SwitchRecipe
+//    }
     
     struct SingleGenericRecipeResponse: Decodable {
         let recipe: Recipe
