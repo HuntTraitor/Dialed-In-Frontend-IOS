@@ -28,6 +28,12 @@ enum Recipe: Identifiable, Codable {
         }
     }
     
+    var method: Method {
+        switch self {
+        case .switchRecipe(let data): return data.method
+        }
+    }
+    
     var gramsIn: Int {
         switch self {
         case .switchRecipe(let data): return data.info.gramsIn

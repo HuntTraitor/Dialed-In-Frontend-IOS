@@ -98,7 +98,7 @@ struct SwitchRecipeView: View {
                         CoffeeCard(coffee: recipe.coffee)
                             .environmentObject(authViewModel)
                     } label: {
-                        CoffeeCardSmall(coffee: recipe.coffee)
+                        CoffeeCardExtraSmall(coffee: recipe.coffee)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }

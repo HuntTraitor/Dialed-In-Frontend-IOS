@@ -118,14 +118,7 @@ struct CoffeeView: View {
 }
 
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    
-    let mockCoffeeService = MockCoffeeService()
-    let mockCoffeeViewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
-    
-    let coffeeService = DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL)
-    let coffeeViewModel = CoffeeViewModel(coffeeService: coffeeService)
-    
-    return CoffeeView()
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        CoffeeView()
+    }
 }

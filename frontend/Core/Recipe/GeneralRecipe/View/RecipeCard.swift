@@ -11,36 +11,52 @@ struct RecipeCard: View {
     var recipe: Recipe
     
     var body: some View {
-        HStack {
-            VStack {
-                ImageView(URL(string: recipe.coffee.info.img ?? ""))
-                Text(recipe.coffee.info.name)
-                    .bold()
+        VStack {
+            HStack {
+                Image(systemName: "cup.and.heat.waves.fill")
+                    .foregroundColor(Color("background"))
+                Text(recipe.method.name)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-
-            VStack(alignment: .leading) {
-                Text(recipe.name)
-                    .italic()
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 10)
-
-                HStack {
-                    HStack {
-                        Image(systemName: "cup.and.heat.waves.fill")
-                            .foregroundColor(Color("background"))
-                        Text("\(recipe.gramsIn)g")
-                    }
-                    .padding(.leading, 15)
-                    Spacer()
-                    HStack {
-                        Image(systemName: "drop.fill")
-                            .foregroundColor(Color("background"))
-                        Text("\(recipe.mlOut)ml")
-                    }
-                    .padding(.trailing, 10)
+            .padding(.leading, 10)
+            
+            Divider()
+                .frame(height: 2)
+                .background(Color("background"))
+                .padding(.vertical, 4)
+                .padding(.horizontal, 10)
+                .opacity(0.8)
+            HStack {
+                VStack {
+                    ImageView(URL(string: recipe.coffee.info.img ?? ""))
                 }
-                .padding(.bottom, 10)
+                .frame(width: 150, height: 150)
+                
+                VStack(alignment: .leading) {
+                    Text(recipe.name)
+                        .italic()
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        HStack {
+                            Image(systemName: "cup.and.heat.waves.fill")
+                                .foregroundColor(Color("background"))
+                            Text("\(recipe.gramsIn)g")
+                        }
+                        HStack {
+                            Image(systemName: "drop.fill")
+                                .foregroundColor(Color("background"))
+                            Text("\(recipe.mlOut)ml")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .frame(maxHeight: 75) // or whatever value feels right
             }
         }
     }
