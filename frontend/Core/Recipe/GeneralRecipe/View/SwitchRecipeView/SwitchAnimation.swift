@@ -24,7 +24,7 @@ struct SwitchAnimation: View {
 
                 Text("Phase \(currentPhaseIndex + 1) out of \(recipe.info.phases.count)")
                 
-                Text("\(phase.open ? "Open" : "Closed") switch and pour to \(phase.amount)g")
+                Text("\(phase.open ? "Open" : "Close") switch and pour to \(phase.amount)g")
 
                 SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
                     .id(currentPhaseIndex)
@@ -119,8 +119,6 @@ extension SwitchAnimation {
     func direction(for phaseIndex: Int) -> Direction {
         let phases = recipe.info.phases
         
-        print(phaseIndex, phases[phaseIndex])
-
         guard phaseIndex >= 0 && phaseIndex < phases.count else {
             return .stillBottom  // default fallback
         }
