@@ -23,7 +23,7 @@ struct SwitchPour: View {
     init(fillIn: Double, direction: Direction) {
         self.fillIn = fillIn
         self.direction = direction
-        _remainingTime = State(initialValue: fillIn)
+        _remainingTime = State(initialValue: fillIn+0.9)
     }
 
     var body: some View {
@@ -31,11 +31,11 @@ struct SwitchPour: View {
             ZStack(alignment: .bottom) {
                 switch direction {
                 case .up:
-                    PourAnimation(fillIn: fillIn)
+                    PourAnimation(fillIn: min(fillIn * 0.3, 20))
                         .frame(width: 230, height: 130)
                         .offset(y: -1)
                 case .down:
-                    PourAnimationReverse(fillIn: fillIn)
+                    PourAnimationReverse(fillIn: min(fillIn * 0.3, 20))
                         .frame(width: 230, height: 130)
                         .offset(y: -1)
                 case .stillTop:
@@ -99,6 +99,6 @@ struct SwitchPour: View {
 
 
 #Preview {
-    SwitchPour(fillIn: 75, direction: .stillBottom)
+    SwitchPour(fillIn: 200, direction: .up)
 }
 

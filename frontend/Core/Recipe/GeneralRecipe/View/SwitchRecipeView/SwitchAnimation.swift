@@ -1,0 +1,167 @@
+//
+//  SwitchAnimation.swift
+//  DialedIn
+//
+//  Created by Hunter Tratar on 8/3/25.
+//
+
+import SwiftUI
+
+struct SwitchAnimation: View {
+    let recipe: SwitchRecipe
+    @State private var currentPhaseIndex = 0
+    @State private var targetPhaseIndex = 0
+    @State private var currentTask: Task<Void, Never>? = nil
+    @State private var isPlaying = true
+    @State private var showStopConfirmation = false
+
+
+    var body: some View {
+        VStack {
+            if currentPhaseIndex < recipe.info.phases.count {
+                let phase = recipe.info.phases[currentPhaseIndex]
+                let currentDirection = direction(for: currentPhaseIndex)
+
+                Text("Phase \(currentPhaseIndex + 1) out of \(recipe.info.phases.count)")
+                
+                Text("\(phase.open ? "Open" : "Closed") switch and pour to \(phase.amount)g")
+
+                SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
+                    .id(currentPhaseIndex)
+            } else {
+                Text("Done!")
+            }
+            
+            HStack(spacing: 40) {
+                Button(action: {
+                    skipBackward()
+                }) {
+                    Image(systemName: "arrowshape.backward.fill")
+                        .font(.system(size: 36))
+                }
+
+                Button(action: {
+                    showStopConfirmation = true
+                }) {
+                    Image(systemName: "stop.fill")
+                        .font(.system(size: 36))
+                }
+
+                Button(action: {
+                    skipForward()
+                }) {
+                    Image(systemName: "arrowshape.forward.fill")
+                        .font(.system(size: 36))
+                }
+            }
+            .padding(.top)
+        }
+        .onAppear {
+            runPhaseSequence()
+        }
+        .onDisappear {
+            currentTask?.cancel()
+        }
+        .alert("Stop Recipe?", isPresented: $showStopConfirmation) {
+            Button("Stop", role: .destructive) {
+                stopRecipe()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to stop the current recipe? This cannot be undone.")
+        }
+    }
+    
+    func runPhaseSequence() {
+        currentTask?.cancel()
+        currentTask = Task {
+            for i in currentPhaseIndex..<recipe.info.phases.count {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    currentPhaseIndex = i
+                }
+
+                let time = recipe.info.phases[i].time
+                try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000) - 200_000_000)
+                
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    currentPhaseIndex = recipe.info.phases.count
+                }
+            }
+        }
+    }
+
+    func skipForward() {
+        guard currentPhaseIndex < recipe.info.phases.count - 1 else { return }
+        currentTask?.cancel()
+        currentPhaseIndex += 1
+        runPhaseSequence()
+    }
+
+    func skipBackward() {
+        guard currentPhaseIndex > 0 else { return }
+        currentTask?.cancel()
+        currentPhaseIndex -= 1
+        runPhaseSequence()
+    }
+    
+    func stopRecipe() {
+        currentTask?.cancel()
+        currentPhaseIndex = recipe.info.phases.count
+    }
+}
+
+
+extension SwitchAnimation {
+    
+    func direction(for phaseIndex: Int) -> Direction {
+        let phases = recipe.info.phases
+        
+        print(phaseIndex, phases[phaseIndex])
+
+        guard phaseIndex >= 0 && phaseIndex < phases.count else {
+            return .stillBottom  // default fallback
+        }
+
+        let currentPhase = phases[phaseIndex]
+        
+        if phaseIndex == 0 && currentPhase.open {
+            if currentPhase.amount > 0 {
+                return .up
+            } else {
+                return .stillBottom
+            }
+        }
+        
+        else if currentPhase.open {
+            // if the amount is 0 and the prev amount is not zero
+            if currentPhase.amount == 0 && phases[phaseIndex - 1].amount != 0 {
+                return .down
+            }
+            // if the amount is greater than 0
+            else if currentPhase.amount > 0 {
+                return .up
+            }
+        }
+        
+        // if the switch is closed
+        else if !currentPhase.open {
+            // if the current amount is zero and the previous amount was not zero
+            if currentPhase.amount == 0 && phases[phaseIndex - 1].amount != 0 {
+                return .stillTop
+            }
+            // if the amount is greater than 0
+            else if currentPhase.amount > 0 {
+                return .up
+            }
+        }
+        return .stillBottom
+    }
+}
+
+#Preview {
+    SwitchAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+}
+
