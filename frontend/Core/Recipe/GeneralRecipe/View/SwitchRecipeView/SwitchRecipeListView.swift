@@ -80,9 +80,6 @@ struct SwitchRecipeListView: View {
                                             .padding(.vertical, 10)
                                             .background(Color.white)
                                             .cornerRadius(10)
-
-                                        //                                        .padding(.horizontal, 20)
-                                        //                                        .padding(.vertical, 3)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }

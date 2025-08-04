@@ -28,33 +28,33 @@ struct SwitchAnimation: View {
 
                 SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
                     .id(currentPhaseIndex)
+                
+                HStack(spacing: 40) {
+                    Button(action: {
+                        skipBackward()
+                    }) {
+                        Image(systemName: "arrowshape.backward.fill")
+                            .font(.system(size: 36))
+                    }
+
+                    Button(action: {
+                        showStopConfirmation = true
+                    }) {
+                        Image(systemName: "stop.fill")
+                            .font(.system(size: 36))
+                    }
+
+                    Button(action: {
+                        skipForward()
+                    }) {
+                        Image(systemName: "arrowshape.forward.fill")
+                            .font(.system(size: 36))
+                    }
+                }
+                .padding(.top)
             } else {
-                Text("Done!")
+                SwitchRecipeSummary(recipe: recipe)
             }
-            
-            HStack(spacing: 40) {
-                Button(action: {
-                    skipBackward()
-                }) {
-                    Image(systemName: "arrowshape.backward.fill")
-                        .font(.system(size: 36))
-                }
-
-                Button(action: {
-                    showStopConfirmation = true
-                }) {
-                    Image(systemName: "stop.fill")
-                        .font(.system(size: 36))
-                }
-
-                Button(action: {
-                    skipForward()
-                }) {
-                    Image(systemName: "arrowshape.forward.fill")
-                        .font(.system(size: 36))
-                }
-            }
-            .padding(.top)
         }
         .onAppear {
             runPhaseSequence()
