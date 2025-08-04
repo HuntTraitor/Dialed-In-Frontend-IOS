@@ -17,7 +17,7 @@ struct PourAnimation: View {
             ZStack(alignment: .bottom) {
                 Rectangle()
                     .fill(Color("WaterColor"))
-                    .frame(height: isExpanded ? geometry.size.height : 0)
+                    .frame(height: isExpanded ? geometry.size.height * 0.8 : 0)
                     .animation(.easeInOut(duration: fillIn), value: isExpanded)
                 
                 LottieView(animation: .named("WaterAnimation"))
@@ -25,10 +25,9 @@ struct PourAnimation: View {
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                    .offset(y: isExpanded ? -geometry.size.height + 1 : 1)
+                    .offset(y: isExpanded ? -geometry.size.height * 0.8 : 1)
                     .animation(.easeInOut(duration: fillIn), value: isExpanded)
             }
-            .offset(y: 35)
         }
         .onAppear {
             isExpanded = true
