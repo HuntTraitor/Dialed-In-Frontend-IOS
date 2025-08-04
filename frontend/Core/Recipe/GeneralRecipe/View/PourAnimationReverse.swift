@@ -1,5 +1,5 @@
 //
-//  PourAnimation.swift
+//  PourAnimationReverse.swift
 //  DialedIn
 //
 //  Created by Hunter Tratar on 8/3/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Lottie
 
-struct PourAnimation: View {
+struct PourAnimationReverse: View {
     let fillIn: Double
     @State private var isExpanded = false
     
@@ -17,7 +17,7 @@ struct PourAnimation: View {
             ZStack(alignment: .bottom) {
                 Rectangle()
                     .fill(Color("WaterColor"))
-                    .frame(height: isExpanded ? geometry.size.height * 0.8 : 0)
+                    .frame(height: isExpanded ? 0 : geometry.size.height * 0.8)
                     .animation(.easeInOut(duration: fillIn), value: isExpanded)
                 
                 LottieView(animation: .named("WaterAnimation"))
@@ -25,7 +25,7 @@ struct PourAnimation: View {
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                    .offset(y: isExpanded ? -geometry.size.height * 0.8+2 : 1)
+                    .offset(y: isExpanded ? 0: -geometry.size.height * 0.8 + 2)
                     .animation(.easeInOut(duration: fillIn), value: isExpanded)
             }
         }
@@ -36,5 +36,6 @@ struct PourAnimation: View {
 }
 
 #Preview {
-    PourAnimation(fillIn: 10)
+    PourAnimationReverse(fillIn: 10)
 }
+
