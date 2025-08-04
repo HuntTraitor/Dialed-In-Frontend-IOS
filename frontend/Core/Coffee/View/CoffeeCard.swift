@@ -190,8 +190,7 @@ extension View {
 
 
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-    CoffeeCard(coffee: Coffee.MOCK_NOTHING_COFFEE)
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        CoffeeCard(coffee: Coffee.MOCK_COFFEE)
+    }
 }

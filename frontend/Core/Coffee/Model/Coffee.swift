@@ -305,7 +305,7 @@ extension Coffee {
             originType: .singleOrigin,
             rating: .four,
             roastLevel: .medium,
-            tastingNotes: [.caramelized],
+            tastingNotes: [.caramelized, .acidic, .ashy],
             cost: 24.99,
             img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
         ),

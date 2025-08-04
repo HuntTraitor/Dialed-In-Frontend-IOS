@@ -105,6 +105,6 @@ struct InfoRow: View {
 }
 
 #Preview {
-    CoffeeCardSmall(coffee: Coffee.MOCK_NOTHING_COFFEE)
+    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEE)
 }
 
