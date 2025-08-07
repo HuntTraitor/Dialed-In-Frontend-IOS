@@ -142,9 +142,9 @@ extension SwitchRecipe {
             gramsIn: 20,
             mlOut: 320,
             phases: [
-                RecipeInfo.Phase(open: true, time: 5, amount: 160),
-                RecipeInfo.Phase(open: false, time: 5, amount: 160),
-                RecipeInfo.Phase(open: true, time: 5, amount: 0)
+                RecipeInfo.Phase(open: true, time: 45, amount: 160),
+                RecipeInfo.Phase(open: false, time: 75, amount: 160),
+                RecipeInfo.Phase(open: true, time: 60, amount: 0)
             ]
         )
     )

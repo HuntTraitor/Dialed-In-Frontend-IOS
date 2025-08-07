@@ -22,12 +22,61 @@ struct SwitchAnimation: View {
                 let phase = recipe.info.phases[currentPhaseIndex]
                 let currentDirection = direction(for: currentPhaseIndex)
 
-                Text("Phase \(currentPhaseIndex + 1) out of \(recipe.info.phases.count)")
-                
-                Text("\(phase.open ? "Open" : "Close") switch and pour to \(phase.amount)g")
-
-                SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
-                    .id(currentPhaseIndex)
+                VStack(spacing: 20) {
+                    // Phase progress bar
+                    HStack(spacing: 8) {
+                        ForEach(0..<recipe.info.phases.count, id: \.self) { index in
+                            Rectangle()
+                                .fill(index <= currentPhaseIndex ?
+                                      brownShade(for: index, total: recipe.info.phases.count) :
+                                      Color.gray.opacity(0.3))
+                                .frame(height: 6)
+                                .cornerRadius(3)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    // Current phase header
+                    VStack(spacing: 24) {
+                        Text("Phase \(currentPhaseIndex + 1) of \(recipe.info.phases.count)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                        
+                        // Switch state indicator - very prominent
+                        HStack(spacing: 12) {
+                            Image(systemName: phase.open ? "lock.open.fill" : "lock.fill")
+                                .font(.title)
+                                .foregroundColor(phase.open ? .green : .red)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(phase.open ? "OPEN SWITCH" : "CLOSE SWITCH")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(phase.open ? .green : .red)
+                                
+                                Text("Pour to \(phase.amount)g")
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                        }
+                        .padding(.horizontal, 60)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(phase.open ? Color.green.opacity(0.1) : Color.red.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(phase.open ? Color.green.opacity(0.3) : Color.red.opacity(0.3), lineWidth: 1)
+                                )
+                        )
+                    }
+                    
+                    // Animation
+                    SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
+                        .id(currentPhaseIndex)
+                }
                 
                 HStack(spacing: 40) {
                     Button(action: {

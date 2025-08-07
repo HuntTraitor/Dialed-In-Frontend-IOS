@@ -13,6 +13,7 @@ struct SwitchRecipeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showCountdown = false
     @State private var showAnimation = false
+    @State private var isMinimized: Bool = true
     
     private var sortedPhases: [SwitchRecipe.RecipeInfo.Phase] {
         recipe.info.phases
@@ -22,19 +23,13 @@ struct SwitchRecipeView: View {
         sortedPhases.reduce(0) { $0 + $1.time }
     }
     
-    private var phaseColors: [Color] {
-        sortedPhases.enumerated().map { getColor(for: $0.offset) }
-    }
-    
     var body: some View {
         NavigationView {
             ZStack {
-                // Main content (always present)
                 mainContent
                     .opacity(showAnimation ? 0 : 1)
                     .animation(.easeInOut(duration: 0.3), value: showAnimation)
                 
-                // Countdown overlay
                 if showCountdown {
                     Color.black.opacity(0.5)
                         .edgesIgnoringSafeArea(.all)
@@ -47,7 +42,6 @@ struct SwitchRecipeView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 showCountdown = false
                                 showAnimation = true
-                                print("COMPLETED HERE")
                             }
                         }
                     )
@@ -73,10 +67,10 @@ struct SwitchRecipeView: View {
         }
         .navigationViewStyle(.stack)
         .safeAreaInset(edge: .top) {
-            Color.clear.frame(height: 0) // pushes content down from top safe area
+            Color.clear.frame(height: 0)
         }
         .safeAreaInset(edge: .bottom) {
-            Color.clear.frame(height: 0) // pushes content up from bottom safe area
+            Color.clear.frame(height: 0)
         }
         .addToolbar()
     }
@@ -84,42 +78,75 @@ struct SwitchRecipeView: View {
     private var mainContent: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Recipe header
-                VStack {
-                    Text(recipe.info.name)
-                        .font(.title)
-                        .italic()
-                        .bold()
-                        .padding(.bottom, 5)
+                // Recipe title
+                Text(recipe.info.name)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                
+                Divider()
+                
+                HStack(spacing: 40) {
+                    VStack {
+                        Text("\(recipe.info.gramsIn)g")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("Coffee")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Image(systemName: "arrow.right")
+                        .foregroundColor(.secondary)
+                    
+                    VStack {
+                        Text("\(recipe.info.mlOut)ml")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("Output")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    VStack {
+                        Text("\(totalTime)s")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("Total Time")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Divider()
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Label("Coffee Bean", systemImage: "leaf.fill")
+                            .font(.headline)
+                            .foregroundColor(.brown)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            isMinimized.toggle()
+                        }) {
+                            Image(systemName: isMinimized ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                                .foregroundColor(.brown)
+                                .font(.title3)
+                        }
+                    }
                     
                     NavigationLink {
                         CoffeeCard(coffee: recipe.coffee)
-                            .environmentObject(authViewModel)
                     } label: {
-                        CoffeeCardExtraSmall(coffee: recipe.coffee)
+                        CoffeeRow(coffee: recipe.coffee, isMinimized: $isMinimized)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
                 
-                // Brew metrics
-                HStack(spacing: 30) {
-                    VStack {
-                        Image(systemName: "scalemass.fill")
-                        Text("\(recipe.info.gramsIn)g")
-                    }
-                    
-                    VStack {
-                        Image(systemName: "drop.fill")
-                        Text("\(recipe.info.mlOut)ml")
-                    }
-                }
-                .font(.headline)
-                .padding(.bottom, 10)
-                
-                // Brew visualization
                 brewVisualization
                 
-                // Start button
                 Button {
                     showCountdown = true
                 } label: {
@@ -137,42 +164,19 @@ struct SwitchRecipeView: View {
     
     private var brewVisualization: some View {
         VStack {
-            // Timer circle visualization
-            ZStack {
-                Circle()
-                    .fill(Color.clear)
-                    .frame(width: 250, height: 250)
-                    .overlay(
-                        Circle().stroke(Color.white, lineWidth: 25)
-                    )
-                
-                // Phase segments
-                ForEach(Array(sortedPhases.enumerated()), id: \.offset) { index, phase in
-                    let slice = CGFloat(phase.time) / CGFloat(totalTime)
-                    let startAngle = sortedPhases.prefix(index).reduce(0) { $0 + CGFloat($1.time)/CGFloat(totalTime) }
-                    let endAngle = startAngle + slice
-                    
-                    Circle()
-                        .trim(from: startAngle, to: endAngle)
-                        .stroke(
-                            phaseColors[index],
-                            style: StrokeStyle(lineWidth: 25, lineCap: .round, lineJoin: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-                        .frame(width: 250, height: 250)
-                }
-                
-                // Total time display
-                Text(totalTimeString)
-                    .font(.system(size: 50, weight: .black))
+            VStack(spacing: 0) {
+                SwitchRecipeViewImage(recipe: recipe)
+                Text(timeString(from: totalTime))
+                    .font(.system(size: 24, weight: .medium, design: .monospaced))
             }
             
+
             // Phase legend
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(sortedPhases.enumerated()), id: \.offset) { index, phase in
                     HStack {
                         Rectangle()
-                            .fill(phaseColors[index])
+                            .fill(brownShade(for: index, total: sortedPhases.count))
                             .frame(width: 20, height: 20)
                             .cornerRadius(4)
                         
@@ -192,15 +196,6 @@ struct SwitchRecipeView: View {
             }
             .padding(.top, 20)
         }
-    }
-    
-    private var totalTimeString: String {
-        String(format: "%d:%02d", totalTime / 60, totalTime % 60)
-    }
-    
-    private func getColor(for index: Int) -> Color {
-        let colors: [Color] = [.blue, .green, .orange, .purple, .red, .yellow]
-        return colors[index % colors.count]
     }
 }
 
