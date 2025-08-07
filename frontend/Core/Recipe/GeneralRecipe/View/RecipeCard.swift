@@ -11,54 +11,101 @@ struct RecipeCard: View {
     var recipe: Recipe
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Image(systemName: "cup.and.heat.waves.fill")
-                    .foregroundColor(Color("background"))
+                    .foregroundColor(.brown)
+                    .font(.title2)
+                
                 Text(recipe.method.name)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.brown)
+                
+                Spacer()
+
             }
-            .padding(.leading, 10)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             
             Divider()
-                .frame(height: 2)
-                .background(Color("background"))
-                .padding(.vertical, 4)
-                .padding(.horizontal, 10)
-                .opacity(0.8)
-            HStack {
-                VStack {
+            
+            HStack(spacing: 16) {
+                ZStack {
                     ImageView(URL(string: recipe.coffee.info.img ?? ""))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .frame(width: 150, height: 150)
+                .frame(width: 120, height: 120)
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text(recipe.name)
-                        .italic()
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .center)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(2)
+                    
+                    Text(recipe.coffee.info.name)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
                     
                     Spacer()
                     
-                    HStack {
-                        HStack {
-                            Image(systemName: "cup.and.heat.waves.fill")
-                                .foregroundColor(Color("background"))
-                            Text("\(recipe.gramsIn)g")
+                    HStack(spacing: 20) {
+                        VStack(spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "scalemass")
+                                    .font(.caption)
+                                Text("\(recipe.gramsIn)g")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.brown)
+                            
+                            Text("Coffee")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
-                        HStack {
-                            Image(systemName: "drop.fill")
-                                .foregroundColor(Color("background"))
-                            Text("\(recipe.mlOut)ml")
+                        
+                        VStack(spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "drop.fill")
+                                    .font(.caption)
+                                Text("\(recipe.mlOut)ml")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.blue)
+                            
+                            Text("Output")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        // Ratio display
+                        VStack(spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "percent")
+                                    .font(.caption)
+                                Text("1:\(Int(Double(recipe.mlOut) / Double(recipe.gramsIn)))")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.orange)
+                            
+                            Text("Ratio")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .frame(maxHeight: 75) // or whatever value feels right
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .padding(16)
         }
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
 }
 
