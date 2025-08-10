@@ -24,55 +24,49 @@ struct SwitchRecipeView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                mainContent
-                    .opacity(showAnimation ? 0 : 1)
-                    .animation(.easeInOut(duration: 0.3), value: showAnimation)
-                
-                if showCountdown {
-                    Color.black.opacity(0.5)
-                        .edgesIgnoringSafeArea(.all)
-                        .transition(.opacity)
-                        .zIndex(0)
-                    
-                    CountdownDialog(
-                        seconds: 3,
-                        onComplete: {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                showCountdown = false
-                                showAnimation = true
-                            }
-                        }
-                    )
-                    .zIndex(1)
-                    .transition(.opacity)
-                }
-                
-                // Full-screen animation
-                if showAnimation {
-                    SwitchAnimation(recipe: recipe)
+        ZStack {
+            mainContent
+                .opacity(showAnimation ? 0 : 1)
+                .animation(.easeInOut(duration: 0.3), value: showAnimation)
+            
+            if showCountdown {
+                Color.black.opacity(0.5)
                     .edgesIgnoringSafeArea(.all)
-                    .zIndex(2)
                     .transition(.opacity)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
-                            withAnimation {
-                                showAnimation = false
-                            }
+                    .zIndex(0)
+                
+                CountdownDialog(
+                    seconds: 3,
+                    onComplete: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showCountdown = false
+                            showAnimation = true
+                        }
+                    }
+                )
+                .zIndex(1)
+                .transition(.opacity)
+            }
+            
+            // Full-screen animation
+            if showAnimation {
+                VStack {
+                    SwitchAnimation(recipe: recipe)
+                        .padding(.top, 40)
+                    Spacer()
+                }
+                .zIndex(2)
+                .transition(.opacity)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
+                        withAnimation {
+                            showAnimation = false
                         }
                     }
                 }
             }
+            
         }
-        .navigationViewStyle(.stack)
-        .safeAreaInset(edge: .top) {
-            Color.clear.frame(height: 0)
-        }
-        .safeAreaInset(edge: .bottom) {
-            Color.clear.frame(height: 0)
-        }
-        .addToolbar()
     }
     
     private var mainContent: some View {
@@ -200,7 +194,10 @@ struct SwitchRecipeView: View {
 }
 
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    SwitchRecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        NavigationStack {
+            SwitchRecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+                .addToolbar()
+        }
+    }
 }

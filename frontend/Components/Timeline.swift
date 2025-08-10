@@ -22,9 +22,7 @@ struct HorizontalTimelineView: View {
             HStack(spacing: 0) {
                 ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
                     HStack(spacing: 0) {
-                        // Timeline node
                         VStack(spacing: 4) {
-                            // Event marker
                             Circle()
                                 .fill(Color("background"))
                                 .frame(width: 12, height: 12)
@@ -33,7 +31,6 @@ struct HorizontalTimelineView: View {
                                         .stroke(Color.white, lineWidth: 2)
                                 )
                             
-                            // Event details
                             VStack(spacing: 2) {
                                 Text(event.time)
                                     .font(.caption)
@@ -50,12 +47,11 @@ struct HorizontalTimelineView: View {
                             }
                         }
                         
-                        // Connecting line (except for last event)
                         if index < events.count - 1 {
                             Rectangle()
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(width: 60, height: 2)
-                                .padding(.bottom, 35) // Align with circle center
+                                .padding(.bottom, 35)
                         }
                     }
                 }
@@ -85,7 +81,6 @@ struct PourTimelineDemo: View {
                     .padding(.top)
                 
                 HorizontalTimelineView(events: sampleEvents)
-                    .background(Color.gray.opacity(0.05))
                     .cornerRadius(12)
                     .padding(.horizontal)
                 

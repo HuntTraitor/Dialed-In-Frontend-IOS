@@ -33,7 +33,7 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
         var mlOut: Int
         var phases: [Phase]
         
-        
+            
         enum CodingKeys: String, CodingKey {
             case name
             case gramsIn = "grams_in"

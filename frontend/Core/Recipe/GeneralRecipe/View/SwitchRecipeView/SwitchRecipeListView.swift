@@ -89,7 +89,6 @@ struct SwitchRecipeListView: View {
             }
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
             .padding(.horizontal)
-            .addToolbar()
             .task {
                 if !hasApeared {
                     await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")

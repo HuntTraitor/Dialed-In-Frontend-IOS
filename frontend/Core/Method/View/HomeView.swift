@@ -31,7 +31,6 @@ struct HomeView: View {
                     isLoading = false
                 }
             }
-            .addToolbar()
             .addNavigationSupport()
         }
     }

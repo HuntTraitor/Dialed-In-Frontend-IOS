@@ -101,7 +101,6 @@ struct CoffeeView: View {
                 }
                 .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
                 .padding(.horizontal)
-                .addToolbar()
                 .addNavigationSupport()
                 .task {
                     if !hasAppeared {

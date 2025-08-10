@@ -56,8 +56,8 @@ struct ContentView: View {
 
                         }
                     }
-                    .addNavigationSupport()
                     .addToolbar()
+                    .addNavigationSupport()
                 }
             }
         }
@@ -103,5 +103,6 @@ extension View {
 #Preview {
     PreviewWrapper {
         ContentView()
+            .addToolbar()
     }
 }

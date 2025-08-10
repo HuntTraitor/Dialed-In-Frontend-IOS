@@ -113,7 +113,6 @@ struct SwitchRecipeSummary: View {
                         .fontWeight(.bold)
                     
                     HorizontalTimelineView(events: events)
-                        .background(Color.gray.opacity(0.05))
                         .cornerRadius(12)
                         .padding(.horizontal)
                     
@@ -201,6 +200,7 @@ struct SwitchRecipeSummary: View {
             }
             .padding(.vertical)
         }
+        
     }
 }
 
