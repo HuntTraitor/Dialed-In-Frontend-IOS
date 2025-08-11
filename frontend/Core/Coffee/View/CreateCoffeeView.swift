@@ -28,6 +28,8 @@ struct CreateCoffeeView: View {
     @State private var imageSelection: PhotosPickerItem?
     @State private var imageObject: UIImage?
     @State private var imageData: Data?
+    @State private var validationError: String? = nil
+
 
     var body: some View {
         ZStack {
@@ -266,6 +268,11 @@ struct CreateCoffeeView: View {
     private var doneButton: some View {
         Button("Done") {
             Task {
+                if let validationError = validateCoffeeInput() {
+                    self.validationError = validationError
+                    return
+                }
+                
                 let coffeeInput = CoffeeInput(
                     id: nil,
                     name: name,
@@ -291,6 +298,18 @@ struct CreateCoffeeView: View {
             }
             dismiss()
         }
+        .disabled(!isFormValid)
+    }
+    
+    private func validateCoffeeInput() -> String? {
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return "Coffee name must be provided."
+        }
+        return nil
+    }
+
+    var isFormValid: Bool {
+        return validateCoffeeInput() == nil
     }
 
     private var cancelButton: some View {
@@ -313,8 +332,7 @@ extension View {
 
 // MARK: - Preview
 #Preview {
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-
-    return CreateCoffeeView()
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        CreateCoffeeView()
+    }
 }
