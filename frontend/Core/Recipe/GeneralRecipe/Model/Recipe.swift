@@ -185,6 +185,11 @@ func unwrap(_ value: Any) -> Any {
     }
 }
 
+protocol RecipeInput: Codable {
+    var methodId: Int { get }
+    var coffeeId: Int { get }
+}
+
 
 
 

@@ -12,11 +12,17 @@ struct CoffeeChoice: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            ImageView(URL(string: coffee.info.img!))
-                .frame(width: 40, height: 40)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .shadow(radius: 1)
-
+            if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                ImageView(url)
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .shadow(radius: 1)
+            } else {
+                Image("No Image")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
+            }
             Text(coffee.info.name)
                 .font(.subheadline)
                 .lineLimit(1)

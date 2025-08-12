@@ -341,7 +341,7 @@ struct EditCoffeeView: View {
 }
 
 #Preview {
-    struct PreviewWrapper: View {
+    struct EditPreviewWrapper: View {
         @State private var refreshData: Bool = false
         @State private var sampleCoffee = Coffee(
             id: 1,
@@ -358,15 +358,11 @@ struct EditCoffeeView: View {
         )
 
         var body: some View {
-            let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-            let viewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
-
             EditCoffeeView(
                 coffee: $sampleCoffee
             )
-            .environmentObject(authViewModel)
         }
     }
 
-    return PreviewWrapper()
+    return PreviewWrapper{EditPreviewWrapper()}
 }

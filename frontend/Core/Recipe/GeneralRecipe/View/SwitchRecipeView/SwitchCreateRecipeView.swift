@@ -90,7 +90,7 @@ struct CreateSwitchRecipeView: View {
                     }
                 }
                 .sheet(isPresented: $isShowingCreateCoffeeView) {
-//                    CreateCoffeeView(viewModel: coffeeViewModel)
+                    CreateCoffeeView()
                 }
                 .navigationTitle("New Recipe")
                 .navigationBarTitleDisplayMode(.inline)
@@ -104,7 +104,6 @@ struct CreateSwitchRecipeView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             saveRecipe()
-                            presentationMode.wrappedValue.dismiss()
                         }
                         .disabled(!isFormValid)
                     }
@@ -171,7 +170,7 @@ struct CreateSwitchRecipeView: View {
             }
         }
         
-        return nil // Validation succcessful
+        return nil
     }
 
     
@@ -205,8 +204,11 @@ struct CreateSwitchRecipeView: View {
             
             print("📤 Uploading Recipe...")
             
-//            await viewModel.postSwitchRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
-            presentationMode.wrappedValue.dismiss()
+            await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
+            
+            if viewModel.errorMessage == nil {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }

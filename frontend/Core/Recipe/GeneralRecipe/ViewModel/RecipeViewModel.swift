@@ -39,7 +39,7 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    func postRecipe(withToken token: String, recipe: Recipe) async {
+    func postRecipe<T: RecipeInput>(withToken token: String, recipe: T) async {
         isLoading = true
         errorMessage = nil
         do {

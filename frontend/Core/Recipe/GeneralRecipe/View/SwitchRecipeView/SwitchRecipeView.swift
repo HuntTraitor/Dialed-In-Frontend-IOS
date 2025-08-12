@@ -57,13 +57,13 @@ struct SwitchRecipeView: View {
                 }
                 .zIndex(2)
                 .transition(.opacity)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
-                        withAnimation {
-                            showAnimation = false
-                        }
-                    }
-                }
+//                .onAppear {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
+//                        withAnimation {
+//                            showAnimation = false
+//                        }
+//                    }
+//                }
             }
             
         }

@@ -57,7 +57,7 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
 //    }
 //}
 
-struct SwitchRecipeInput: Codable, Hashable {
+struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
     var methodId: Int
     var coffeeId: Int
     var info: RecipeInfo

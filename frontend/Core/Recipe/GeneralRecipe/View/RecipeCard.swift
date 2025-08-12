@@ -32,8 +32,15 @@ struct RecipeCard: View {
             
             HStack(spacing: 16) {
                 ZStack {
-                    ImageView(URL(string: recipe.coffee.info.img ?? ""))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    if let imgString = recipe.coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                        ImageView(url)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        Image("No Image")
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                 }
                 .frame(width: 120, height: 120)
                 

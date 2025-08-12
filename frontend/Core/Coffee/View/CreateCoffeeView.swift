@@ -294,9 +294,14 @@ struct CreateCoffeeView: View {
                 await viewModel.postCoffee(input: coffeeInput, token: authViewModel.token ?? "")
                 
                 print(viewModel.errorMessage ?? "No error message")
+                
+                // only dismiss when there is not an error
+                if viewModel.errorMessage == nil {
+                    print("no error message, dismissed")
+                    dismiss()
+                }
 
             }
-            dismiss()
         }
         .disabled(!isFormValid)
     }

@@ -42,7 +42,6 @@ class DefaultRecipeService: RecipeService {
                 let wrapper = try decoder.decode(RecipeWrapper.self, from: data)
                 return wrapper.recipes
             } catch let error as DecodingError {
-                // Print the raw JSON for debugging (only in debug builds)
                 #if DEBUG
                 if let jsonString = String(data: data, encoding: .utf8) {
                     print("📦 Raw JSON Response:\n\(jsonString)")
@@ -67,7 +66,6 @@ class DefaultRecipeService: RecipeService {
                     - Full Path: \(context.codingPath)
                     """)
                     
-                    // Additional debug for key not found
                     if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                        let recipes = json["recipes"] as? [[String: Any]] {
                         print("ℹ️ First recipe keys:", recipes.first?.keys ?? "No recipes")
@@ -105,7 +103,7 @@ class DefaultRecipeService: RecipeService {
         }
     }
     
-    func postRecipe(withToken token: String, recipe: Recipe) async throws -> Recipe {
+    func postRecipe<T: RecipeInput>(withToken token: String, recipe: T) async throws -> Recipe {
         let url = baseURL.appendingPathComponent("recipes")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -131,7 +129,6 @@ class DefaultRecipeService: RecipeService {
                 throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
 
-            // ✅ Decode depending on expected return
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let result = try decoder.decode(SingleGenericRecipeResponse.self, from: data)
