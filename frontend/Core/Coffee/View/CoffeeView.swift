@@ -10,7 +10,6 @@ import SwiftUI
 struct CoffeeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: CoffeeViewModel
-    @Bindable private var navigator = NavigationManager.nav
     @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
@@ -25,7 +24,6 @@ struct CoffeeView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $navigator.mainNavigator) {
             ZStack {
                 Color(.systemGray6)
                     .edgesIgnoringSafeArea(.all)
@@ -112,7 +110,6 @@ struct CoffeeView: View {
             if viewModel.isLoading {
                 LoadingCircle()
             }
-        }
     }
 }
 

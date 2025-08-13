@@ -9,36 +9,29 @@
 
 import SwiftUI
 
-@Observable
-final class NavigationManager {
+final class NavigationManager: ObservableObject {
+    static let shared = NavigationManager()
     
-    var selectedTab = 1
+    @Published var selectedTab = 1
+    @Published var mainNavigator: [NavigationDestination] = []
+    @Published var settingsNavigator: [NavigationDestination] = []
     
-    //Tab handler for pop to root on tap of selected tab
-    var tabHandler: Binding<Int> { Binding(
-        get: { self.selectedTab },
-        // React to taps on the tap item
-        set: {
-            // If the current tab selection gets tapped again
-            if $0 == self.selectedTab {
-                switch $0 {
-                    case 1:
-                        self.mainNavigator = [] //reset the navigation path
-                    case 4:
-                        self.settingsNavigator = []
-                    default:
-                        self.mainNavigator = []
-
+    var tabHandler: Binding<Int> {
+        Binding(
+            get: { self.selectedTab },
+            set: {
+                if $0 == self.selectedTab {
+                    switch $0 {
+                    case 1: self.mainNavigator = []
+                    case 4: self.settingsNavigator = []
+                    default: self.mainNavigator = []
+                    }
                 }
+                self.selectedTab = $0
             }
-            self.selectedTab = $0
-        }
-    ) }
-    
-    static let nav = NavigationManager() //also commonly called "shared"
-    
-    var mainNavigator: [NavigationDestination] = []
-    var settingsNavigator: [NavigationDestination] = []
+        )
+    }
     
     private init() {}
 }
+

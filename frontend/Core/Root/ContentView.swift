@@ -10,7 +10,7 @@ import SimpleKeychain
 
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @Bindable private var navigator = NavigationManager.nav
+    @EnvironmentObject var navigationManager: NavigationManager
     @State private var isLogoutDialogOpen = false
     @State private var lastValidTab = 1
     
@@ -21,43 +21,34 @@ struct ContentView: View {
             if !authViewModel.isAuthenticated {
                 LoginView()
             } else {
-                NavigationStack(path: $navigator.mainNavigator) {
-                    ZStack {
-                        TabView(selection: navigator.tabHandler) {
-                            HomeView()
-                                .tabItem {
-                                    Label("Home", systemImage: "house.fill")
-                                        .accessibilityIdentifier(testingID.homeNavigationButton)
-                                }
-                                .tag(1)
-                            
-                            CoffeeView()
-                                .tabItem {
-                                    Label("Coffee", systemImage: "cup.and.saucer.fill")
-                                        .accessibilityIdentifier(testingID.coffeeNavigationButton)
-                                }
-                                .tag(2)
-                            
-                            GeneralRecipeView(curMethod: nil)
-                                .tabItem {
-                                    Label("Recipes", systemImage: "book.pages")
-                                        .accessibilityIdentifier(testingID.recipeNavigationButton)
-                                }
-                                .tag(3)
-                            
-                            ProfileView()
-                                .tabItem {
-                                    Label("Profile", systemImage: "person.crop.circle")
-                                        .accessibilityIdentifier(testingID.profileNavigationButton)
-                                }
-                                .tag(4)
-
-
-
-                        }
+                TabView(selection: navigationManager.tabHandler) {
+                    NavigationStack(path: $navigationManager.mainNavigator) {
+                        HomeView()
+                            .addNavigationSupport()
                     }
-                    .addToolbar()
-                    .addNavigationSupport()
+                    .tabItem { Label("Home", systemImage: "house.fill") }
+                    .tag(1)
+                    
+                    NavigationStack(path: $navigationManager.mainNavigator) {
+                        CoffeeView()
+                            .addNavigationSupport()
+                    }
+                    .tabItem { Label("Coffee", systemImage: "cup.and.saucer.fill") }
+                    .tag(2)
+                    
+                    NavigationStack(path: $navigationManager.mainNavigator) {
+                        GeneralRecipeView(curMethod: nil)
+                            .addNavigationSupport()
+                    }
+                    .tabItem { Label("Recipes", systemImage: "book.pages") }
+                    .tag(3)
+                    
+                    NavigationStack(path: $navigationManager.settingsNavigator) {
+                        ProfileView()
+                            .addNavigationSupport()
+                    }
+                    .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                    .tag(4)
                 }
             }
         }

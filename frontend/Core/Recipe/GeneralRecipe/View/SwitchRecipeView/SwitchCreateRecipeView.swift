@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-struct CreateSwitchRecipeView: View {
-    @Environment(\.presentationMode) var presentationMode
+struct SwitchCreateRecipeView: View {
+    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""
     @State private var mlOut: String = ""
@@ -37,87 +38,86 @@ struct CreateSwitchRecipeView: View {
     
     var body: some View {
         ZStack {
-            NavigationView {
-                Form {
-                    Section {
-                        TextField("Name", text: $recipeName)
-                        TextField("Total Grams In", text: $gramsIn)
-                            .keyboardType(.decimalPad)
-                        TextField("Total ML Out", text: $mlOut)
-                            .keyboardType(.decimalPad)
-                    } header: {
-                        Text("Information")
-                    } footer: {
-                        Text("Please enter all the information above.")
-                    }
-                    .headerProminence(.increased)
-                    
-                    Section("Coffee") {
-                        CoffeePickerView(
-                            selectedCoffeeId: $selectedCoffeeId,
-                            showCoffeePicker: $showCoffeePicker,
-                            isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
-                            searchTerm: $searchTerm
-                        )
-                    }
-                    
-                    Section("Pours") {
-                        if !phases.isEmpty {
-                            ForEach(phases.indices, id: \.self) { index in
-                                PhaseRowView(
-                                    phaseNum: .constant(index + 1),
-                                    phase: $phases[index]
-                                )
-                            }
-                            .onDelete { indexSet in
-                                phases.remove(atOffsets: indexSet)
-                            }
+            Form {
+                Section {
+                    TextField("Name", text: $recipeName)
+                    TextField("Total Grams In", text: $gramsIn)
+                        .keyboardType(.decimalPad)
+                    TextField("Total ML Out", text: $mlOut)
+                        .keyboardType(.decimalPad)
+                } header: {
+                    Text("Information")
+                } footer: {
+                    Text("Please enter all the information above.")
+                }
+                .headerProminence(.increased)
+                
+                Section("Coffee") {
+                    CoffeePickerView(
+                        selectedCoffeeId: $selectedCoffeeId,
+                        showCoffeePicker: $showCoffeePicker,
+                        isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
+                        searchTerm: $searchTerm
+                    )
+                }
+                
+                Section("Pours") {
+                    if !phases.isEmpty {
+                        ForEach(phases.indices, id: \.self) { index in
+                            PhaseRowView(
+                                phaseNum: .constant(index + 1),
+                                phase: $phases[index]
+                            )
                         }
-                        Button {
-                            let newPhase = SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 0, amount: 0)
-                            phases.append(newPhase)
-                        } label: {
-                            Label("Add Pour...", systemImage: "plus")
-                                .font(.system(size: 15))
-                                .bold()
-                                .padding(.trailing, 30)
+                        .onDelete { indexSet in
+                            phases.remove(atOffsets: indexSet)
                         }
                     }
-                }
-                .onAppear {
-                    Task {
-                        await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    Button {
+                        let newPhase = SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 0, amount: 0)
+                        phases.append(newPhase)
+                    } label: {
+                        Label("Add Pour...", systemImage: "plus")
+                            .font(.system(size: 15))
+                            .bold()
+                            .padding(.trailing, 30)
                     }
                 }
-                .sheet(isPresented: $isShowingCreateCoffeeView) {
-                    CreateCoffeeView()
-                }
-                .navigationTitle("New Recipe")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackButtonHidden(true)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") {
-                            saveRecipe()
-                        }
-                        .disabled(!isFormValid)
-                    }
-                }
-                .alert("Validation Error", isPresented: .constant(validationError != nil), actions: {
-                    Button("OK", role: .cancel) {
-                        validationError = nil
-                    }
-                }, message: {
-                    if let message = validationError {
-                        Text(message)
-                    }
-                })
             }
+            .onAppear {
+                Task {
+                    await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                }
+            }
+            .sheet(isPresented: $isShowingCreateCoffeeView) {
+                CreateCoffeeView()
+            }
+            .navigationTitle("New Switch Recipe")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        saveRecipe()
+                    }
+                    .disabled(!isFormValid)
+                }
+            }
+            .alert("Validation Error", isPresented: .constant(validationError != nil), actions: {
+                Button("OK", role: .cancel) {
+                    validationError = nil
+                }
+            }, message: {
+                if let message = validationError {
+                    Text(message)
+                }
+            })
+            
             if viewModel.errorMessage != nil {
                 CustomDialog(
                     isActive: .constant(true),
@@ -207,7 +207,7 @@ struct CreateSwitchRecipeView: View {
             await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
             
             if viewModel.errorMessage == nil {
-                presentationMode.wrappedValue.dismiss()
+                dismiss()
             }
         }
     }
@@ -215,7 +215,7 @@ struct CreateSwitchRecipeView: View {
 
 #Preview {
     PreviewWrapper {
-        CreateSwitchRecipeView()
+        SwitchCreateRecipeView()
     }
 }
 

@@ -10,7 +10,7 @@ import SwiftUI
 struct SwitchRecipeListView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject private var viewModel: RecipeViewModel
-    @Bindable private var navigator = NavigationManager.nav
+    @EnvironmentObject var navigationManager: NavigationManager
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
     @State private var hasApeared: Bool = false
@@ -45,7 +45,7 @@ struct SwitchRecipeListView: View {
                     .padding(.top, 40)
                     .italic()
                     .sheet(isPresented: $isShowingCreateRecipeView) {
-                        CreateSwitchRecipeView()
+                        SwitchCreateRecipeView()
                     }
                 }
                 

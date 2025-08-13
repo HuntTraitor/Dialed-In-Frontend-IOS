@@ -25,7 +25,6 @@ struct LoginView: View {
     }
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 VStack {
                     Image("logo")
@@ -123,7 +122,7 @@ struct LoginView: View {
                 }
             }
         }
-    }
+    
 }
 
 #Preview {

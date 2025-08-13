@@ -8,19 +8,10 @@
 import SwiftUI
 
 struct MethodListView: View {
-    @StateObject private var viewModel: MethodViewModel
+    @EnvironmentObject private var viewModel: MethodViewModel
     @State private var hasAppeared: Bool = false
     
     private let testingID = UIIdentifiers.MethodScreen.self
-    
-    init(viewModel: MethodViewModel? = nil) {
-        if let viewModel {
-            _viewModel = StateObject(wrappedValue: viewModel)
-        } else {
-            let service = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
-            _viewModel = StateObject(wrappedValue: MethodViewModel(methodService: service))
-        }
-    }
     
     var body: some View {
         VStack {
@@ -68,15 +59,9 @@ struct MethodListView: View {
 }
 
 #Preview {
-    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    
-    let methodService = DefaultMethodService(baseURL: EnvironmentManager.current.baseURL)
-    let methodViewModel = MethodViewModel(methodService: methodService)
-    
-    let mockMethodService = MockMethodService()
-    mockMethodService.isErrorThrown = true
-    let mockMethodViewModel = MethodViewModel(methodService: mockMethodService)
-    
-    return MethodListView(viewModel: methodViewModel)
-        .environmentObject(viewModel)
+    PreviewWrapper {
+        NavigationStack {
+            MethodListView()
+        }
+    }
 }

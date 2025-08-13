@@ -4,12 +4,11 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
     @State private var isLoading: Bool = true
-    @Bindable private var navigator = NavigationManager.nav
-    
+    @EnvironmentObject var navigationManager: NavigationManager
+
     private let testingID = UIIdentifiers.HomeScreen.self
 
     var body: some View {
-        NavigationStack(path: $navigator.mainNavigator) {
             ZStack {
                 if isLoading {
                     LoadingCircle()
@@ -33,13 +32,7 @@ struct HomeView: View {
             }
             .addNavigationSupport()
         }
-    }
-}
-
-#Preview {
-    let viewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    return HomeView()
-        .environmentObject(viewModel)
+    
 }
 
 extension View {
@@ -54,5 +47,11 @@ extension View {
             .font: font
         ]
         return self
+    }
+}
+
+#Preview {
+    PreviewWrapper {
+        HomeView()
     }
 }
