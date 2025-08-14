@@ -30,10 +30,7 @@ struct CoffeeRow: View {
 
 #Preview {
     @Previewable @State var isMinimized = true
-
-    let authViewModel = AuthViewModel(authService: DefaultAuthService(baseURL: EnvironmentManager.current.baseURL))
-    let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
-
-    return CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized)
-        .environmentObject(authViewModel)
+    PreviewWrapper {
+        CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized)
+    }
 }

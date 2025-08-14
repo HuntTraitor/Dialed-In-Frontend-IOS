@@ -14,7 +14,7 @@ struct PreviewWrapper<Content: View>: View {
     @StateObject private var methodViewModel = MethodViewModel(methodService: DefaultMethodService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var recipeViewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
-    @StateObject private var navigationManager = NavigationManager.shared
+    @ObservedObject private var navigationManager = NavigationManager.shared
 
     var body: some View {
         content()

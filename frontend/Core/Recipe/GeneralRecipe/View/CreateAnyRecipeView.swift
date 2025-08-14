@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CreateAnyRecipeView: View {
     @EnvironmentObject private var viewModel: MethodViewModel
+    @State private var selectedMethod: Method? = nil
+    @State private var isShowingMethodSheet = false
 
     var body: some View {
         ZStack {
@@ -47,10 +49,10 @@ struct CreateAnyRecipeView: View {
                     Spacer()
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 16) {
+                        LazyVStack(spacing: 12) {
                             ForEach(viewModel.methods) { method in
-                                NavigationLink {
-                                    CreateAnyRecipeRow(curMethod: method)
+                                Button {
+                                    selectedMethod = method
                                 } label: {
                                     MethodCardSmall(title: method.name, image: method.name)
                                         .scaleEffect(0.98)
@@ -61,6 +63,11 @@ struct CreateAnyRecipeView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 30)
+                    }
+                    .sheet(item: $selectedMethod) { method in
+                        NavigationStack {
+                            CreateAnyRecipeRow(curMethod: method)
+                        }
                     }
                 }
             }

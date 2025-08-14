@@ -44,8 +44,10 @@ class AuthViewModel: ObservableObject {
     
     func verifySessionAfterLaunch() {
         Task {
-            _ = await verifySession()
-            hasVerifiedSession = true
+            let _ = await verifySession()
+            await MainActor.run {
+                hasVerifiedSession = true
+            }
         }
     }
     

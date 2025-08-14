@@ -18,25 +18,27 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if !authViewModel.isAuthenticated {
+            if !authViewModel.hasVerifiedSession {
+                ProgressView()
+            } else if !authViewModel.isAuthenticated {
                 LoginView()
             } else {
                 TabView(selection: navigationManager.tabHandler) {
-                    NavigationStack(path: $navigationManager.mainNavigator) {
+                    NavigationStack(path: $navigationManager.homeNavigator) {
                         HomeView()
                             .addNavigationSupport()
                     }
                     .tabItem { Label("Home", systemImage: "house.fill") }
                     .tag(1)
                     
-                    NavigationStack(path: $navigationManager.mainNavigator) {
+                    NavigationStack(path: $navigationManager.coffeeNavigator) {
                         CoffeeView()
                             .addNavigationSupport()
                     }
                     .tabItem { Label("Coffee", systemImage: "cup.and.saucer.fill") }
                     .tag(2)
                     
-                    NavigationStack(path: $navigationManager.mainNavigator) {
+                    NavigationStack(path: $navigationManager.recipesNavigator) {
                         GeneralRecipeView(curMethod: nil)
                             .addNavigationSupport()
                     }
@@ -60,7 +62,6 @@ struct ContentView: View {
 
 
 extension View {
-    
     //addToolbar
     func addToolbar() -> some View {
         self
@@ -85,7 +86,7 @@ extension View {
     func addNavigationSupport() -> some View {
         self
             .navigationDestination(for: NavigationDestination.self) { destination in
-            destination // The enum itself returns the view
+            destination
         }
     }
 }

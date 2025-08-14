@@ -45,7 +45,9 @@ struct SwitchRecipeListView: View {
                     .padding(.top, 40)
                     .italic()
                     .sheet(isPresented: $isShowingCreateRecipeView) {
-                        SwitchCreateRecipeView()
+                        NavigationStack {
+                            SwitchCreateRecipeView()
+                        }
                     }
                 }
                 
