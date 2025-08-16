@@ -22,6 +22,14 @@ struct ContentView: View {
                 ProgressView()
             } else if !authViewModel.isAuthenticated {
                 LoginView()
+                // resets tabs when user logs out
+                .onAppear {
+                    navigationManager.selectedTab = 1
+                    navigationManager.homeNavigator = []
+                    navigationManager.coffeeNavigator = []
+                    navigationManager.recipesNavigator = []
+                    navigationManager.settingsNavigator = []
+                }
             } else {
                 TabView(selection: navigationManager.tabHandler) {
                     NavigationStack(path: $navigationManager.homeNavigator) {
