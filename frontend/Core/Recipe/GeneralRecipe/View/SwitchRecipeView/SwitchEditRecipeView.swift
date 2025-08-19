@@ -212,15 +212,11 @@ struct SwitchEditRecipeView: View {
                 coffeeId: coffeeId,
                 info: recipeInfo
             )
-//            
-//            print("📤 Uploading Recipe...")
-//            
-//            await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
-//            
-//            if viewModel.errorMessage == nil {
-//                navigationManager.recipesNavigator.removeLast()
-//                dismiss()
-//            }
+            
+            await viewModel.editRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe, recipeId: recipe.id)
+            if viewModel.errorMessage == nil {
+                dismiss()
+            }
             print("edited switch recipe to....")
         }
     }

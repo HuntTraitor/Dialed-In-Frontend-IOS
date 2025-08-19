@@ -14,7 +14,6 @@ class DefaultRecipeService: RecipeService {
         self.baseURL = baseURL
     }
     
-    // We should create a forMethod parameter that is optional that will query parameter the method
     func fetchRecipes(withToken token: String) async throws -> [Recipe] {
         let url = baseURL.appendingPathComponent("recipes")
         
@@ -140,10 +139,44 @@ class DefaultRecipeService: RecipeService {
             throw APIError.unknownError(error: error)
         }
     }
+    
+    func editRecipe<T: RecipeInput>(withToken token: String, recipe: T, recipeId: Int) async throws -> Recipe {
+        let url = baseURL.appendingPathComponent("recipes/\(recipeId)")
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
 
-//    private struct SingleSwitchRecipeResponse: Decodable {
-//        let recipe: SwitchRecipe
-//    }
+        request.httpBody = try encoder.encode(recipe)
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.requestFailed(description: "No valid HTTP response")
+            }
+
+            guard (200..<300).contains(httpResponse.statusCode) else {
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("Upload failed with response: \(json)")
+                }
+                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+            }
+
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let result = try decoder.decode(SingleGenericRecipeResponse.self, from: data)
+            return result.recipe
+
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknownError(error: error)
+        }
+    }
     
     struct SingleGenericRecipeResponse: Decodable {
         let recipe: Recipe

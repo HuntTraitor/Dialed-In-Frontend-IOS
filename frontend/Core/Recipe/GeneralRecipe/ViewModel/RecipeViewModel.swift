@@ -50,6 +50,18 @@ class RecipeViewModel: ObservableObject {
         }
         isLoading = false
     }
+    
+    func editRecipe<T: RecipeInput>(withToken token: String, recipe: T, recipeId: Int) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let recipe = try await recipeService.editRecipe(withToken: token, recipe: recipe, recipeId: recipeId)
+            await fetchRecipes(withToken: token)
+        } catch {
+            errorMessage = "Failed to edit recipe: \(error.localizedDescription)"
+        }
+        isLoading = false
+    }
 }
 
 
