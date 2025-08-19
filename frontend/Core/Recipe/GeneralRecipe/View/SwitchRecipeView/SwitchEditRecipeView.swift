@@ -1,27 +1,39 @@
 //
-//  CreateRecipeView.swift
+//  SwitchEditRecipeView.swift
 //  DialedIn
 //
-//  Created by Hunter Tratar on 6/22/25.
+//  Created by Hunter Tratar on 8/19/25.
 //
 
 import SwiftUI
 
-struct SwitchCreateRecipeView: View {
+struct SwitchEditRecipeView: View {
     @Environment(\.dismiss) var dismiss
+    @Binding var recipe: SwitchRecipe
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var navigationManager: NavigationManager
-    @State private var recipeName: String = ""
-    @State private var gramsIn: String = ""
-    @State private var mlOut: String = ""
+    
+    @State private var tempRecipeName: String = ""
+    @State private var tempGramsIn: String = ""
+    @State private var tempMlOut: String = ""
+    @State private var tempPhases: [SwitchPhase] = []
+    
     @State private var selectedCoffeeId: Int?
     @State private var showCoffeePicker = false
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
-    @State private var phases: [SwitchPhase] = []
     @State private var validationError: String? = nil
+    
+    init(recipe: Binding<SwitchRecipe>) {
+        self._recipe = recipe
+        self._tempRecipeName = State(initialValue: recipe.wrappedValue.info.name)
+        self._tempGramsIn = State(initialValue: String(recipe.wrappedValue.info.gramsIn))
+        self._tempMlOut = State(initialValue: String(recipe.wrappedValue.info.mlOut))
+        self._tempPhases = State(initialValue: recipe.wrappedValue.info.phases)
+        self._selectedCoffeeId = State(initialValue: recipe.wrappedValue.coffee.id)
+    }
     
     var isFormValid: Bool {
         return validateRecipeInput() == nil
@@ -40,10 +52,10 @@ struct SwitchCreateRecipeView: View {
         ZStack {
             Form {
                 Section {
-                    TextField("Name", text: $recipeName)
-                    TextField("Total Grams In", text: $gramsIn)
+                    TextField("Name", text: $tempRecipeName)
+                    TextField("Total Grams In", text: $tempGramsIn)
                         .keyboardType(.decimalPad)
-                    TextField("Total ML Out", text: $mlOut)
+                    TextField("Total ML Out", text: $tempMlOut)
                         .keyboardType(.decimalPad)
                 } header: {
                     Text("Information")
@@ -62,20 +74,20 @@ struct SwitchCreateRecipeView: View {
                 }
                 
                 Section("Pours") {
-                    if !phases.isEmpty {
-                        ForEach(phases.indices, id: \.self) { index in
+                    if !tempPhases.isEmpty {
+                        ForEach(tempPhases.indices, id: \.self) { index in
                             PhaseRowView(
                                 phaseNum: .constant(index + 1),
-                                phase: $phases[index]
+                                phase: $tempPhases[index]
                             )
                         }
                         .onDelete { indexSet in
-                            phases.remove(atOffsets: indexSet)
+                            tempPhases.remove(atOffsets: indexSet)
                         }
                     }
                     Button {
                         let newPhase = SwitchPhase(open: true, time: 0, amount: 0)
-                        phases.append(newPhase)
+                        tempPhases.append(newPhase)
                     } label: {
                         Label("Add Pour...", systemImage: "plus")
                             .font(.system(size: 15))
@@ -132,19 +144,18 @@ struct SwitchCreateRecipeView: View {
             }
         }
     }
-    
     private func validateRecipeInput() -> String? {
-        guard !recipeName.trimmingCharacters(in: .whitespaces).isEmpty else {
+        guard !tempRecipeName.trimmingCharacters(in: .whitespaces).isEmpty else {
             return "Recipe name must be provided."
         }
-        if recipeName.count > 100 {
+        if tempRecipeName.count > 100 {
             return "Recipe name must not be more than 100 characters."
         }
         
-        guard let gramsInInt = Int(gramsIn) else {
+        guard let gramsInInt = Int(tempGramsIn) else {
             return "Grams In must be a number."
         }
-        guard let mlOutInt = Int(mlOut) else {
+        guard let mlOutInt = Int(tempMlOut) else {
             return "ML Out must be a number."
         }
         
@@ -161,7 +172,7 @@ struct SwitchCreateRecipeView: View {
             return "ML Out must be less than a thousand."
         }
         
-        for (index, phase) in phases.enumerated() {
+        for (index, phase) in tempPhases.enumerated() {
             if phase.time <= 0 {
                 return "Phase \(index + 1): Time must be greater than zero."
             }
@@ -181,8 +192,8 @@ struct SwitchCreateRecipeView: View {
                 return
             }
             guard
-                let gramsInInt = Int(gramsIn),
-                let mlOutInt = Int(mlOut),
+                let gramsInInt = Int(tempGramsIn),
+                let mlOutInt = Int(tempMlOut),
                 let coffeeId = selectedCoffeeId
             else {
                 self.validationError = "Invalid input format."
@@ -190,10 +201,10 @@ struct SwitchCreateRecipeView: View {
             }
             
             let recipeInfo = SwitchRecipeInput.RecipeInfo(
-                name: recipeName,
+                name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
-                phases: phases
+                phases: tempPhases
             )
             
             let newRecipe = SwitchRecipeInput(
@@ -201,22 +212,23 @@ struct SwitchCreateRecipeView: View {
                 coffeeId: coffeeId,
                 info: recipeInfo
             )
-            
-            print("📤 Uploading Recipe...")
-            
-            await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
-            
-            if viewModel.errorMessage == nil {
-                navigationManager.recipesNavigator.removeLast()
-                dismiss()
-            }
+//            
+//            print("📤 Uploading Recipe...")
+//            
+//            await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
+//            
+//            if viewModel.errorMessage == nil {
+//                navigationManager.recipesNavigator.removeLast()
+//                dismiss()
+//            }
+            print("edited switch recipe to....")
         }
     }
 }
 
 #Preview {
     PreviewWrapper {
-        SwitchCreateRecipeView()
+        SwitchEditRecipeView(recipe: .constant(SwitchRecipe.MOCK_SWITCH_RECIPE))
     }
 }
 

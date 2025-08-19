@@ -31,7 +31,7 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
         var name: String
         var gramsIn: Int
         var mlOut: Int
-        var phases: [Phase]
+        var phases: [SwitchPhase]
         
             
         enum CodingKeys: String, CodingKey {
@@ -40,22 +40,8 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
             case mlOut = "ml_out"
             case phases
         }
-
-        struct Phase: Codable, Hashable {
-            var open: Bool
-            var time: Int
-            var amount: Int
-        }
     }
 }
-
-//struct V60RecipeInfo: RecipeInfo, Identifiable, Codable, Hashable {
-//    var phases: [Phase]
-//    struct Phase: Codable, Hashable {
-//        var time: Int
-//        var amount: Int
-//    }
-//}
 
 struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
     var methodId: Int
@@ -73,7 +59,7 @@ struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
         var name: String
         var gramsIn: Int
         var mlOut: Int
-        var phases: [Phase]
+        var phases: [SwitchPhase]
         
         enum CodingKeys: String, CodingKey {
             case name
@@ -81,55 +67,14 @@ struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
             case mlOut = "ml_out"
             case phases
         }
-        
-        struct Phase: Codable, Hashable {
-            var open: Bool
-            var time: Int
-            var amount: Int
-        }
     }
 }
 
-//func mapToSwitchRecipe(_ recipe: Recipe) -> SwitchRecipe? {
-//    print(recipe.method.name.lowercased())
-//    guard recipe.method.name.lowercased() == "hario switch" else { return nil }
-//    
-//    do {
-//        let data = try JSONSerialization.data(withJSONObject: recipe.info.value, options: [])
-//        let decoder = JSONDecoder()
-//        let info = try decoder.decode(SwitchRecipe.RecipeInfo.self, from: data)
-//
-//        return SwitchRecipe(
-//            id: recipe.id,
-//            userId: recipe.userId,
-//            coffee: recipe.coffee,
-//            method: recipe.method,
-//            info: info
-//        )
-//    } catch {
-//        print("Failed to decode SwitchRecipe info: \(error)")
-//        return nil
-//    }
-//}
-
-
-//struct MultiSwitchRecipeResponse: Codable {
-//    var recipes: [SwitchRecipe]
-//}
-//
-//struct SingleSwitchRecipeResponse: Codable {
-//    var recipe: SwitchRecipe
-//}
-//
-//enum FetchSwitchRecipeResult {
-//    case recipes([SwitchRecipe])
-//    case error([String: Any])
-//}
-//
-//enum PostSwitchRecipeResult {
-//    case recipe(SwitchRecipe)
-//    case error([String: Any])
-//}
+struct SwitchPhase: Codable, Hashable {
+    var open: Bool
+    var time: Int
+    var amount: Int
+}
 
 extension SwitchRecipe {
     static var MOCK_SWITCH_RECIPE = SwitchRecipe(
@@ -142,9 +87,9 @@ extension SwitchRecipe {
             gramsIn: 20,
             mlOut: 320,
             phases: [
-                RecipeInfo.Phase(open: true, time: 45, amount: 160),
-                RecipeInfo.Phase(open: false, time: 75, amount: 160),
-                RecipeInfo.Phase(open: true, time: 60, amount: 0)
+                SwitchPhase(open: true, time: 45, amount: 160),
+                SwitchPhase(open: false, time: 75, amount: 160),
+                SwitchPhase(open: true, time: 60, amount: 0)
             ]
         )
     )
@@ -157,9 +102,9 @@ extension SwitchRecipe {
             gramsIn: 20,
             mlOut: 320,
             phases: [
-                SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                SwitchRecipeInput.RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                SwitchRecipeInput.RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                SwitchPhase(open: true, time: 3, amount: 160),
+                SwitchPhase(open: false, time: 3, amount: 160),
+                SwitchPhase(open: true, time: 3, amount: 0)
             ]
         )
     )        
@@ -175,9 +120,9 @@ extension SwitchRecipe {
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
-                    RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                    SwitchPhase(open: true, time: 3, amount: 160),
+                    SwitchPhase(open: false, time: 3, amount: 160),
+                    SwitchPhase(open: true, time: 3, amount: 0)
                 ]
             )
         ),
@@ -191,9 +136,9 @@ extension SwitchRecipe {
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
-                    RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                    SwitchPhase(open: true, time: 3, amount: 160),
+                    SwitchPhase(open: false, time: 3, amount: 160),
+                    SwitchPhase(open: true, time: 3, amount: 0)
                 ]
             )
         ),
@@ -207,9 +152,9 @@ extension SwitchRecipe {
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
-                    RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                    SwitchPhase(open: true, time: 3, amount: 160),
+                    SwitchPhase(open: false, time: 3, amount: 160),
+                    SwitchPhase(open: true, time: 3, amount: 0)
                 ]
             )
         ),
@@ -223,9 +168,9 @@ extension SwitchRecipe {
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
-                    RecipeInfo.Phase(open: true, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: false, time: 3, amount: 160),
-                    RecipeInfo.Phase(open: true, time: 3, amount: 0)
+                    SwitchPhase(open: true, time: 3, amount: 160),
+                    SwitchPhase(open: false, time: 3, amount: 160),
+                    SwitchPhase(open: true, time: 3, amount: 0)
                 ]
             )
         )

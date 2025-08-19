@@ -10,7 +10,7 @@ import SwiftUI
 struct SwitchRecipeViewImage: View {
     var recipe: SwitchRecipe
     
-    private func rectangleHeight(for phase: SwitchRecipe.RecipeInfo.Phase, in phases: [SwitchRecipe.RecipeInfo.Phase]) -> CGFloat {
+    private func rectangleHeight(for phase: SwitchPhase, in phases: [SwitchPhase]) -> CGFloat {
         let totalTime = phases.reduce(0) { $0 + $1.time }
         let phaseRatio = CGFloat(phase.time) / CGFloat(totalTime)
         return 135 * phaseRatio

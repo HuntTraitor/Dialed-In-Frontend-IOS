@@ -15,7 +15,7 @@ struct SwitchRecipeView: View {
     @State private var showAnimation = false
     @State private var isMinimized: Bool = true
     
-    private var sortedPhases: [SwitchRecipe.RecipeInfo.Phase] {
+    private var sortedPhases: [SwitchPhase] {
         recipe.info.phases
     }
     
@@ -116,7 +116,7 @@ struct SwitchRecipeView: View {
                 
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Label("Coffee Bean", systemImage: "leaf.fill")
+                        Label("Coffee", systemImage: "leaf.fill")
                             .font(.headline)
                             .foregroundColor(.brown)
                         
