@@ -32,7 +32,7 @@ struct LoginView: View {
                         .scaledToFill()
                         .frame(width: 150, height: 180)
                         .padding(.vertical, 32)
-
+                    
                     VStack(spacing: 24) {
                         InputView(
                             text: $email,
@@ -127,6 +127,8 @@ struct LoginView: View {
 
 #Preview {
     PreviewWrapper {
-        LoginView()
+        NavigationStack {
+            LoginView()
+        }
     }
 }

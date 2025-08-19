@@ -24,13 +24,11 @@ enum AppEnvironment {
 
 enum EnvironmentManager {
     static var current: AppEnvironment {
-        let env = ProcessInfo.processInfo.environment
-
-        if let rawURL = env["-base-url"], let url = URL(string: rawURL) {
-            return .custom(url)
-        }
-        print("Using production URL")
+        #if DEBUG
+        return .custom(URL(string: "http://10.201.100.19:3000/v1/")!)
+        #else
         return .production
+        #endif
     }
 }
 

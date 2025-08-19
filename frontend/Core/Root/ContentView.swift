@@ -21,7 +21,9 @@ struct ContentView: View {
             if !authViewModel.hasVerifiedSession {
                 ProgressView()
             } else if !authViewModel.isAuthenticated {
-                LoginView()
+                NavigationStack {
+                    LoginView()
+                }
                 // resets tabs when user logs out
                 .onAppear {
                     navigationManager.selectedTab = 1

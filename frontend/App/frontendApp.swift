@@ -33,6 +33,7 @@ struct MyApp: App {
                 .environmentObject(methodViewModel)
                 .environmentObject(coffeeViewModel)
                 .environmentObject(recipeViewModel)
+                .preferredColorScheme(.light)
         }
     }
 }
