@@ -104,7 +104,7 @@ struct SwitchEditRecipeView: View {
             .sheet(isPresented: $isShowingCreateCoffeeView) {
                 CreateCoffeeView()
             }
-            .navigationTitle("New Switch Recipe")
+            .navigationTitle("Edit Switch Recipe")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
@@ -213,11 +213,24 @@ struct SwitchEditRecipeView: View {
                 info: recipeInfo
             )
             
-            await viewModel.editRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe, recipeId: recipe.id)
+            guard let updatedRecipe = await viewModel.editRecipe(
+                withToken: authViewModel.token ?? "",
+                recipe: newRecipe,
+                recipeId: recipe.id
+            ) else {
+                print("❌ Update failed: no recipe returned")
+                return
+            }
+
+            if case .switchRecipe(let switchRecipe) = updatedRecipe {
+                recipe = switchRecipe
+            } else {
+                print("❌ Returned recipe was not a SwitchRecipe")
+            }
+            
             if viewModel.errorMessage == nil {
                 dismiss()
             }
-            print("edited switch recipe to....")
         }
     }
 }

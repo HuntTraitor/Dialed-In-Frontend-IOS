@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct SwitchRecipeView: View {
-    let recipe: SwitchRecipe
+    @State var recipe: SwitchRecipe
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showCountdown = false
     @State private var showAnimation = false
     @State private var isMinimized: Bool = true
+    @State private var isShowingEditRecipeView: Bool = false
     
     private var sortedPhases: [SwitchPhase] {
         recipe.info.phases
@@ -57,13 +58,6 @@ struct SwitchRecipeView: View {
                 }
                 .zIndex(2)
                 .transition(.opacity)
-//                .onAppear {
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime)) {
-//                        withAnimation {
-//                            showAnimation = false
-//                        }
-//                    }
-//                }
             }
             
         }
@@ -151,6 +145,21 @@ struct SwitchRecipeView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(Color("background"))
                 .padding(.horizontal, 40)
+                
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            isShowingEditRecipeView = true
+                        } label: {
+                            Image(systemName: "pencil.circle.fill")
+                        }
+                    }
+                }
+                .sheet(isPresented: $isShowingEditRecipeView) {
+                    NavigationStack {
+                        SwitchEditRecipeView(recipe: $recipe)
+                    }
+                }
             }
             .padding()
         }
