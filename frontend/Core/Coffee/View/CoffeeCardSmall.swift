@@ -8,16 +8,52 @@
 import SwiftUI
 
 struct CoffeeCardSmall: View {
-    let coffee: Coffee
+    @State var coffee: Coffee
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var viewModel: CoffeeViewModel
+    @State private var showDeleteAlert = false
+    @State private var coffeeToDelete: Coffee?
+    @State private var showEditSheet = false
+
     var body: some View {
         VStack {
             HStack {
                 Text(coffee.info.name)
                     .padding(.leading, 30)
                     .lineLimit(1)
+                
                 Spacer()
+                
                 StarRatingView(rating: coffee.info.rating?.rawValue ?? .zero)
-                    .padding(.trailing, 30)
+                    .padding(.trailing, 10)
+                
+                Menu {
+                    Button {
+                        showEditSheet = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "pencil")
+                            Text("Edit")
+                        }
+                    }
+                    
+                    
+                    Button(role: .destructive) {
+                        coffeeToDelete = coffee
+                        showDeleteAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Delete")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(.degrees(90))
+                        .padding(.trailing, 30)
+                        .contentShape(Rectangle())
+                        .foregroundColor(Color("background"))
+                }
             }
             Divider()
                 .frame(height: 1)
@@ -84,6 +120,17 @@ struct CoffeeCardSmall: View {
             }
             .padding(.vertical, 8)
         }
+        .sheet(isPresented: $showEditSheet) {
+            EditCoffeeView(coffee: $coffee)
+        }
+        .alert("Are you sure you want to delete?", isPresented: $showDeleteAlert, presenting: coffeeToDelete) { coffee in
+            Button("Yes", role: .destructive) {
+                Task {
+                    await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        }
     }
 }
 
@@ -105,6 +152,10 @@ struct InfoRow: View {
 }
 
 #Preview {
-    CoffeeCardSmall(coffee: Coffee.MOCK_COFFEE)
+    PreviewWrapper {
+        NavigationStack {
+            CoffeeCardSmall(coffee: Coffee.MOCK_COFFEE)
+        }
+    }
 }
 

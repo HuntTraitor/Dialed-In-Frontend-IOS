@@ -68,6 +68,7 @@ class CoffeeViewModel: ObservableObject {
         do {
             let coffee = try await coffeeService.updateCoffee(input: input, token: token)
             await fetchCoffees(withToken: token)
+            print("fetched new coffees after update...")
             return coffee
         } catch {
             errorMessage = "Failed to update coffee: \(error.localizedDescription)"

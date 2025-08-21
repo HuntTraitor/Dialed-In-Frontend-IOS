@@ -115,6 +115,8 @@ struct CoffeeView: View {
 
 #Preview {
     PreviewWrapper {
-        CoffeeView()
+        NavigationStack {
+            CoffeeView()
+        }
     }
 }
