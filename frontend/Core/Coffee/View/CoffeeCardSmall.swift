@@ -11,6 +11,7 @@ struct CoffeeCardSmall: View {
     @State var coffee: Coffee
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: CoffeeViewModel
+    @EnvironmentObject var recipeViewModel: RecipeViewModel
     @State private var showDeleteAlert = false
     @State private var coffeeToDelete: Coffee?
     @State private var showEditSheet = false
@@ -127,6 +128,7 @@ struct CoffeeCardSmall: View {
             Button("Yes", role: .destructive) {
                 Task {
                     await viewModel.deleteCoffee(coffeeId: coffee.id, token: authViewModel.token ?? "")
+                    await recipeViewModel.fetchRecipes(withToken: authViewModel.token ?? "")
                 }
             }
             Button("Cancel", role: .cancel) { }
