@@ -83,7 +83,7 @@ struct CoffeeView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             ScrollView {
-                                ForEach(filteredCoffees, id: \.id) { coffee in
+                                ForEach(filteredCoffees, id: \.self) { coffee in
                                     VStack {
                                         CoffeeRow(coffee: coffee, isMinimized: $isMinimized)
                                     }

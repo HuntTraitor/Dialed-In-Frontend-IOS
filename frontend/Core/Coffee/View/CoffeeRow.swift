@@ -16,7 +16,6 @@ struct CoffeeRow: View {
     var body: some View {
         NavigationLink(
             destination: CoffeeCard(coffee: coffee)
-                .environmentObject(authViewModel)
         ) {
             if isMinimized {
                 CoffeeCardExtraSmall(coffee: coffee)
@@ -29,7 +28,7 @@ struct CoffeeRow: View {
 }
 
 #Preview {
-    @Previewable @State var isMinimized = true
+    @Previewable @State var isMinimized = false
     PreviewWrapper {
         CoffeeRow(coffee: Coffee.MOCK_COFFEE, isMinimized: $isMinimized)
     }

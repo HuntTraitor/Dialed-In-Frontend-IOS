@@ -10,15 +10,8 @@ import WrappingHStack
 
 struct CoffeeCard: View {
     @State var coffee: Coffee
-//    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: CoffeeViewModel
     @Environment(\.presentationMode) var presentationMode
-//    @State var isChoiceDialogActive: Bool = false
-//    @State var isSuccessDeleteDialogActive: Bool = false
-//    @State var isFailureDeleteDialogActive: Bool = false
-//    @State private var isDetailViewPresented: Bool = false
-//    let title: String
-//    let keyValuePairs: [(String, String)]
     @State private var isGeneralExpanded = true
     @State private var isRoastExpanded = true
     @State private var isTasteExpanded = true
