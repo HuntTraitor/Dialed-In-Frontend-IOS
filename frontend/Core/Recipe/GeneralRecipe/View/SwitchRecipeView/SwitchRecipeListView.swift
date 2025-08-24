@@ -72,11 +72,9 @@ struct SwitchRecipeListView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             ScrollView {
-                                ForEach(filteredRecipes, id: \.self) { recipe in
+                                ForEach(filteredRecipes, id: \.id) { recipe in
                                     NavigationLink(
-                                        destination: SwitchRecipeView(
-                                            recipe: recipe
-                                        )
+                                        destination: SwitchRecipeView(recipe: recipe)
                                     ) {
                                         RecipeCard(recipe: .switchRecipe(recipe))
                                             .padding(.vertical, 10)
