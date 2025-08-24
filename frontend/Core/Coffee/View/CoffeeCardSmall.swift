@@ -17,7 +17,7 @@ struct CoffeeCardSmall: View {
     @State private var showEditSheet = false
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Text(coffee.info.name)
                     .padding(.leading, 30)
@@ -51,11 +51,13 @@ struct CoffeeCardSmall: View {
                 } label: {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))
-                        .padding(.trailing, 30)
-                        .contentShape(Rectangle())
+                        .frame(width: 44, height: 44)
+                        .padding(.trailing, 20)
                         .foregroundColor(Color("background"))
                 }
             }
+            
+            
             Divider()
                 .frame(height: 1)
                 .background(Color("background"))
