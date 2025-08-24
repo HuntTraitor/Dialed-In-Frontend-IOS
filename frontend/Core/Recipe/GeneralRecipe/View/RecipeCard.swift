@@ -35,6 +35,7 @@ struct RecipeCard: View {
                     if let imgString = recipe.coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
                         ImageView(url)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .scaledToFit()
                     } else {
                         Image("No Image")
                             .resizable()

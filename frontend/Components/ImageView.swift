@@ -81,7 +81,7 @@ struct ImageView: View {
             if let uiImage = viewModel.resource {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()  // Changed from scaledToFit
             } else {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
