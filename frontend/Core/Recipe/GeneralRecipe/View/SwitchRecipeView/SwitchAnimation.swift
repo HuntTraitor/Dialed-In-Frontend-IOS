@@ -14,6 +14,7 @@ struct SwitchAnimation: View {
     @State private var currentTask: Task<Void, Never>? = nil
     @State private var isPlaying = true
     @State private var showStopConfirmation = false
+    @Binding var showAnimation: Bool
 
 
     var body: some View {
@@ -76,6 +77,8 @@ struct SwitchAnimation: View {
                     // Animation
                     SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
                         .id(currentPhaseIndex)
+                        .transition(.opacity.combined(with: .scale)) // fade instead of flicker
+                        .animation(.easeInOut, value: currentPhaseIndex)
                 }
                 
                 HStack(spacing: 40) {
@@ -102,7 +105,7 @@ struct SwitchAnimation: View {
                 }
                 .padding(.top)
             } else {
-                SwitchRecipeSummary(recipe: recipe)
+                SwitchRecipeSummary(recipe: recipe, showAnimation: $showAnimation)
             }
         }
         .onAppear {
@@ -132,12 +135,12 @@ struct SwitchAnimation: View {
                 }
 
                 let time = recipe.info.phases[i].time
-                try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000) - 200_000_000)
-                
-                guard !Task.isCancelled else { return }
-                await MainActor.run {
-                    currentPhaseIndex = recipe.info.phases.count
-                }
+                try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000))
+            }
+
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                currentPhaseIndex = recipe.info.phases.count
             }
         }
     }
@@ -209,6 +212,6 @@ extension SwitchAnimation {
 }
 
 #Preview {
-    SwitchAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    SwitchAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, showAnimation: .constant(true))
 }
 

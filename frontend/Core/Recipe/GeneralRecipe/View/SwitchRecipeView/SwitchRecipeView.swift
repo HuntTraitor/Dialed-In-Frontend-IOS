@@ -52,15 +52,17 @@ struct SwitchRecipeView: View {
             // Full-screen animation
             if showAnimation {
                 VStack {
-                    SwitchAnimation(recipe: recipe)
+                    SwitchAnimation(recipe: recipe, showAnimation: $showAnimation)
                         .padding(.top, 40)
                     Spacer()
                 }
                 .zIndex(2)
                 .transition(.opacity)
             }
-            
         }
+        .toolbar(showAnimation ? .hidden : .visible, for: .tabBar)
+        .toolbar(showAnimation ? .hidden : .visible, for: .navigationBar)
+        .navigationBarBackButtonHidden(showAnimation)
     }
     
     private var mainContent: some View {
@@ -206,7 +208,6 @@ struct SwitchRecipeView: View {
     PreviewWrapper {
         NavigationStack {
             SwitchRecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
-                .addToolbar()
         }
     }
 }

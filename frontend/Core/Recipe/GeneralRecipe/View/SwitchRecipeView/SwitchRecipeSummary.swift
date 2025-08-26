@@ -10,6 +10,7 @@ import Lottie
 
 struct SwitchRecipeSummary: View {
     var recipe: SwitchRecipe
+    @Binding var showAnimation: Bool
     var brewTime: String {
         timeString(from: recipe.info.phases.reduce(0) { $0 + $1.time })
     }
@@ -196,6 +197,21 @@ struct SwitchRecipeSummary: View {
                         .cornerRadius(10)
                     }
                     .padding(.horizontal, 30)
+                    
+                    Button {
+                        showAnimation = false
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .foregroundColor(Color("background"))
+                            
+                            Text("Done")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding()
+                        }
+                        .padding()
+                    }
                 }
             }
             .padding(.vertical)
@@ -205,5 +221,5 @@ struct SwitchRecipeSummary: View {
 }
 
 #Preview {
-    SwitchRecipeSummary(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    SwitchRecipeSummary(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, showAnimation: .constant(true))
 }
