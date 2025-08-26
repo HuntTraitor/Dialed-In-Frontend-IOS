@@ -178,6 +178,38 @@ class DefaultRecipeService: RecipeService {
         }
     }
     
+    func deleteRecipe(recipeId: Int, token: String) async throws -> Bool {
+        let url = baseURL.appendingPathComponent("recipe/\(recipeId)")
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.requestFailed(description: "No valid HTTP response")
+            }
+
+            guard (200..<300).contains(httpResponse.statusCode) else {
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("Delete failed with response: \(json)")
+                    if let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
+                    }
+                }
+                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+            }
+
+            _ = try? JSONDecoder().decode(DeleteRecipeResponse.self, from: data)
+            return true
+            
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknownError(error: error)
+        }
+    }
+    
     struct SingleGenericRecipeResponse: Decodable {
         let recipe: Recipe
     }
@@ -185,4 +217,10 @@ class DefaultRecipeService: RecipeService {
     private struct RecipeWrapper: Decodable {
         let recipes: [Recipe]
     }
+    
+    struct DeleteRecipeResponse: Codable {
+        var message: String
+    }
 }
+
+

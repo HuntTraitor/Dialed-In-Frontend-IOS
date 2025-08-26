@@ -64,6 +64,21 @@ class RecipeViewModel: ObservableObject {
             return nil
         }
     }
+    
+    func deleteRecipe(recipeId: Int, token: String) async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        
+        do {
+            let deleted = try await recipeService.deleteRecipe(recipeId: recipeId, token: token)
+            if deleted {
+                await fetchRecipes(withToken: token)
+            }
+        } catch {
+            errorMessage = "Failed to delete recipes: \(error.localizedDescription)"
+        }
+    }
 }
 
 
