@@ -25,7 +25,8 @@ enum AppEnvironment {
 enum EnvironmentManager {
     static var current: AppEnvironment {
         #if DEBUG
-        return .custom(URL(string: "http://10.201.100.19:3000/v1/")!)
+//        return .custom(URL(string: "http://10.201.100.19:3000/v1/")!)
+        return .custom(URL(string: "http://localhost:3000/v1/")!)
         #else
         return .production
         #endif

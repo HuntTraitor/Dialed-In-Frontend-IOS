@@ -15,9 +15,14 @@ struct SwitchRecipeListView: View {
     @State private var isShowingCreateRecipeView = false
     @State private var hasApeared: Bool = false
     
-    var filteredRecipes: [SwitchRecipe] {
-        guard !searchTerm.isEmpty else { return viewModel.switchRecipes }
-        return viewModel.switchRecipes.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+    var filteredRecipes: [Binding<SwitchRecipe>] {
+        viewModel.switchRecipes.indices.compactMap { index in
+            let recipe = viewModel.switchRecipes[index]
+            guard searchTerm.isEmpty || recipe.info.name.localizedCaseInsensitiveContains(searchTerm) else {
+                return nil
+            }
+            return $viewModel.switchRecipes[index]
+        }
     }
     
     var body: some View {
@@ -72,13 +77,20 @@ struct SwitchRecipeListView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             ScrollView {
-                                ForEach(filteredRecipes, id: \.id) { recipe in
+                                ForEach(filteredRecipes, id: \.wrappedValue.id) { $recipe in
                                     NavigationLink(
                                         destination: SwitchRecipeView(recipe: recipe)
                                     ) {
-                                        RecipeCard(recipe: .switchRecipe(recipe))
-                                            .padding(.vertical, 10)
-                                            .cornerRadius(10)
+                                        RecipeCard(recipe: Binding(
+                                            get: { Recipe.switchRecipe($recipe.wrappedValue) },
+                                            set: { newValue in
+                                                if case let .switchRecipe(updated) = newValue {
+                                                    $recipe.wrappedValue = updated
+                                                }
+                                            }
+                                        ))
+                                        .padding(.vertical, 10)
+                                        .cornerRadius(10)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }

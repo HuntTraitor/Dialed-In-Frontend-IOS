@@ -179,7 +179,7 @@ class DefaultRecipeService: RecipeService {
     }
     
     func deleteRecipe(recipeId: Int, token: String) async throws -> Bool {
-        let url = baseURL.appendingPathComponent("recipe/\(recipeId)")
+        let url = baseURL.appendingPathComponent("recipes/\(recipeId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

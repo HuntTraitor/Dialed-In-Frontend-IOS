@@ -8,7 +8,23 @@
 import SwiftUI
 
 struct RecipeCard: View {
-    var recipe: Recipe
+    @Binding var recipe: Recipe
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var viewModel: RecipeViewModel
+    @State private var showEditSheet: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    @State private var recipeToDelete: Recipe?
+    
+    @ViewBuilder
+    private var editSheetContent: some View {
+        if let binding = $recipe.switchRecipeBinding {
+            NavigationView {
+                SwitchEditRecipeView(recipe: binding)
+                    .navigationTitle("Edit Recipe")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,6 +39,34 @@ struct RecipeCard: View {
                     .foregroundColor(.brown)
                 
                 Spacer()
+                
+                Menu {
+                    Button {
+                        showEditSheet = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "pencil")
+                            Text("Edit")
+                        }
+                    }
+                    
+                    
+                    Button(role: .destructive) {
+                        recipeToDelete = recipe
+                        showDeleteAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Delete")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(.degrees(90))
+                        .frame(width: 44, height: 44)
+                        .padding(.trailing, 20)
+                        .foregroundColor(Color("background"))
+                }
 
             }
             .padding(.horizontal, 16)
@@ -113,9 +157,42 @@ struct RecipeCard: View {
         }
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .sheet(isPresented: $showEditSheet) {
+            editSheetContent
+        }
+        .alert("Are you sure you want to delete this recipe?", isPresented: $showDeleteAlert, presenting: recipeToDelete) { recipe in
+            Button("Yes", role: .destructive) {
+                Task {
+                    await viewModel.deleteRecipe(recipeId: recipe.id, token: authViewModel.token ?? "")
+                    await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        }
     }
 }
 
+extension Binding where Value == Recipe {
+    var switchRecipeBinding: Binding<SwitchRecipe>? {
+        guard case .switchRecipe = wrappedValue else { return nil }
+        return Binding<SwitchRecipe>(
+            get: {
+                if case .switchRecipe(let sr) = self.wrappedValue {
+                    return sr
+                }
+                fatalError("Unexpected enum case")
+            },
+            set: { newValue in
+                self.wrappedValue = .switchRecipe(newValue)
+            }
+        )
+    }
+}
+
+
 #Preview {
-    RecipeCard(recipe: Recipe.switchRecipe(SwitchRecipe.MOCK_SWITCH_RECIPE))
+    @Previewable @State var recipe = Recipe.switchRecipe(SwitchRecipe.MOCK_SWITCH_RECIPE)
+    PreviewWrapper {
+        RecipeCard(recipe: $recipe)
+    }
 }

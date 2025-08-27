@@ -96,8 +96,7 @@ class AuthViewModel: ObservableObject {
             }
             return true
         } catch {
-            // we may or may not want to throw this - mainly due to weird user experience displaying error when keychain simply gets reset
-            print(error.localizedDescription)
+            errorMessage = error.localizedDescription
         }
         
         // otherwise signout and return false

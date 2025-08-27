@@ -17,9 +17,23 @@ struct AllRecipeView: View {
     @State private var showCreateRecipe = false
     @State private var selectedRecipe: Recipe? = nil
     
-    var filteredRecipes: [Recipe] {
-        guard !searchTerm.isEmpty else { return viewModel.allRecipes }
-        return viewModel.allRecipes.filter {$0.name.localizedCaseInsensitiveContains(searchTerm)}
+    var filteredRecipes: [Binding<SwitchRecipe>] {
+        viewModel.allRecipes.indices.compactMap { index in
+            let recipe = viewModel.allRecipes[index]
+            guard case .switchRecipe = recipe else { return nil }
+            guard searchTerm.isEmpty || recipe.name.localizedCaseInsensitiveContains(searchTerm) else {
+                return nil
+            }
+            return Binding(
+                get: {
+                    if case let .switchRecipe(r) = viewModel.allRecipes[index] { return r }
+                    fatalError("Unexpected enum case")
+                },
+                set: { newValue in
+                    viewModel.allRecipes[index] = .switchRecipe(newValue)
+                }
+            )
+        }
     }
     
     var body: some View {
@@ -68,11 +82,11 @@ struct AllRecipeView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             ScrollView {
-                                ForEach(filteredRecipes, id: \.id) { recipe in
+                                ForEach(filteredRecipes, id: \.wrappedValue.id) { $recipe in
                                     NavigationLink(
-                                        destination: destinationView(for: recipe)
+                                        destination: SwitchRecipeView(recipe: recipe)
                                     ) {
-                                        recipeCard(for: recipe)
+                                        recipeCard(for: $recipe)
                                             .padding(.vertical, 10)
                                             .background(Color.white)
                                             .cornerRadius(10)
@@ -107,11 +121,15 @@ extension AllRecipeView {
     }
 
     @ViewBuilder
-    func recipeCard(for recipe: Recipe) -> some View {
-        switch recipe {
-        case .switchRecipe(let switchRecipe):
-            RecipeCard(recipe: .switchRecipe(switchRecipe))
-        }
+    func recipeCard(for switchRecipe: Binding<SwitchRecipe>) -> some View {
+        RecipeCard(recipe: Binding(
+            get: { Recipe.switchRecipe(switchRecipe.wrappedValue) },
+            set: { newValue in
+                if case let .switchRecipe(updated) = newValue {
+                    switchRecipe.wrappedValue = updated
+                }
+            }
+        ))
     }
 }
 
