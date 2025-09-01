@@ -132,6 +132,7 @@ struct SwitchAnimation: View {
 
                 await MainActor.run {
                     currentPhaseIndex = i
+                    SoundManager.instance.playSound(sound: .nextPhase)
                 }
 
                 let time = recipe.info.phases[i].time
@@ -140,7 +141,9 @@ struct SwitchAnimation: View {
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
+                print("hi")
                 currentPhaseIndex = recipe.info.phases.count
+                SoundManager.instance.playSound(sound: .animationFinish)
             }
         }
     }
@@ -162,6 +165,7 @@ struct SwitchAnimation: View {
     func stopRecipe() {
         currentTask?.cancel()
         currentPhaseIndex = recipe.info.phases.count
+        SoundManager.instance.playSound(sound: .animationFinish)
     }
 }
 
