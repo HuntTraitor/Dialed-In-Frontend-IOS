@@ -250,11 +250,14 @@ struct CreateCoffeeView: View {
             }
 
             if let imageObject {
-                Image(uiImage: imageObject)
-                    .resizable()
-                    .frame(width: 200, height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.top, 16)
+                ZStack {
+                    Image(uiImage: imageObject)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.top, 16)
+                }
+                .frame(width: 200, height: 200)
             }
 
             Color.clear
