@@ -268,16 +268,23 @@ struct EditCoffeeView: View {
             }
             
             if let imageObject {
-                Image(uiImage: imageObject)
-                    .resizable()
-                    .frame(width: 200, height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.top, 16)
+                ZStack {
+                    Image(uiImage: imageObject)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.top, 16)
+                }
+                .frame(width: 200, height: 200)
             } else if !tempImg.isEmpty, let url = URL(string: tempImg) {
-                ImageView(url)
-                    .frame(width: 200, height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.top, 16)
+                ZStack {
+                    ImageView(url)
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.top, 16)
+                }
+                .frame(width: 200, height: 200)
+
             }
 
             Color.clear
