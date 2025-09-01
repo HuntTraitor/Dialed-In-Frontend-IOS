@@ -33,6 +33,7 @@ struct CoffeePickerView: View {
                 if let coffee = selectedCoffee {
                     CoffeeChoice(coffee: coffee)
                         .frame(height: 35)
+                        .padding(.vertical, 1)
                 } else {
                     Text("Select Coffee")
                         .foregroundColor(.gray)
