@@ -25,12 +25,15 @@ struct CoffeeCard: View {
                     // Image centered horizontally
                     HStack {
                         Spacer()
-                        if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
-                            ImageView(url)
-                                .frame(width: 200, height: 200)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.top, 16)
+                        ZStack {
+                            if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                                ImageView(url)
+                                    .scaledToFit()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.top, 16)
+                            }
                         }
+                        .frame(width: 200, height: 200)
                         Spacer()
                     }
 

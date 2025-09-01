@@ -66,11 +66,13 @@ struct CoffeeCardSmall: View {
             HStack(alignment: .top, spacing: 16) {
                 // Image on the left
                 if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
-                    ImageView(url)
-                        .frame(width: 100, height: 100)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .padding(.leading, 20)
-                        .scaledToFit()
+                    ZStack {
+                        ImageView(url)
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding(.leading, 20)
+                    }
+                    .frame(width: 100, height: 100)
                 } else {
                     Color.clear
                         .frame(width: 50, height: 100)
