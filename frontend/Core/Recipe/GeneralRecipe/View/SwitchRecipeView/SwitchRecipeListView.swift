@@ -89,10 +89,14 @@ struct SwitchRecipeListView: View {
                                                 }
                                             }
                                         ))
-                                        .padding(.vertical, 10)
                                         .cornerRadius(10)
                                     }
                                     .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .refreshable {
+                                Task {
+                                    await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
                                 }
                             }
                         }

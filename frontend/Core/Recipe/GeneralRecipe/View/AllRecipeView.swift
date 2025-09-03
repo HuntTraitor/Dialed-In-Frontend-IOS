@@ -94,6 +94,11 @@ struct AllRecipeView: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
+                            .refreshable {
+                                Task {
+                                    await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
+                                }
+                            }
                         }
                     }
                 }

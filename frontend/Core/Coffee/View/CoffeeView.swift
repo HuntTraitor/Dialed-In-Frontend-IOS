@@ -93,6 +93,11 @@ struct CoffeeView: View {
                                     .shadow(color: .black.opacity(0.01), radius: 5, x: 0, y: 2)
                                 }
                             }
+                            .refreshable {
+                                Task {
+                                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                                }
+                            }
                         }
                     }
                 }
