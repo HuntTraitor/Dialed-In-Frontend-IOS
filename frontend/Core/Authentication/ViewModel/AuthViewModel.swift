@@ -138,4 +138,8 @@ class AuthViewModel: ObservableObject {
     func isValidConfirmPassword(password: String, confirmPassword: String) -> Bool {
         return password == confirmPassword
     }
+    
+    func isValidCode(code: String) -> Bool {
+        return !code.isEmpty
+    }
 }

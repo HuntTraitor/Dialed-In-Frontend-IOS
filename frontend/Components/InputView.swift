@@ -12,6 +12,7 @@ struct InputView: View {
     let icon: String
     let placeholder: String
     var isSecureField = false
+    var keyboardType: UIKeyboardType = .default
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -21,6 +22,7 @@ struct InputView: View {
                     Image(systemName: icon)
                     SecureField(placeholder, text: $text)
                         .font(.system(size: 14))
+                        .keyboardType(keyboardType)
                         .padding()
                 }
             } else {
@@ -29,6 +31,7 @@ struct InputView: View {
                     Image(systemName: icon)
                     TextField(placeholder, text: $text)
                         .font(.system(size: 14))
+                        .keyboardType(keyboardType)
                         .padding()
                 }
             }
