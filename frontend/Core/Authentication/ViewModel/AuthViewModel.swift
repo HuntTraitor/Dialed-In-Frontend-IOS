@@ -116,7 +116,19 @@ class AuthViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
-
+    
+    func sendPasswordEmail(email: String) async {
+        isLoading = true
+        errorMessage = nil
+        
+        defer {isLoading = false}
+        
+        do {
+            _ = try await authService.sendPasswordResetEmail(toEmail: email)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
     
     // Name is valid if its not empty
     func isValidName(name: String) -> Bool {

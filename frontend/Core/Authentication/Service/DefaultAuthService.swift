@@ -124,5 +124,63 @@ final class DefaultAuthService: AuthService {
             throw APIError.unknownError(error: error)
         }
     }
+    
+    func sendPasswordResetEmail(toEmail email: String) async throws -> EmailSentResponse {
+        let url = baseURL.appendingPathComponent("tokens/password-reset")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = ["email": email]
+        request.httpBody = try JSONEncoder().encode(requestBody)
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.requestFailed(description: "No valid HTTP response")
+            }
+            
+            guard (200..<300).contains(httpResponse.statusCode) else {
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("Email sending failed with response: \(json)")
+                    if let errorMessage = json["error"] as? String {
+                        throw APIError.custom(message: errorMessage)
+                    }
+                }
+                if httpResponse.statusCode == 422 {
+                    throw APIError.custom(message: "No account found with that email address.")
+                }
+                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
+            }
+            
+            do {
+                let decoded = try JSONDecoder().decode(EmailSentResponse.self, from: data)
+                return decoded
+            } catch let decodingError as DecodingError {
+                switch decodingError {
+                case .typeMismatch(let type, let context):
+                    print("Type mismatch for type \(type) at \(context.codingPath): \(context.debugDescription)")
+                case .valueNotFound(let type, let context):
+                    print("Value of type \(type) not found at \(context.codingPath): \(context.debugDescription)")
+                case .keyNotFound(let key, let context):
+                    print("Key '\(key)' not found at \(context.codingPath): \(context.debugDescription)")
+                case .dataCorrupted(let context):
+                    print("Data corrupted at \(context.codingPath): \(context.debugDescription)")
+                @unknown default:
+                    print("Unknown decoding error: \(decodingError)")
+                }
+                throw APIError.jsonParsingFailure(error: decodingError)
+            } catch {
+                // For non-DecodingErrors (e.g., data issues)
+                print("Unexpected error: \(error)")
+                throw APIError.jsonParsingFailure(error: error)
+            }
+            
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknownError(error: error)
+        }
+    }
 }
 

@@ -80,7 +80,7 @@ struct LoginView: View {
                     .accessibilityIdentifier(testingID.singinButton)
                     
                     NavigationLink {
-                        
+                        SendEmailView()
                     } label: {
                         Text("forgot password?")
                             .font(.system(size: 14))

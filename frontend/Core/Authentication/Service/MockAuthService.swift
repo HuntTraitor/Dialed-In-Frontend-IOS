@@ -34,5 +34,13 @@ final class MockAuthService: AuthService {
             return User.MOCK_USER
         }
     }
+    
+    func sendPasswordResetEmail(toEmail email: String) async throws -> EmailSentResponse {
+        if isErrorThrown {
+            throw APIError.unknownError(error: DummyError.someError)
+        } else {
+            return Token.MOCK_EMAIL_SENT_RESPONSE
+        }
+    }
 }
 
