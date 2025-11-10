@@ -130,6 +130,18 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func resetPassword(password: String, code: String) async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        
+        do {
+            _ = try await authService.resetPassword(password: password, code: code)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
     // Name is valid if its not empty
     func isValidName(name: String) -> Bool {
         return name != ""

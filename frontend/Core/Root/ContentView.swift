@@ -13,7 +13,8 @@ struct ContentView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var isLogoutDialogOpen = false
     @State private var lastValidTab = 1
-    
+    @State private var authPath = NavigationPath()
+
     private let testingID = UIIdentifiers.HomeScreen.self
 
     var body: some View {
@@ -21,8 +22,25 @@ struct ContentView: View {
             if !authViewModel.hasVerifiedSession {
                 ProgressView()
             } else if !authViewModel.isAuthenticated {
-                NavigationStack {
-                    LoginView()
+                NavigationStack(path: $authPath) {
+                    LoginView(
+                        onForgotPassword: {
+                            authPath.append(AuthRoute.sendEmail)
+                        },
+                        onRegister: {
+                            authPath.append(AuthRoute.register)
+                        }
+                    )
+                    .navigationDestination(for: AuthRoute.self) { route in
+                        switch route {
+                        case .sendEmail:
+                            SendEmailView(path: $authPath)
+                        case .resetPassword:
+                            PasswordResetView(path: $authPath)
+                        case .register:
+                            RegistrationView()
+                        }
+                    }
                 }
                 // resets tabs when user logs out
                 .onAppear {
@@ -31,8 +49,10 @@ struct ContentView: View {
                     navigationManager.coffeeNavigator = []
                     navigationManager.recipesNavigator = []
                     navigationManager.settingsNavigator = []
+                    authPath = NavigationPath()  // reset auth stack too
                 }
             } else {
+                // 🏠 MAIN APP TABS (unchanged)
                 TabView(selection: navigationManager.tabHandler) {
                     NavigationStack(path: $navigationManager.homeNavigator) {
                         HomeView()
@@ -66,6 +86,7 @@ struct ContentView: View {
         }
     }
 }
+
 
 
 

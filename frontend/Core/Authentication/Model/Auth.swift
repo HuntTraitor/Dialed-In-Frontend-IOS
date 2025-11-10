@@ -51,6 +51,10 @@ struct EmailSentResponse: Codable {
     let message: String
 }
 
+struct PasswordResetResponse: Codable {
+    let message: String
+}
+
 // EXTENSIONS ------------------------------------------------------------------------------------------------------------------------------
 
 extension User {
@@ -60,6 +64,7 @@ extension User {
 extension Token {
     static var MOCK_TOKEN = Token(token: "12345678", expiry: "2025-01-10T20:36:21.010464673Z")
     static var MOCK_EMAIL_SENT_RESPONSE = EmailSentResponse(message: "an email will be sent to you containing password reset instructions")
+    static var MOCK_PASSWORD_RESET_RESPONSE = PasswordResetResponse(message: "your password has been reset")
 }
 
 let emailRX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"

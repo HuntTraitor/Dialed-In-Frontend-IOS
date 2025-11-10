@@ -26,7 +26,7 @@ final class MockAuthService: AuthService {
             return User.MOCK_USER
         }
     }
-        
+    
     func verifyUser(withToken token: String) async throws -> User {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
@@ -40,6 +40,14 @@ final class MockAuthService: AuthService {
             throw APIError.unknownError(error: DummyError.someError)
         } else {
             return Token.MOCK_EMAIL_SENT_RESPONSE
+        }
+    }
+    
+    func resetPassword(password: String, code: String) async throws -> PasswordResetResponse {
+        if isErrorThrown {
+            throw APIError.unknownError(error: DummyError.someError)
+        } else {
+            return Token.MOCK_PASSWORD_RESET_RESPONSE
         }
     }
 }

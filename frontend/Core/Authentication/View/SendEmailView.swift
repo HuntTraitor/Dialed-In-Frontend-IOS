@@ -9,11 +9,11 @@ import SwiftUI
 
 struct SendEmailView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @Binding var path: NavigationPath
     @State private var email = ""
-    @State private var navigateToReset = false
     
     private var isFormValid: Bool {
-        return viewModel.isValidEmail(email: email)
+        viewModel.isValidEmail(email: email)
     }
     
     var body: some View {
@@ -45,7 +45,7 @@ struct SendEmailView: View {
                         Task {
                             await viewModel.sendPasswordEmail(email: email)
                             if viewModel.errorMessage == nil {
-                                navigateToReset = true
+                                path.append(AuthRoute.resetPassword)
                             }
                         }
                     } label: {
@@ -70,13 +70,9 @@ struct SendEmailView: View {
             .padding(.horizontal)
             .disabled(viewModel.isLoading || viewModel.errorMessage != nil)
             .blur(radius: (viewModel.isLoading || viewModel.errorMessage != nil) ? 2 : 0)
-            .navigationDestination(isPresented: $navigateToReset) {
-                PasswordResetView()
-            }
-
+            
             if viewModel.isLoading {
                 LoadingCircle()
-                    .zIndex(1)
             }
 
             if viewModel.errorMessage != nil {
@@ -93,15 +89,6 @@ struct SendEmailView: View {
                 )
                 .zIndex(3)
             }
-        }
-    }
-
-}
-
-#Preview {
-    PreviewWrapper {
-        NavigationStack {
-            SendEmailView()
         }
     }
 }
