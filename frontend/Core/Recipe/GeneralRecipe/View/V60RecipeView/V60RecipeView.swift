@@ -134,6 +134,16 @@ struct V60RecipeView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemBackground))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.brown.opacity(0.15), lineWidth: 1)
+                )
+
                 
                 brewVisualization
                 
