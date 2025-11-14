@@ -28,28 +28,7 @@ struct V60RecipeView: View {
         ZStack {
             mainContent
                 .opacity(showAnimation ? 0 : 1)
-                .animation(.easeInOut(duration: 0.3), value: showAnimation)
-            
-            if showCountdown {
-                Color.black.opacity(0.5)
-                    .edgesIgnoringSafeArea(.all)
-                    .transition(.opacity)
-                    .zIndex(0)
-                
-                CountdownDialog(
-                    seconds: 3,
-                    onComplete: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showCountdown = false
-                            showAnimation = true
-                        }
-                    }
-                )
-                .zIndex(1)
-                .transition(.opacity)
-            }
-            
-            // Full-screen animation
+
             if showAnimation {
                 VStack {
                     V60Animation(recipe: recipe, showAnimation: $showAnimation)
@@ -59,7 +38,33 @@ struct V60RecipeView: View {
                 .zIndex(2)
                 .transition(.opacity)
             }
+
+            if showCountdown {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                    .zIndex(3)
+
+                CountdownDialog(
+                    seconds: 3,
+                    onComplete: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showCountdown = false
+                        }
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                showAnimation = true
+                            }
+                        }
+                    }
+                )
+                .zIndex(4)
+                .transition(.opacity)
+            }
         }
+        .animation(.easeInOut(duration: 0.3), value: showCountdown)
+        .animation(.easeInOut(duration: 0.3), value: showAnimation)
+
         .toolbar(showAnimation ? .hidden : .visible, for: .tabBar)
         .toolbar(showAnimation ? .hidden : .visible, for: .navigationBar)
         .navigationBarBackButtonHidden(showAnimation)

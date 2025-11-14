@@ -21,7 +21,7 @@ struct V60Pour: View {
     
     init(fillIn: Double) {
         self.fillIn = fillIn
-        _remainingTime = State(initialValue: fillIn+0.9)
+        _remainingTime = State(initialValue: fillIn)
     }
 
     var body: some View {

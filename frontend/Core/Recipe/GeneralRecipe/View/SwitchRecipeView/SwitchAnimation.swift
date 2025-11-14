@@ -6,15 +6,52 @@
 //
 
 import SwiftUI
+import Combine
 
 struct SwitchAnimation: View {
     let recipe: SwitchRecipe
-    @State private var currentPhaseIndex = 0
     @State private var targetPhaseIndex = 0
     @State private var currentTask: Task<Void, Never>? = nil
     @State private var isPlaying = true
     @State private var showStopConfirmation = false
     @Binding var showAnimation: Bool
+    
+    @State private var currentPhaseIndex: Int = 0
+    @State private var startDate: Date?
+    @State private var timer: AnyCancellable?
+
+    private var phases: [SwitchPhase] {
+        recipe.info.phases
+    }
+
+    private var cumulativePhaseEndTimes: [TimeInterval] {
+        var total: TimeInterval = 0
+        return phases.map { phase in
+            total += TimeInterval(phase.time)
+            return total
+        }
+    }
+
+    private var phaseStartTimes: [TimeInterval] {
+        var total: TimeInterval = 0
+        return phases.map { phase in
+            let start = total
+            total += TimeInterval(phase.time)
+            return start
+        }
+    }
+    
+    private func jump(to phaseIndex: Int) {
+        guard !phases.isEmpty else { return }
+        let clampedIndex = max(0, min(phaseIndex, phases.count - 1))
+
+        let targetElapsed = phaseStartTimes[clampedIndex]   // seconds
+
+        startDate = Date().addingTimeInterval(-targetElapsed)
+
+        currentPhaseIndex = clampedIndex
+        SoundManager.instance.playSound(sound: .nextPhase)
+    }
 
 
     var body: some View {
@@ -44,7 +81,9 @@ struct SwitchAnimation: View {
                     
                     // Current phase header
                     VStack(spacing: 24) {
-                        Text("Phase \(currentPhaseIndex + 1) of \(recipe.info.phases.count)")
+                            Text("Phase \(currentPhaseIndex + 1)")
+                            .onAppear { startSequence() }
+                            .onDisappear { stopSequence() }
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -80,15 +119,14 @@ struct SwitchAnimation: View {
                     }
                     
                     // Animation
-                    SwitchPour(fillIn: Double(phase.time), direction: currentDirection)
+                    // Animation
+                    SwitchPour(fillIn: Double(phases[currentPhaseIndex].time), direction: currentDirection)
                         .id(currentPhaseIndex)
-                        .transition(.opacity.combined(with: .scale)) // fade instead of flicker
-                        .animation(.easeInOut, value: currentPhaseIndex)
                 }
                 
                 HStack(spacing: 40) {
                     Button(action: {
-                        skipBackward()
+                        skipBack()
                     }) {
                         Image(systemName: "arrowshape.backward.fill")
                             .font(.system(size: 36))
@@ -135,36 +173,70 @@ struct SwitchAnimation: View {
             for i in currentPhaseIndex..<recipe.info.phases.count {
                 guard !Task.isCancelled else { return }
 
+                let time = recipe.info.phases[i].time
+
                 await MainActor.run {
+                    print("Phase \(i) start at", Date(), "duration:", time)
                     currentPhaseIndex = i
-                    SoundManager.instance.playSound(sound: .nextPhase)
                 }
 
-                let time = recipe.info.phases[i].time
                 try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000))
+
+                await MainActor.run {
+                    print("Phase \(i) end at", Date())
+                }
             }
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
-                print("hi")
+                print("Recipe finished at", Date())
                 currentPhaseIndex = recipe.info.phases.count
-                SoundManager.instance.playSound(sound: .animationFinish)
             }
         }
     }
+    
+    private func startSequence() {
+        stopSequence()
 
-    func skipForward() {
-        guard currentPhaseIndex < recipe.info.phases.count - 1 else { return }
-        currentTask?.cancel()
-        currentPhaseIndex += 1
-        runPhaseSequence()
+        startDate = Date()
+        currentPhaseIndex = 0
+        SoundManager.instance.playSound(sound: .nextPhase)
+
+        timer = Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink { now in
+                guard let start = startDate else { return }
+
+                let elapsed = now.timeIntervalSince(start)
+
+                // Figure out what phase we're in
+                let ends = cumulativePhaseEndTimes
+
+                if let idx = ends.firstIndex(where: { elapsed < $0 }) {
+                    if idx != currentPhaseIndex {
+                        currentPhaseIndex = idx
+                        SoundManager.instance.playSound(sound: .nextPhase)
+                    }
+                } else {
+                    // All phases done
+                    stopSequence()
+                    SoundManager.instance.playSound(sound: .animationFinish)
+                    showAnimation = false
+                }
+            }
+    }
+    
+    private func skipForward() {
+        jump(to: currentPhaseIndex + 1)
     }
 
-    func skipBackward() {
-        guard currentPhaseIndex > 0 else { return }
-        currentTask?.cancel()
-        currentPhaseIndex -= 1
-        runPhaseSequence()
+    private func skipBack() {
+        jump(to: currentPhaseIndex - 1)
+    }
+
+    private func stopSequence() {
+        timer?.cancel()
+        timer = nil
     }
     
     func stopRecipe() {
