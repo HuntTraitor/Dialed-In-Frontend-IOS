@@ -9,40 +9,47 @@ import Foundation
 
 enum Recipe: Identifiable, Codable {
     case switchRecipe(SwitchRecipe)
+    case v60Recipe(V60Recipe)
 
     var id: Int {
         switch self {
         case .switchRecipe(let data): return data.id
+        case .v60Recipe(let data): return data.id
         }
     }
 
     var name: String {
         switch self {
         case .switchRecipe(let data): return data.info.name
+        case .v60Recipe(let data): return data.info.name
         }
     }
     
     var coffee: Coffee {
         switch self {
         case .switchRecipe(let data): return data.coffee
+        case .v60Recipe(let data): return data.coffee
         }
     }
     
     var method: Method {
         switch self {
         case .switchRecipe(let data): return data.method
+        case .v60Recipe(let data): return data.method
         }
     }
     
     var gramsIn: Int {
         switch self {
         case .switchRecipe(let data): return data.info.gramsIn
+        case.v60Recipe(let data): return data.info.gramsIn
         }
     }
     
     var mlOut: Int {
         switch self {
         case .switchRecipe(let data): return data.info.mlOut
+        case .v60Recipe(let data): return data.info.mlOut
         }
     }
 
@@ -52,6 +59,7 @@ enum Recipe: Identifiable, Codable {
 
     private enum RecipeType: String, Codable {
         case switchRecipe
+        case v60Recipe
     }
 
     init(from decoder: Decoder) throws {
@@ -120,6 +128,9 @@ enum Recipe: Identifiable, Codable {
         switch self {
         case .switchRecipe(let data):
             try container.encode(RecipeType.switchRecipe, forKey: .type)
+            try data.encode(to: encoder)
+        case .v60Recipe(let data):
+            try container.encode(RecipeType.v60Recipe, forKey: .type)
             try data.encode(to: encoder)
         }
     }

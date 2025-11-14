@@ -169,7 +169,7 @@ struct V60RecipeView: View {
                 }
                 .sheet(isPresented: $isShowingEditRecipeView) {
                     NavigationStack {
-//                        SwitchEditRecipeView(recipe: $recipe)
+                        V60EditRecipeView(recipe: $recipe)
                     }
                 }
             }

@@ -122,6 +122,8 @@ extension AllRecipeView {
         switch recipe {
         case .switchRecipe(let switchRecipe):
             SwitchRecipeView(recipe: switchRecipe)
+        case .v60Recipe(let v60Recipe):
+            V60RecipeView(recipe: v60Recipe)
         }
     }
 
