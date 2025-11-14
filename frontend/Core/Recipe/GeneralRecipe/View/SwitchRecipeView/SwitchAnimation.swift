@@ -21,6 +21,11 @@ struct SwitchAnimation: View {
         VStack {
             if currentPhaseIndex < recipe.info.phases.count {
                 let phase = recipe.info.phases[currentPhaseIndex]
+                let cumulativeAmount = recipe.info.phases
+                    .prefix(currentPhaseIndex + 1)
+                    .reduce(0) { partial, phase in
+                        partial + phase.amount
+                    }
                 let currentDirection = direction(for: currentPhaseIndex)
 
                 VStack(spacing: 20) {
@@ -56,7 +61,7 @@ struct SwitchAnimation: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(phase.open ? .green : .red)
                                 
-                                Text("Pour to \(phase.amount)g")
+                                Text("Pour to \(cumulativeAmount)g")
                                     .font(.subheadline)
                                     .foregroundColor(.primary)
                             }
