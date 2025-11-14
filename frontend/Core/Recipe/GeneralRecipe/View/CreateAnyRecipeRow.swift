@@ -14,7 +14,7 @@ struct CreateAnyRecipeRow: View {
         case .harioSwitch:
             SwitchCreateRecipeView()
         case .v60:
-            Text("V60 recipes")
+            V60CreateRecipeView()
         }
     }
 }

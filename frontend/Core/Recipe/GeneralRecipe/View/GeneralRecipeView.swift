@@ -16,7 +16,7 @@ public struct GeneralRecipeView: View {
         case .harioSwitch:
             SwitchRecipeListView()
         case .v60:
-            Text("V60 recipes")
+            V60RecipeListView()
         default:
             AllRecipeView()
         }

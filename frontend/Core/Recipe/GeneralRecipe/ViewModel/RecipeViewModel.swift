@@ -13,6 +13,7 @@ class RecipeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var allRecipes: [Recipe] = []
     @Published var switchRecipes: [SwitchRecipe] = []
+    @Published var v60Recipes: [V60Recipe] = []
 
     private let recipeService: RecipeService
 
@@ -28,9 +29,17 @@ class RecipeViewModel: ObservableObject {
         do {
             let fetched = try await recipeService.fetchRecipes(withToken: token)
             self.allRecipes = fetched
+            
             self.switchRecipes = fetched.compactMap { recipe in
                 if case let .switchRecipe(switchRecipe) = recipe {
                     return switchRecipe
+                }
+                return nil
+            }
+            
+            self.v60Recipes = fetched.compactMap { recipe in
+                if case let .v60Recipe(v60Recipe) = recipe {
+                    return v60Recipe
                 }
                 return nil
             }
