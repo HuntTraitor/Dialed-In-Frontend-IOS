@@ -114,6 +114,16 @@ enum Recipe: Identifiable, Codable {
                 print("❌ Failed to decode as SwitchRecipe")
                 throw error
             }
+        
+        case "V60":
+            do {
+                let v60Recipe = try decoder.decode(V60Recipe.self, from: jsonData)
+                self = .v60Recipe(v60Recipe)
+            } catch {
+                print("❌ Failed to decode as V60Recipe")
+                throw error
+            }
+            
         default:
             print("❌ Unknown method: \(methodName)")
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown method \(methodName)")

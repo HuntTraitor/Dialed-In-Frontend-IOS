@@ -17,24 +17,21 @@ struct AllRecipeView: View {
     @State private var showCreateRecipe = false
     @State private var selectedRecipe: Recipe? = nil
     
-    var filteredRecipes: [Binding<SwitchRecipe>] {
+    var filteredRecipes: [Binding<Recipe>] {
         viewModel.allRecipes.indices.compactMap { index in
             let recipe = viewModel.allRecipes[index]
-            guard case .switchRecipe = recipe else { return nil }
+
             guard searchTerm.isEmpty || recipe.name.localizedCaseInsensitiveContains(searchTerm) else {
                 return nil
             }
+
             return Binding(
-                get: {
-                    if case let .switchRecipe(r) = viewModel.allRecipes[index] { return r }
-                    fatalError("Unexpected enum case")
-                },
-                set: { newValue in
-                    viewModel.allRecipes[index] = .switchRecipe(newValue)
-                }
+                get: { viewModel.allRecipes[index] },
+                set: { viewModel.allRecipes[index] = $0 }
             )
         }
     }
+
     
     var body: some View {
         ZStack {
@@ -84,7 +81,7 @@ struct AllRecipeView: View {
                             ScrollView {
                                 ForEach(filteredRecipes, id: \.wrappedValue.id) { $recipe in
                                     NavigationLink(
-                                        destination: SwitchRecipeView(recipe: recipe)
+                                        destination: destinationView(for: recipe)
                                     ) {
                                         recipeCard(for: $recipe)
                                             .padding(.vertical, 10)
@@ -128,15 +125,8 @@ extension AllRecipeView {
     }
 
     @ViewBuilder
-    func recipeCard(for switchRecipe: Binding<SwitchRecipe>) -> some View {
-        RecipeCard(recipe: Binding(
-            get: { Recipe.switchRecipe(switchRecipe.wrappedValue) },
-            set: { newValue in
-                if case let .switchRecipe(updated) = newValue {
-                    switchRecipe.wrappedValue = updated
-                }
-            }
-        ))
+    func recipeCard(for recipe: Binding<Recipe>) -> some View {
+        RecipeCard(recipe: recipe)
     }
 }
 
