@@ -82,7 +82,7 @@ extension V60Recipe {
         coffee: Coffee.MOCK_COFFEE,
         method: Method.MOCK_METHOD,
         info: RecipeInfo(
-            name: "Classic Switch Recipe",
+            name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
             phases: [
@@ -97,7 +97,7 @@ extension V60Recipe {
         methodId: 1,
         coffeeId: Coffee.MOCK_COFFEE.id,
         info: V60RecipeInput.RecipeInfo(
-            name: "Classic Switch Recipe",
+            name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
             phases: [
@@ -115,7 +115,7 @@ extension V60Recipe {
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
             info: RecipeInfo(
-                name: "Classic Switch Recipe",
+                name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
@@ -131,7 +131,7 @@ extension V60Recipe {
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
             info: RecipeInfo(
-                name: "Classic Switch Recipe",
+                name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
@@ -147,7 +147,7 @@ extension V60Recipe {
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
             info: RecipeInfo(
-                name: "Classic Switch Recipe",
+                name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
@@ -163,7 +163,7 @@ extension V60Recipe {
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
             info: RecipeInfo(
-                name: "Classic Switch Recipe",
+                name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
                 phases: [
