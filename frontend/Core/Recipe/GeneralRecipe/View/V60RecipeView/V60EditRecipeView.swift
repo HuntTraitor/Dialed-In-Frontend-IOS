@@ -208,7 +208,7 @@ struct V60EditRecipeView: View {
             )
             
             let newRecipe = V60RecipeInput(
-                methodId: 2,
+                methodId: 1,
                 coffeeId: coffeeId,
                 info: recipeInfo
             )

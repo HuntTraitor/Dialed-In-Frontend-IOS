@@ -10,15 +10,13 @@ import Combine
 
 struct V60Animation: View {
     let recipe: V60Recipe
-    @State private var targetPhaseIndex = 0
-    @State private var currentTask: Task<Void, Never>? = nil
-    @State private var isPlaying = true
-    @State private var showStopConfirmation = false
     @Binding var showAnimation: Bool
-    
+
     @State private var currentPhaseIndex: Int = 0
     @State private var startDate: Date?
     @State private var timer: AnyCancellable?
+
+    @State private var showStopConfirmation = false
 
     private var phases: [V60Phase] {
         recipe.info.phases
@@ -40,20 +38,8 @@ struct V60Animation: View {
             return start
         }
     }
-    
-    private func jump(to phaseIndex: Int) {
-        guard !phases.isEmpty else { return }
-        let clampedIndex = max(0, min(phaseIndex, phases.count - 1))
 
-        let targetElapsed = phaseStartTimes[clampedIndex]   // seconds
-
-        startDate = Date().addingTimeInterval(-targetElapsed)
-
-        currentPhaseIndex = clampedIndex
-        SoundManager.instance.playSound(sound: .nextPhase)
-    }
-
-
+    // MARK: - Body
 
     var body: some View {
         VStack {
@@ -77,24 +63,20 @@ struct V60Animation: View {
                         }
                     }
                     .padding(.horizontal)
-                    
+
                     // Current phase header
                     VStack(spacing: 24) {
                         Text("Phase \(currentPhaseIndex + 1)")
-                            .onAppear { startSequence() }
-                            .onDisappear { stopSequence() }
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
-                        
-                        // Pour state indicator - very prominent
+
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Pour to \(cumulativeAmount)g")
                                     .font(.subheadline)
                                     .foregroundColor(.primary)
                             }
-                            
                         }
                         .padding(.horizontal, 60)
                         .padding(.vertical, 16)
@@ -107,12 +89,12 @@ struct V60Animation: View {
                                 )
                         )
                     }
-                    
+
                     // Animation
                     V60Pour(fillIn: Double(phases[currentPhaseIndex].time))
                         .id(currentPhaseIndex)
                 }
-                
+
                 HStack(spacing: 40) {
                     Button(action: {
                         skipBack()
@@ -137,14 +119,15 @@ struct V60Animation: View {
                 }
                 .padding(.top)
             } else {
+                // All phases done → show summary inside the overlay
                 V60RecipeSummary(recipe: recipe, showAnimation: $showAnimation)
             }
         }
         .onAppear {
-            runPhaseSequence()
+            startSequence()
         }
         .onDisappear {
-            currentTask?.cancel()
+            stopSequence()
         }
         .alert("Stop Recipe?", isPresented: $showStopConfirmation) {
             Button("Stop", role: .destructive) {
@@ -155,7 +138,9 @@ struct V60Animation: View {
             Text("Are you sure you want to stop the current recipe? This cannot be undone.")
         }
     }
-    
+
+    // MARK: - Timer-driven sequence
+
     private func startSequence() {
         stopSequence()
 
@@ -169,8 +154,6 @@ struct V60Animation: View {
                 guard let start = startDate else { return }
 
                 let elapsed = now.timeIntervalSince(start)
-
-                // Figure out what phase we're in
                 let ends = cumulativePhaseEndTimes
 
                 if let idx = ends.firstIndex(where: { elapsed < $0 }) {
@@ -179,10 +162,11 @@ struct V60Animation: View {
                         SoundManager.instance.playSound(sound: .nextPhase)
                     }
                 } else {
-                    // All phases done
+                    // All phases done: stop timer and show summary
                     stopSequence()
                     SoundManager.instance.playSound(sound: .animationFinish)
-                    showAnimation = false
+                    currentPhaseIndex = phases.count  // triggers summary branch
+                    // DO NOT set showAnimation = false here; summary view will handle closing.
                 }
             }
     }
@@ -191,35 +175,20 @@ struct V60Animation: View {
         timer?.cancel()
         timer = nil
     }
-    
-    func runPhaseSequence() {
-        currentTask?.cancel()
-        currentTask = Task {
-            for i in currentPhaseIndex..<recipe.info.phases.count {
-                guard !Task.isCancelled else { return }
 
-                let time = recipe.info.phases[i].time
+    // MARK: - Jump / Skip
 
-                await MainActor.run {
-                    print("Phase \(i) start at", Date(), "duration:", time)
-                    currentPhaseIndex = i
-                }
+    private func jump(to phaseIndex: Int) {
+        guard !phases.isEmpty else { return }
 
-                try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000))
+        let clampedIndex = max(0, min(phaseIndex, phases.count - 1))
+        let targetElapsed = phaseStartTimes[clampedIndex]   // seconds
 
-                await MainActor.run {
-                    print("Phase \(i) end at", Date())
-                }
-            }
+        startDate = Date().addingTimeInterval(-targetElapsed)
 
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                print("Recipe finished at", Date())
-                currentPhaseIndex = recipe.info.phases.count
-            }
-        }
+        currentPhaseIndex = clampedIndex
+        SoundManager.instance.playSound(sound: .nextPhase)
     }
-
 
     private func skipForward() {
         jump(to: currentPhaseIndex + 1)
@@ -228,13 +197,19 @@ struct V60Animation: View {
     private func skipBack() {
         jump(to: currentPhaseIndex - 1)
     }
-    
+
+    // MARK: - Stop
+
     func stopRecipe() {
-        currentTask?.cancel()
-        currentPhaseIndex = recipe.info.phases.count
+        stopSequence()
+        currentPhaseIndex = phases.count
         SoundManager.instance.playSound(sound: .animationFinish)
+
+//        uncomment this to turn off summary when manually stopping
+//        showAnimation = false
     }
 }
+
 
 #Preview {
     V60Animation(recipe: V60Recipe.MOCK_V60_RECIPE, showAnimation: .constant(true))

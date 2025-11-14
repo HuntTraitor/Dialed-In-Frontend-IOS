@@ -10,15 +10,13 @@ import Combine
 
 struct SwitchAnimation: View {
     let recipe: SwitchRecipe
-    @State private var targetPhaseIndex = 0
-    @State private var currentTask: Task<Void, Never>? = nil
-    @State private var isPlaying = true
-    @State private var showStopConfirmation = false
     @Binding var showAnimation: Bool
-    
+
     @State private var currentPhaseIndex: Int = 0
     @State private var startDate: Date?
     @State private var timer: AnyCancellable?
+
+    @State private var showStopConfirmation = false
 
     private var phases: [SwitchPhase] {
         recipe.info.phases
@@ -41,17 +39,7 @@ struct SwitchAnimation: View {
         }
     }
     
-    private func jump(to phaseIndex: Int) {
-        guard !phases.isEmpty else { return }
-        let clampedIndex = max(0, min(phaseIndex, phases.count - 1))
-
-        let targetElapsed = phaseStartTimes[clampedIndex]   // seconds
-
-        startDate = Date().addingTimeInterval(-targetElapsed)
-
-        currentPhaseIndex = clampedIndex
-        SoundManager.instance.playSound(sound: .nextPhase)
-    }
+    // MARK: - Body
 
 
     var body: some View {
@@ -82,8 +70,6 @@ struct SwitchAnimation: View {
                     // Current phase header
                     VStack(spacing: 24) {
                             Text("Phase \(currentPhaseIndex + 1)")
-                            .onAppear { startSequence() }
-                            .onDisappear { stopSequence() }
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -148,14 +134,15 @@ struct SwitchAnimation: View {
                 }
                 .padding(.top)
             } else {
+                // All phases done → show summary inside the overlay
                 SwitchRecipeSummary(recipe: recipe, showAnimation: $showAnimation)
             }
         }
         .onAppear {
-            runPhaseSequence()
+            startSequence()
         }
         .onDisappear {
-            currentTask?.cancel()
+            stopSequence()
         }
         .alert("Stop Recipe?", isPresented: $showStopConfirmation) {
             Button("Stop", role: .destructive) {
@@ -167,34 +154,8 @@ struct SwitchAnimation: View {
         }
     }
     
-    func runPhaseSequence() {
-        currentTask?.cancel()
-        currentTask = Task {
-            for i in currentPhaseIndex..<recipe.info.phases.count {
-                guard !Task.isCancelled else { return }
+    // MARK: - Timer-driven sequence
 
-                let time = recipe.info.phases[i].time
-
-                await MainActor.run {
-                    print("Phase \(i) start at", Date(), "duration:", time)
-                    currentPhaseIndex = i
-                }
-
-                try? await Task.sleep(nanoseconds: UInt64(Double(time) * 1_000_000_000))
-
-                await MainActor.run {
-                    print("Phase \(i) end at", Date())
-                }
-            }
-
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                print("Recipe finished at", Date())
-                currentPhaseIndex = recipe.info.phases.count
-            }
-        }
-    }
-    
     private func startSequence() {
         stopSequence()
 
@@ -208,8 +169,6 @@ struct SwitchAnimation: View {
                 guard let start = startDate else { return }
 
                 let elapsed = now.timeIntervalSince(start)
-
-                // Figure out what phase we're in
                 let ends = cumulativePhaseEndTimes
 
                 if let idx = ends.firstIndex(where: { elapsed < $0 }) {
@@ -218,20 +177,13 @@ struct SwitchAnimation: View {
                         SoundManager.instance.playSound(sound: .nextPhase)
                     }
                 } else {
-                    // All phases done
+                    // All phases done: stop timer and show summary
                     stopSequence()
                     SoundManager.instance.playSound(sound: .animationFinish)
-                    showAnimation = false
+                    currentPhaseIndex = phases.count  // triggers summary branch
+                    // DO NOT set showAnimation = false here; summary view will handle closing.
                 }
             }
-    }
-    
-    private func skipForward() {
-        jump(to: currentPhaseIndex + 1)
-    }
-
-    private func skipBack() {
-        jump(to: currentPhaseIndex - 1)
     }
 
     private func stopSequence() {
@@ -239,10 +191,37 @@ struct SwitchAnimation: View {
         timer = nil
     }
     
+    // MARK: - Jump / Skip
+
+    private func jump(to phaseIndex: Int) {
+        guard !phases.isEmpty else { return }
+
+        let clampedIndex = max(0, min(phaseIndex, phases.count - 1))
+        let targetElapsed = phaseStartTimes[clampedIndex]   // seconds
+
+        startDate = Date().addingTimeInterval(-targetElapsed)
+
+        currentPhaseIndex = clampedIndex
+        SoundManager.instance.playSound(sound: .nextPhase)
+    }
+
+    private func skipForward() {
+        jump(to: currentPhaseIndex + 1)
+    }
+
+    private func skipBack() {
+        jump(to: currentPhaseIndex - 1)
+    }
+    
+    // MARK: - Stop
+
     func stopRecipe() {
-        currentTask?.cancel()
-        currentPhaseIndex = recipe.info.phases.count
+        stopSequence()
+        currentPhaseIndex = phases.count
         SoundManager.instance.playSound(sound: .animationFinish)
+
+//        uncomment this to turn off summary when manually stopping
+//        showAnimation = false
     }
 }
 

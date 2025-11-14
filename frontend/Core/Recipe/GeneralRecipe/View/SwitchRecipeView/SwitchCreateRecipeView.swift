@@ -207,7 +207,9 @@ struct SwitchCreateRecipeView: View {
             await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
             
             if viewModel.errorMessage == nil {
-                navigationManager.recipesNavigator.removeLast()
+                if !navigationManager.recipesNavigator.isEmpty {
+                    navigationManager.recipesNavigator.removeLast()
+                }
                 dismiss()
             }
         }

@@ -71,7 +71,7 @@ struct SwitchRecipeSummary: View {
                                 Text("Water")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("\(recipe.info.mlOut)g")
+                                Text("\(recipe.info.mlOut)ml")
                             }
                         }
                     }

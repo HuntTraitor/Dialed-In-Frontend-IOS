@@ -51,7 +51,7 @@ struct V60RecipeListView: View {
                     .italic()
                     .sheet(isPresented: $isShowingCreateRecipeView) {
                         NavigationStack {
-                            SwitchCreateRecipeView()
+                            V60CreateRecipeView()
                         }
                     }
                 }
@@ -61,7 +61,7 @@ struct V60RecipeListView: View {
                         .scaleEffect(0.9)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 10)
-                } else if viewModel.switchRecipes.isEmpty {
+                } else if viewModel.v60Recipes.isEmpty {
                     NoResultsFound(itemName: "recipe", systemImage: "book.pages")
                         .scaleEffect(0.8)
                         .offset(y: -(UIScreen.main.bounds.height) * 0.1)

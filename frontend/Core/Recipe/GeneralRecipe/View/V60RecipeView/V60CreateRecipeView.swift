@@ -197,7 +197,7 @@ struct V60CreateRecipeView: View {
             )
             
             let newRecipe = V60RecipeInput(
-                methodId: 2,
+                methodId: 1,
                 coffeeId: coffeeId,
                 info: recipeInfo
             )
@@ -207,7 +207,9 @@ struct V60CreateRecipeView: View {
             await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
             
             if viewModel.errorMessage == nil {
-                navigationManager.recipesNavigator.removeLast()
+                if !navigationManager.recipesNavigator.isEmpty {
+                    navigationManager.recipesNavigator.removeLast()
+                }
                 dismiss()
             }
         }
