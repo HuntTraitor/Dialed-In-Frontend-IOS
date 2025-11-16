@@ -10,33 +10,50 @@ import WrappingHStack
 
 struct TastingNotesDialog: View {
     @Binding var selectedTastingNotes: [TastingNote]
+    @State private var searchText: String = ""
 
     private var groupedNotes: [String: [TastingNote]] {
-        Dictionary(grouping: TastingNote.allCases, by: \.category)
+        let filtered = TastingNote.allCases.filter { note in
+            searchText.isEmpty ||
+            note.displayName.localizedCaseInsensitiveContains(searchText)
+        }
+
+        return Dictionary(grouping: filtered, by: \.category)
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                ForEach(groupedNotes.keys.sorted(), id: \.self) { category in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(category)
-                            .font(.headline)
 
-                        WrappingHStack(groupedNotes[category] ?? [], id: \.self, spacing: .constant(8), lineSpacing: 8) { note in
-                            Text(note.rawValue.capitalized)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(selectedTastingNotes.contains(note) ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2))
-                                .foregroundColor(.primary)
-                                .cornerRadius(10)
-                                .font(.caption)
-                                .onTapGesture {
-                                    toggle(note)
-                                }
+                VStack {
+                    SearchBar(text: $searchText, placeholder: "Search Tasting Notes")
+                        .padding(.horizontal, 1)
+                        .padding(.vertical, 1)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                }
+
+                ForEach(groupedNotes.keys.sorted(), id: \.self) { category in
+                    if let notes = groupedNotes[category], !notes.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(category)
+                                .font(.headline)
+
+                            WrappingHStack(notes, id: \.self, spacing: .constant(8), lineSpacing: 8) { note in
+                                Text(note.displayName)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(selectedTastingNotes.contains(note) ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2))
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(10)
+                                    .font(.caption)
+                                    .onTapGesture {
+                                        toggle(note)
+                                    }
+                            }
                         }
+                        Divider()
                     }
-                    Divider()
                 }
             }
             .padding()
@@ -52,8 +69,6 @@ struct TastingNotesDialog: View {
         }
     }
 }
-
-
 
 #Preview {
     @Previewable @State var selectedTastingNotes: [TastingNote] = []

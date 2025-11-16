@@ -59,66 +59,434 @@ enum Rating: Int, Codable {
 }
 
 enum TastingNote: String, CaseIterable, Identifiable, Codable {
-    case lemon, lime, orange, grapefruit
-    case strawberry, raspberry, blueberry
-    case raisin, prune
-    case apple, peach, pear, grape, melon, pineapple, cherry, coconut, banana
+    // Fruity – Berry & Red Fruit
+    case strawberry, ripeStrawberry, wildStrawberry
+    case raspberry, blackRaspberry, blueberry, blackberry
+    case boysenberry, mulberry, cranberry
+    case redCurrant, blackcurrant, cherry, blackCherry, maraschinoCherry
+    case plum, redPlum, prune, raisin
+    case dateFruit, pomegranate, gojiBerry
 
-    case acidic, sourAromatics
-    case winey, whiskey, fermented
+    // Fruity – Citrus
+    case lemon, lemonZest, lemonade
+    case lime, keyLime
+    case orange, bloodOrange, mandarin, tangerine, clementine
+    case grapefruit, pinkGrapefruit
+    case bergamot, yuzu, citron
 
-    case oliveOil, raw, greenBeans, peapod, fresh, darkGreen, vegetative
+    // Fruity – Stone Fruit
+    case peach, whitePeach, nectarine
+    case apricot, driedApricot
+    case yellowPlum, mirabelle, cherryPlum
 
-    case stale, cardboard, papery, woody, moldyDamp, mustyDusty, mustyEarthy
-    case petroleum, medicinal, rubber, skunky, creosol
+    // Fruity – Tropical
+    case mango, ripeMango, greenMango
+    case pineapple, grilledPineapple
+    case passionFruit, guava, papaya
+    case lychee, jackfruit, dragonFruit, starfruit, kiwi
+    case banana, driedBanana, plantain
 
-    case smoky, ashy, acrid, burnt, tobacco
-    case molasses, mapleSyrup, caramelized, brownSugar
+    // Fruity – Melon & Other
+    case watermelon, cantaloupe, honeydew, melonRind
+    case apple, redApple, greenApple, bakedApple
+    case pear, asianPear, quince
+    case fig, freshFig, driedFig
+    case grape, whiteGrape, concordGrape
 
-    case peanuts, hazelnut, almond
-    case chocolate, darkChocolate
+    // Floral
+    case jasmine, jasmineTea
+    case orangeBlossom, honeysuckle
+    case rose, rosePetal, rosewater
+    case lavender, violet, elderflower
+    case chamomile, hibiscus
+    case bergamotBlossom, lily, lilac, acaciaBlossom
+    case frangipani, gardenia
 
-    case vanilla, overallSweet, sweetAromatics
+    // Sweet – Sugar Browning & Dessert
+    case caramel, saltedCaramel
+    case toffee, butterscotch
+    case cremeBrulee
+    case brownSugar, lightBrownSugar, darkBrownSugar
+    case molasses, treacle
+    case honey, wildflowerHoney, floralHoney
+    case mapleSyrup
+    case caneSugar, powderedSugar
+    case vanilla, vanillaBean
+    case marshmallow, nougat, fudge, praline, dulceDeLeche
 
-    case blackTea, chamomile, rose, jasmine
+    // Sweet – Baked Goods
+    case milkChocolate, darkChocolate
+    case cocoa, cocoaNibs
+    case hotChocolate, chocolateSyrup
+    case brownie, chocolateCake, chocolateChipCookie
+    case shortbread, sugarCookie, butterCookie
+    case poundCake, spongeCake
+    case cinnamonRoll
+    case pastryCream, custard
+    case waffle, pancake
+    case pieCrust, grahamCracker
 
-    case cinnamon, nutmeg, clove, anise, pepper
+    // Nutty & Seeds
+    case almond, marzipan
+    case hazelnut, filbert
+    case peanut, peanutButter
+    case pecan, walnut, cashew, macadamia, pistachio, chestnut
+    case roastedNuts, toastedAlmond
+    case sunflowerSeed, sesameSeed, tahini
+
+    // Cocoa / Chocolatey
+    case bittersweetChocolate
+    case bakingChocolate
+    case dutchCocoa
+    case chocolateTruffle
+    case chocolateFudge
+    case cocoaHusk
+    case hotCocoaMix
+
+    // Spices – Sweet & Baking
+    case cinnamon, cassia, nutmeg, clove, allspice
+    case starAnise, aniseSeed
+    case cardamom, greenCardamom, blackCardamom
+    case ginger, candiedGinger
+    case pumpkinSpice, applePieSpice
+
+    // Spices – Savory & Herbal
+    case blackPepper, whitePepper, pinkPeppercorn
+    case chili, cayenne, paprika
+    case cumin, corianderSeed, fennelSeed, caraway
+    case bayLeaf, sage, thyme, rosemary
+    case oregano, marjoram, basil, dill, tarragon
+
+    // Herbal / Tea-Like
+    case blackTea, earlGrey
+    case greenTea, jasmineGreenTea
+    case oolong, rooibos
+    case chamomileTea
+    case mintTea, spearmint, peppermint
+    case lemongrass, lemonVerbena
+    case herbalInfusion, driedHerbs
+
+    // Fermented / Alcoholic
+    case redWine, whiteWine
+    case portWine, sherry
+    case brandy, cognac
+    case rum, spicedRum
+    case whiskey, bourbon
+    case liqueur, amaretto, kirsch
+    case cider, hardCider
+    case beer, stout
+    case fermentedFruit, overripeFruit
+
+    // Vegetal / Savory
+    case tomato, sunDriedTomato
+    case bellPepper, greenBellPepper, redBellPepper
+    case jalapeno, greenChili
+    case cookedVegetables
+    case spinach, kale, cabbage, beet, carrot, celery, cucumber, zucchini
+    case olive, greenOlive, blackOlive
+
+    // Fresh / Green
+    case freshCutGrass
+    case greenLeaf
+    case alfalfa
+    case hay, wetHay
+    case teaLeaf
+    case eucalyptus
+    case pineNeedle
+    case resinous, sappy
+
+    // Nutty / Grain / Cereal
+    case roastedBarley
+    case malt, maltedBarley
+    case toastedGrain
+    case granola, cereal, bran
+    case wheatCracker
+    case ryeBread, wholegrainBread, sourdough
+    case oatmeal, porridge
+
+    // Roasty / Browned / Smoky
+    case lightRoast, mediumRoast, darkRoast
+    case toasted, roasted
+    case roastedPeanut, roastedAlmond, roastedHazelnut
+    case charred, smoky, campfireSmoke
+    case pipeTobacco, cigarBox, tobaccoLeaf
+    case grilled
+    case burntSugar, singedToast
+
+    // Earthy / Mineral
+    case earth, dampEarth, pottingSoil
+    case forestFloor, leafLitter
+    case mushroom, driedMushroom, truffle
+    case clay, chalk
+    case stone, flint
+    case mineral
+    case graphite
+
+    // Dairy / Lactonic
+    case milk
+    case sweetCream, heavyCream
+    case condensedMilk, evaporatedMilk
+    case butter, brownedButter
+    case yogurt, greekYogurt
+    case sourCream, buttermilk
+
+    // Dried Fruit & Candied
+    case goldenRaisin, sultana
+    case driedApple, driedMango
+    case candiedOrangePeel, candiedLemonPeel
+    case mixedPeel
+    case fruitLeather
+
+    // Mouthfeel / Texture
+    case thin
+    case lightBodied, mediumBodied, fullBodied
+    case heavyMouthfeel
+    case creamyMouthfeel
+    case silky, velvety
+    case syrupy, oily, juicy
+    case teaLike
+    case roundMouthfeel
+    case coating
+
+    // Acidity & Overall Impressions
+    case brightAcidity, sparklingAcidity
+    case lively, crisp, tart, tangy
+    case mellowAcidity, softAcidity
+    case balanced
+    case roundProfile
+    case complex, simpleProfile
+    case clean, transparent
+    case structured
+    case elegant, refined
+    case bold, intense, delicate
 
     var id: String { rawValue }
 
     var category: String {
         switch self {
-        case .lemon, .lime, .orange, .grapefruit,
-             .strawberry, .raspberry, .blueberry,
-             .raisin, .prune,
-             .apple, .peach, .pear, .grape, .melon, .pineapple, .cherry, .coconut, .banana:
-            return "Fruity"
-        case .acidic, .sourAromatics:
-            return "Sour"
-        case .winey, .whiskey, .fermented:
-            return "Fermented"
-        case .oliveOil, .raw, .greenBeans, .peapod, .fresh, .darkGreen, .vegetative:
-            return "Green/Vegetative"
-        case .stale, .cardboard, .papery, .woody, .moldyDamp, .mustyDusty, .mustyEarthy:
-            return "Papery/Musty"
-        case .petroleum, .medicinal, .rubber, .skunky, .creosol:
-            return "Chemical"
-        case .smoky, .ashy, .acrid, .burnt, .tobacco:
-            return "Roasted"
-        case .molasses, .mapleSyrup, .caramelized, .brownSugar:
-            return "Brown Sugar"
-        case .peanuts, .hazelnut, .almond:
-            return "Nutty"
-        case .chocolate, .darkChocolate:
-            return "Cocoa"
-        case .vanilla, .overallSweet, .sweetAromatics:
-            return "Sweet"
-        case .blackTea, .chamomile, .rose, .jasmine:
+        // Fruity – Berry & Red Fruit
+        case .strawberry, .ripeStrawberry, .wildStrawberry,
+             .raspberry, .blackRaspberry, .blueberry, .blackberry,
+             .boysenberry, .mulberry, .cranberry,
+             .redCurrant, .blackcurrant, .cherry, .blackCherry, .maraschinoCherry,
+             .plum, .redPlum, .prune, .raisin,
+             .dateFruit, .pomegranate, .gojiBerry:
+            return "Fruity - Berry & Red Fruit"
+
+        // Fruity – Citrus
+        case .lemon, .lemonZest, .lemonade,
+             .lime, .keyLime,
+             .orange, .bloodOrange, .mandarin, .tangerine, .clementine,
+             .grapefruit, .pinkGrapefruit,
+             .bergamot, .yuzu, .citron:
+            return "Fruity - Citrus"
+
+        // Fruity – Stone Fruit
+        case .peach, .whitePeach, .nectarine,
+             .apricot, .driedApricot,
+             .yellowPlum, .mirabelle, .cherryPlum:
+            return "Fruity - Stone Fruit"
+
+        // Fruity – Tropical
+        case .mango, .ripeMango, .greenMango,
+             .pineapple, .grilledPineapple,
+             .passionFruit, .guava, .papaya,
+             .lychee, .jackfruit, .dragonFruit, .starfruit, .kiwi,
+             .banana, .driedBanana, .plantain:
+            return "Fruity - Tropical"
+
+        // Fruity – Melon & Other
+        case .watermelon, .cantaloupe, .honeydew, .melonRind,
+             .apple, .redApple, .greenApple, .bakedApple,
+             .pear, .asianPear, .quince,
+             .fig, .freshFig, .driedFig,
+             .grape, .whiteGrape, .concordGrape:
+            return "Fruity - Melon & Other"
+
+        // Floral
+        case .jasmine, .jasmineTea,
+             .orangeBlossom, .honeysuckle,
+             .rose, .rosePetal, .rosewater,
+             .lavender, .violet, .elderflower,
+             .chamomile, .hibiscus,
+             .bergamotBlossom, .lily, .lilac, .acaciaBlossom,
+             .frangipani, .gardenia:
             return "Floral"
-        case .cinnamon, .nutmeg, .clove, .anise:
-            return "Brown Spice"
-        case .pepper:
-            return "Spices"
+
+        // Sweet – Sugar Browning & Dessert
+        case .caramel, .saltedCaramel,
+             .toffee, .butterscotch,
+             .cremeBrulee,
+             .brownSugar, .lightBrownSugar, .darkBrownSugar,
+             .molasses, .treacle,
+             .honey, .wildflowerHoney, .floralHoney,
+             .mapleSyrup,
+             .caneSugar, .powderedSugar,
+             .vanilla, .vanillaBean,
+             .marshmallow, .nougat, .fudge, .praline, .dulceDeLeche:
+            return "Sweet - Sugar Browning & Dessert"
+
+        // Sweet – Baked Goods
+        case .milkChocolate, .darkChocolate,
+             .cocoa, .cocoaNibs,
+             .hotChocolate, .chocolateSyrup,
+             .brownie, .chocolateCake, .chocolateChipCookie,
+             .shortbread, .sugarCookie, .butterCookie,
+             .poundCake, .spongeCake,
+             .cinnamonRoll,
+             .pastryCream, .custard,
+             .waffle, .pancake,
+             .pieCrust, .grahamCracker:
+            return "Sweet - Baked Goods"
+
+        // Nutty & Seeds
+        case .almond, .marzipan,
+             .hazelnut, .filbert,
+             .peanut, .peanutButter,
+             .pecan, .walnut, .cashew, .macadamia, .pistachio, .chestnut,
+             .roastedNuts, .toastedAlmond,
+             .sunflowerSeed, .sesameSeed, .tahini:
+            return "Nutty & Seeds"
+
+        // Cocoa / Chocolatey
+        case .bittersweetChocolate,
+             .bakingChocolate,
+             .dutchCocoa,
+             .chocolateTruffle,
+             .chocolateFudge,
+             .cocoaHusk,
+             .hotCocoaMix:
+            return "Cocoa / Chocolatey"
+
+        // Spices – Sweet & Baking
+        case .cinnamon, .cassia, .nutmeg, .clove, .allspice,
+             .starAnise, .aniseSeed,
+             .cardamom, .greenCardamom, .blackCardamom,
+             .ginger, .candiedGinger,
+             .pumpkinSpice, .applePieSpice:
+            return "Spices - Sweet & Baking"
+
+        // Spices – Savory & Herbal
+        case .blackPepper, .whitePepper, .pinkPeppercorn,
+             .chili, .cayenne, .paprika,
+             .cumin, .corianderSeed, .fennelSeed, .caraway,
+             .bayLeaf, .sage, .thyme, .rosemary,
+             .oregano, .marjoram, .basil, .dill, .tarragon:
+            return "Spices - Savory & Herbal"
+
+        // Herbal / Tea-Like
+        case .blackTea, .earlGrey,
+             .greenTea, .jasmineGreenTea,
+             .oolong, .rooibos,
+             .chamomileTea,
+             .mintTea, .spearmint, .peppermint,
+             .lemongrass, .lemonVerbena,
+             .herbalInfusion, .driedHerbs:
+            return "Herbal / Tea-Like"
+
+        // Fermented / Alcoholic
+        case .redWine, .whiteWine,
+             .portWine, .sherry,
+             .brandy, .cognac,
+             .rum, .spicedRum,
+             .whiskey, .bourbon,
+             .liqueur, .amaretto, .kirsch,
+             .cider, .hardCider,
+             .beer, .stout,
+             .fermentedFruit, .overripeFruit:
+            return "Fermented / Alcoholic"
+
+        // Vegetal / Savory
+        case .tomato, .sunDriedTomato,
+             .bellPepper, .greenBellPepper, .redBellPepper,
+             .jalapeno, .greenChili,
+             .cookedVegetables,
+             .spinach, .kale, .cabbage, .beet, .carrot, .celery, .cucumber, .zucchini,
+             .olive, .greenOlive, .blackOlive:
+            return "Vegetal / Savory"
+
+        // Fresh / Green
+        case .freshCutGrass,
+             .greenLeaf,
+             .alfalfa,
+             .hay, .wetHay,
+             .teaLeaf,
+             .eucalyptus,
+             .pineNeedle,
+             .resinous, .sappy:
+            return "Fresh / Green"
+
+        // Nutty / Grain / Cereal
+        case .roastedBarley,
+             .malt, .maltedBarley,
+             .toastedGrain,
+             .granola, .cereal, .bran,
+             .wheatCracker,
+             .ryeBread, .wholegrainBread, .sourdough,
+             .oatmeal, .porridge:
+            return "Nutty / Grain / Cereal"
+
+        // Roasty / Browned / Smoky
+        case .lightRoast, .mediumRoast, .darkRoast,
+             .toasted, .roasted,
+             .roastedPeanut, .roastedAlmond, .roastedHazelnut,
+             .charred, .smoky, .campfireSmoke,
+             .pipeTobacco, .cigarBox, .tobaccoLeaf,
+             .grilled,
+             .burntSugar, .singedToast:
+            return "Roasty / Browned / Smoky"
+
+        // Earthy / Mineral
+        case .earth, .dampEarth, .pottingSoil,
+             .forestFloor, .leafLitter,
+             .mushroom, .driedMushroom, .truffle,
+             .clay, .chalk,
+             .stone, .flint,
+             .mineral,
+             .graphite:
+            return "Earthy / Mineral"
+
+        // Dairy / Lactonic
+        case .milk,
+             .sweetCream, .heavyCream,
+             .condensedMilk, .evaporatedMilk,
+             .butter, .brownedButter,
+             .yogurt, .greekYogurt,
+             .sourCream, .buttermilk:
+            return "Dairy / Lactonic"
+
+        // Dried Fruit & Candied
+        case .goldenRaisin, .sultana,
+             .driedApple, .driedMango,
+             .candiedOrangePeel, .candiedLemonPeel,
+             .mixedPeel,
+             .fruitLeather:
+            return "Dried Fruit & Candied"
+
+        // Mouthfeel / Texture
+        case .thin,
+             .lightBodied, .mediumBodied, .fullBodied,
+             .heavyMouthfeel,
+             .creamyMouthfeel,
+             .silky, .velvety,
+             .syrupy, .oily, .juicy,
+             .teaLike,
+             .roundMouthfeel,
+             .coating:
+            return "Mouthfeel / Texture"
+
+        // Acidity & Overall Impressions
+        case .brightAcidity, .sparklingAcidity,
+             .lively, .crisp, .tart, .tangy,
+             .mellowAcidity, .softAcidity,
+             .balanced,
+             .roundProfile,
+             .complex, .simpleProfile,
+             .clean, .transparent,
+             .structured,
+             .elegant, .refined,
+             .bold, .intense, .delicate:
+            return "Acidity & Overall Impressions"
         }
     }
     
@@ -134,6 +502,18 @@ enum TastingNote: String, CaseIterable, Identifiable, Codable {
                 debugDescription: "Invalid tasting note: \(rawValue)"
             )
         }
+    }
+    
+    
+    var displayName: String {
+        rawValue
+            .replacingOccurrences(
+                of: "([a-z])([A-Z])",
+                with: "$1 $2",
+                options: .regularExpression,
+                range: rawValue.startIndex..<rawValue.endIndex
+            )
+            .capitalized
     }
 }
 
@@ -305,7 +685,7 @@ extension Coffee {
             originType: .singleOrigin,
             rating: .four,
             roastLevel: .medium,
-            tastingNotes: [.caramelized, .acidic, .ashy],
+            tastingNotes: [.caramel, .guava, .aniseSeed],
             cost: 24.99,
             img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
         ),
@@ -324,7 +704,7 @@ extension Coffee {
         originType: .singleOrigin,
         rating: .four,
         roastLevel: .medium,
-        tastingNotes: [.caramelized, .chocolate, .vanilla],
+        tastingNotes: [.caramel, .milkChocolate, .vanilla],
         cost: 24.99,
         img: nil
     )
@@ -356,7 +736,7 @@ extension Coffee {
                     originType: .singleOrigin,
                     rating: .five,
                     roastLevel: .medium,
-                    tastingNotes: [.caramelized, .chocolate, .vanilla],
+                    tastingNotes: [.caramel, .milkChocolate, .vanilla],
                     cost: 24.99,
                     img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
                 ),
@@ -396,7 +776,7 @@ extension Coffee {
                     originType: .blend,
                     rating: .three,
                     roastLevel: .mediumDark,
-                    tastingNotes: [.chocolate, .hazelnut, .almond],
+                    tastingNotes: [.milkChocolate, .hazelnut, .almond],
                     cost: 19.99,
                     img: nil
                 ),
@@ -416,7 +796,7 @@ extension Coffee {
                     originType: .singleOrigin,
                     rating: .four,
                     roastLevel: .dark,
-                    tastingNotes: [.smoky, .mustyEarthy, .darkChocolate],
+                    tastingNotes: [.smoky, .acaciaBlossom, .darkChocolate],
                     cost: 22.75,
                     img: nil
                 ),

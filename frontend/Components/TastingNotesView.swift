@@ -27,7 +27,7 @@ struct TastingNotesView: View {
 }
 
 #Preview {
-    TastingNotesView(notes: [.apple, .cherry, .peach, .acidic, .acrid, .anise, .blueberry, .banana])
+    TastingNotesView(notes: [.apple, .cherry, .peach, .allspice, .almond, .applePieSpice, .blueberry, .banana])
 }
 
 

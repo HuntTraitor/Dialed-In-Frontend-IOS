@@ -53,7 +53,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "-base-url"
-            value = "http://10.201.100.19:3000/v1/"
+            value = "https://dialedincafe.com/v1/"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
