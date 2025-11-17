@@ -148,6 +148,10 @@ struct SwitchCreateRecipeView: View {
             return "ML Out must be a number."
         }
         
+        if phases.count <= 0 {
+            return "At least one phase must be provided."
+        }
+        
         if gramsInInt <= 0 {
             return "Grams In must be greater than zero."
         }
