@@ -14,7 +14,7 @@ struct TastingNotesView: View {
     var body: some View {
         VStack {
             WrappingHStack(notes, id: \.self, alignment: .leading, spacing: .dynamicIncludingBorders(minSpacing: 8), lineSpacing: 8) { note in
-                Text(note.rawValue)
+                Text(note.displayName)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(Color.blue.opacity(0.15))

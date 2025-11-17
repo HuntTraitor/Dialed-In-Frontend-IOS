@@ -116,7 +116,7 @@ struct CoffeeCardSmall: View {
                             .font(.caption)
                             .foregroundColor(.gray)
 
-                        Text((coffee.info.tastingNotes?.map { $0.rawValue }.joined(separator: ", ")) ?? "-")
+                        Text((coffee.info.tastingNotes?.map { $0.displayName }.joined(separator: ", ")) ?? "-")
                             .font(.system(size: 13))
                             .lineLimit(2)
                             .truncationMode(.tail)
