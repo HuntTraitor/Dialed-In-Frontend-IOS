@@ -25,7 +25,7 @@ enum Recipe: Identifiable, Codable {
         }
     }
     
-    var coffee: Coffee {
+    var coffee: Coffee? {
         switch self {
         case .switchRecipe(let data): return data.coffee
         case .v60Recipe(let data): return data.coffee
@@ -208,7 +208,7 @@ func unwrap(_ value: Any) -> Any {
 
 protocol RecipeInput: Codable {
     var methodId: Int { get }
-    var coffeeId: Int { get }
+    var coffeeId: Int? { get }
 }
 
 

@@ -32,7 +32,7 @@ struct V60EditRecipeView: View {
         self._tempGramsIn = State(initialValue: String(recipe.wrappedValue.info.gramsIn))
         self._tempMlOut = State(initialValue: String(recipe.wrappedValue.info.mlOut))
         self._tempPhases = State(initialValue: recipe.wrappedValue.info.phases)
-        self._selectedCoffeeId = State(initialValue: recipe.wrappedValue.coffee.id)
+        self._selectedCoffeeId = State(initialValue: recipe.wrappedValue.coffee?.id)
     }
     
     var isFormValid: Bool {
@@ -193,8 +193,7 @@ struct V60EditRecipeView: View {
             }
             guard
                 let gramsInInt = Int(tempGramsIn),
-                let mlOutInt = Int(tempMlOut),
-                let coffeeId = selectedCoffeeId
+                let mlOutInt = Int(tempMlOut)
             else {
                 self.validationError = "Invalid input format."
                 return
@@ -209,7 +208,7 @@ struct V60EditRecipeView: View {
             
             let newRecipe = V60RecipeInput(
                 methodId: 1,
-                coffeeId: coffeeId,
+                coffeeId: selectedCoffeeId,
                 info: recipeInfo
             )
             

@@ -11,7 +11,7 @@ import UIKit
 struct SwitchRecipe: Identifiable, Codable, Hashable {
         var id: Int
         var userId: Int
-        var coffee: Coffee
+        var coffee: Coffee?
         var method: Method
         var info: RecipeInfo
         var createdAt: String?
@@ -45,7 +45,7 @@ struct SwitchRecipe: Identifiable, Codable, Hashable {
 
 struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
     var methodId: Int
-    var coffeeId: Int
+    var coffeeId: Int?
     var info: RecipeInfo
     
     
@@ -66,6 +66,19 @@ struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
             case gramsIn = "grams_in"
             case mlOut = "ml_out"
             case phases
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(methodId, forKey: .methodId)
+        try container.encode(info, forKey: .info)
+
+        if let coffeeId {
+            try container.encode(coffeeId, forKey: .coffeeId)
+        } else {
+            try container.encodeNil(forKey: .coffeeId)
         }
     }
 }
@@ -107,7 +120,23 @@ extension SwitchRecipe {
                 SwitchPhase(open: true, time: 3, amount: 0)
             ]
         )
-    )        
+    )
+    
+    static var MOCK_SWITCH_RECIPE_NO_COFFEE = SwitchRecipe(
+        id: 1,
+        userId: User.MOCK_USER.id,
+        method: Method.MOCK_METHOD,
+        info: SwitchRecipe.RecipeInfo(
+            name: "Classic Switch Recipe",
+            gramsIn: 20,
+            mlOut: 320,
+            phases: [
+                SwitchPhase(open: true, time: 3, amount: 160),
+                SwitchPhase(open: false, time: 3, amount: 160),
+                SwitchPhase(open: true, time: 3, amount: 0)
+            ]
+        )
+    )
     
     static var MOCK_SWITCH_RECIPES = [
         SwitchRecipe(

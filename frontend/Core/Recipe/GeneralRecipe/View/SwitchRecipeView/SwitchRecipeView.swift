@@ -109,39 +109,42 @@ struct SwitchRecipeView: View {
                 
                 Divider()
                 
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Label("Coffee", systemImage: "leaf.fill")
-                            .font(.headline)
-                            .foregroundColor(.brown)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            isMinimized.toggle()
-                        }) {
-                            Image(systemName: isMinimized ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                if let coffee = recipe.coffee {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Label("Coffee", systemImage: "leaf.fill")
+                                .font(.headline)
                                 .foregroundColor(.brown)
-                                .font(.title3)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                isMinimized.toggle()
+                            }) {
+                                Image(systemName: isMinimized ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                                    .foregroundColor(.brown)
+                                    .font(.title3)
+                            }
                         }
+                        
+                        NavigationLink {
+                            CoffeeCard(coffee: coffee)
+                        } label: {
+                            CoffeeRow(coffee: coffee, isMinimized: $isMinimized)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
                     }
-                    
-                    NavigationLink {
-                        CoffeeCard(coffee: recipe.coffee)
-                    } label: {
-                        CoffeeRow(coffee: recipe.coffee, isMinimized: $isMinimized)
-                    }
-                    .buttonStyle(PlainButtonStyle())
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemBackground))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.brown.opacity(0.15), lineWidth: 1)
+                    )
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemBackground))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.brown.opacity(0.15), lineWidth: 1)
-                )
                 
                 brewVisualization
                 

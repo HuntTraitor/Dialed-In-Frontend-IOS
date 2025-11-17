@@ -35,7 +35,7 @@ struct CoffeePickerView: View {
                         .frame(height: 35)
                         .padding(.vertical, 1)
                 } else {
-                    Text("Select Coffee")
+                    Text("None")
                         .foregroundColor(.gray)
                 }
                 Spacer()
@@ -48,28 +48,48 @@ struct CoffeePickerView: View {
         if showCoffeePicker {
             SearchBar(text: $searchTerm, placeholder: "Search Coffees")
 
-            if !filteredCoffees.isEmpty {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ForEach(filteredCoffees.indices, id: \.self) { index in
-                            Button {
-                                selectedCoffeeId = filteredCoffees[index].id
-                                showCoffeePicker = false
-                            } label: {
-                                CoffeeChoice(coffee: filteredCoffees[index])
-                            }
-                            .buttonStyle(PlainButtonStyle())
+            ScrollView {
+                VStack(spacing: 0) {
+                    Button {
+                        selectedCoffeeId = nil
+                        showCoffeePicker = false
+                    } label: {
+                        CoffeeChoiceNone()
+                            .overlay(
+                                HStack {
+                                    Spacer()
+                                    if selectedCoffeeId == nil {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.accentColor)
+                                            .padding(.trailing, 8)
+                                    }
+                                }
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
 
-                            if index != filteredCoffees.indices.last {
-                                Divider()
-                                    .frame(height: 0.5)
-                                    .background(Color.gray.opacity(0.3))
-                            }
+                    Divider()
+                        .background(Color.gray.opacity(0.3))
+
+                    ForEach(filteredCoffees.indices, id: \.self) { index in
+                        Button {
+                            selectedCoffeeId = filteredCoffees[index].id
+                            showCoffeePicker = false
+                        } label: {
+                            CoffeeChoice(coffee: filteredCoffees[index])
+                        }
+                        .buttonStyle(PlainButtonStyle())
+
+                        if index != filteredCoffees.indices.last {
+                            Divider()
+                                .background(Color.gray.opacity(0.3))
                         }
                     }
                 }
-                .frame(maxHeight: 4 * 48)
+
             }
+            .frame(maxHeight: 4 * 48)
+
 
             Button {
                 isShowingCreateCoffeeView = true
@@ -83,32 +103,6 @@ struct CoffeePickerView: View {
         }
     }
 }
-
-//#Preview {
-//    struct PreviewWrapper: View {
-//        @StateObject var viewModel = CoffeeViewModel()
-//        @State var selectedCoffeeId: Int? = nil
-//        @State var showCoffeePicker = false
-//        @State var isShowingCreateCoffeeView = false
-//        @State var searchTerm = ""
-//
-//        var body: some View {
-//            CoffeePickerView(
-//                viewModel: viewModel,
-//                selectedCoffeeId: $selectedCoffeeId,
-//                showCoffeePicker: $showCoffeePicker,
-//                isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
-//                searchTerm: $searchTerm
-//            )
-//            .frame(width: 300)
-//            .onAppear {
-//                viewModel.coffees = Coffee.MOCK_COFFEES
-//            }
-//        }
-//    }
-//
-//    return PreviewWrapper()
-//}
 
 
 

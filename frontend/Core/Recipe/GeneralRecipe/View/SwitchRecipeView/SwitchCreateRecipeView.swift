@@ -182,8 +182,7 @@ struct SwitchCreateRecipeView: View {
             }
             guard
                 let gramsInInt = Int(gramsIn),
-                let mlOutInt = Int(mlOut),
-                let coffeeId = selectedCoffeeId
+                let mlOutInt = Int(mlOut)
             else {
                 self.validationError = "Invalid input format."
                 return
@@ -198,7 +197,7 @@ struct SwitchCreateRecipeView: View {
             
             let newRecipe = SwitchRecipeInput(
                 methodId: 2,
-                coffeeId: coffeeId,
+                coffeeId: selectedCoffeeId,
                 info: recipeInfo
             )
             

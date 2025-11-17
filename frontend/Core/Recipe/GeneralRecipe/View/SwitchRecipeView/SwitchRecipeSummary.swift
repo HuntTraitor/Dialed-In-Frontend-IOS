@@ -44,7 +44,12 @@ struct SwitchRecipeSummary: View {
                         .frame(width: 120, height: 120)
                     
                     Text("All Done!")
-                    Text("Enjoy your brew of \(recipe.coffee.info.name)")
+                    
+                    if let coffee = recipe.coffee {
+                        Text("Enjoy your brew of \(coffee.info.name)")
+                    } else {
+                        Text("Enjoy your brew")
+                    }
                 }
                 
                 // 2x2 grid
@@ -167,36 +172,38 @@ struct SwitchRecipeSummary: View {
                 
                 // Coffee Info section
                 VStack(spacing: 20) {
-                    Text("Coffee")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    
-                    CoffeeCardExtraSmall(coffee: recipe.coffee)
-                    
-                    HStack(alignment: .top) {
-                        Text("Taste Notes")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        TastingNotesView(notes: recipe.coffee.info.tastingNotes ?? [])
-                    }
-                    .padding(.horizontal, 30)
-                    
-                    HStack(alignment: .top) {
-                        Text("Notes")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        ScrollView {
-                            Text(recipe.coffee.info.description ?? "")
-                                .font(.caption)
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
+                    if let coffee = recipe.coffee {
+                        Text("Coffee")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        CoffeeCardExtraSmall(coffee: coffee)
+                        
+                        
+                        HStack(alignment: .top) {
+                            Text("Taste Notes")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            TastingNotesView(notes: coffee.info.tastingNotes ?? [])
                         }
-                        .frame(width: 210, height: 120)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
+                        .padding(.horizontal, 30)
+                        
+                        HStack(alignment: .top) {
+                            Text("Notes")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            ScrollView {
+                                Text(coffee.info.description ?? "")
+                                    .font(.caption)
+                                    .foregroundColor(.primary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(8)
+                            }
+                            .frame(width: 210, height: 120)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                        }
+                        .padding(.horizontal, 30)
                     }
-                    .padding(.horizontal, 30)
                     
                     Button {
                         showAnimation = false
@@ -221,5 +228,5 @@ struct SwitchRecipeSummary: View {
 }
 
 #Preview {
-    SwitchRecipeSummary(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, showAnimation: .constant(true))
+    SwitchRecipeSummary(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE_NO_COFFEE, showAnimation: .constant(true))
 }

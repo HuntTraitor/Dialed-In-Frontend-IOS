@@ -14,6 +14,7 @@ struct CoffeeChoice: View {
         HStack(spacing: 8) {
             if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
                 ImageView(url)
+                    .scaledToFit()
                     .frame(width: 40, height: 40)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .shadow(radius: 1)

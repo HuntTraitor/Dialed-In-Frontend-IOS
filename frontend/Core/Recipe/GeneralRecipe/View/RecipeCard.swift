@@ -14,7 +14,7 @@ struct RecipeCard: View {
     @State private var showEditSheet: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var recipeToDelete: Recipe?
-    
+        
     @ViewBuilder
     private var editSheetContent: some View {
         if let binding = $recipe.switchRecipeBinding {
@@ -75,12 +75,12 @@ struct RecipeCard: View {
             
             HStack(spacing: 16) {
                 ZStack {
-                    if let imgString = recipe.coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
+                    if let imgString = recipe.coffee?.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
                         ImageView(url)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .scaledToFit()
                     } else {
-                        Image("No Image")
+                        Image(systemName: "cup.and.heat.waves.fill")
                             .resizable()
                             .scaledToFit()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -95,12 +95,18 @@ struct RecipeCard: View {
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
                     
-                    Text(recipe.coffee.info.name)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    if let coffee = recipe.coffee {
+                        Text(coffee.info.name)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+//                    Text(recipe.coffee?.info.name ?? "")
+//                        .font(.subheadline)
+//                        .foregroundColor(.secondary)
+//                        .lineLimit(1)
                     
-                    Spacer()
+//                    Spacer()
                     
                     HStack(spacing: 20) {
                         VStack(spacing: 4) {
