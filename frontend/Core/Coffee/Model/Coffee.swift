@@ -43,6 +43,34 @@ struct CoffeeInfo: Codable, Hashable {
     }
 }
 
+extension CoffeeInfo {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        name        = try container.decode(String.self, forKey: .name)
+        roaster     = try container.decodeIfPresent(String.self, forKey: .roaster)
+        decaf       = try container.decode(Bool.self, forKey: .decaf)
+        region      = try container.decodeIfPresent(String.self, forKey: .region)
+        process     = try container.decodeIfPresent(String.self, forKey: .process)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        originType  = try container.decodeIfPresent(OriginType.self, forKey: .originType)
+        rating      = try container.decodeIfPresent(Rating.self, forKey: .rating)
+        roastLevel  = try container.decodeIfPresent(RoastLevel.self, forKey: .roastLevel)
+        cost        = try container.decodeIfPresent(Double.self, forKey: .cost)
+        img         = try container.decodeIfPresent(String.self, forKey: .img)
+
+        // Decode raw strings for tasting notes and map → TastingNote, dropping unknowns
+        if let rawNotes = try container.decodeIfPresent([String].self, forKey: .tastingNotes) {
+            let mapped = rawNotes.compactMap { TastingNote.from(raw: $0) }
+            tastingNotes = mapped.isEmpty ? nil : mapped
+        } else {
+            tastingNotes = nil
+        }
+    }
+}
+
+
+
 enum Rating: Int, Codable {
     case zero = 0
     case one = 1
@@ -504,6 +532,16 @@ enum TastingNote: String, CaseIterable, Identifiable, Codable {
         }
     }
     
+    static func from(raw: String) -> TastingNote? {
+        if let exact = TastingNote(rawValue: raw) {
+            return exact
+        }
+
+        return TastingNote.allCases.first {
+            $0.rawValue.lowercased() == raw.lowercased()
+        }
+    }
+    
     
     var displayName: String {
         rawValue
@@ -536,10 +574,7 @@ enum OriginType: String, Codable, Identifiable, Equatable, FixedOption {
         if let matched = OriginType.predefinedOptions.first(where: { $0.displayName.lowercased() == rawValue.lowercased() }) {
             self = matched
         } else {
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: "Invalid origin type: \(rawValue)"
-            )
+            self = .unknown
         }
     }
 }
@@ -564,13 +599,13 @@ enum RoastLevel: String, Codable, Identifiable, Equatable, FixedOption {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
 
-        if let matched = RoastLevel.predefinedOptions.first(where: { $0.displayName.lowercased() == rawValue.lowercased() }) {
+        if let matched = RoastLevel.predefinedOptions.first(where: {
+            $0.displayName.lowercased() == rawValue.lowercased()
+        }) {
             self = matched
         } else {
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: "Invalid roast level: \(rawValue)"
-            )
+            // Graceful fallback instead of killing decoding
+            self = .unknown
         }
     }
 }
