@@ -18,19 +18,30 @@ struct AllRecipeView: View {
     @State private var selectedRecipe: Recipe? = nil
     
     var filteredRecipes: [Binding<Recipe>] {
-        viewModel.allRecipes.indices.compactMap { index in
-            let recipe = viewModel.allRecipes[index]
-
-            guard searchTerm.isEmpty || recipe.name.localizedCaseInsensitiveContains(searchTerm) else {
+        viewModel.allRecipes.compactMap { recipe in
+            guard searchTerm.isEmpty ||
+                  recipe.name.localizedCaseInsensitiveContains(searchTerm) else {
                 return nil
             }
 
             return Binding(
-                get: { viewModel.allRecipes[index] },
-                set: { viewModel.allRecipes[index] = $0 }
+                get: {
+                    guard let idx = viewModel.allRecipes.firstIndex(where: { $0.id == recipe.id }) else {
+
+                        return recipe
+                    }
+                    return viewModel.allRecipes[idx]
+                },
+                set: { newValue in
+                    guard let idx = viewModel.allRecipes.firstIndex(where: { $0.id == recipe.id }) else {
+                        return
+                    }
+                    viewModel.allRecipes[idx] = newValue
+                }
             )
         }
     }
+
 
     
     var body: some View {

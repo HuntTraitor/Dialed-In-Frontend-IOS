@@ -24,6 +24,13 @@ struct RecipeCard: View {
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
+        else if let binding = $recipe.v60RecipeBinding {
+            NavigationView {
+                V60EditRecipeView(recipe: binding)
+                    .navigationTitle("Edit Recipe")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
     }
     
     var body: some View {
@@ -101,12 +108,6 @@ struct RecipeCard: View {
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
-//                    Text(recipe.coffee?.info.name ?? "")
-//                        .font(.subheadline)
-//                        .foregroundColor(.secondary)
-//                        .lineLimit(1)
-                    
-//                    Spacer()
                     
                     HStack(spacing: 20) {
                         VStack(spacing: 4) {
@@ -189,6 +190,21 @@ extension Binding where Value == Recipe {
             },
             set: { newValue in
                 self.wrappedValue = .switchRecipe(newValue)
+            }
+        )
+    }
+    
+    var v60RecipeBinding: Binding<V60Recipe>? {
+        guard case .v60Recipe = wrappedValue else { return nil }
+        return Binding<V60Recipe>(
+            get: {
+                if case .v60Recipe(let vr) = self.wrappedValue {
+                    return vr
+                }
+                fatalError("Unexpected enum case")
+            },
+            set: { newValue in
+                self.wrappedValue = .v60Recipe(newValue)
             }
         )
     }
