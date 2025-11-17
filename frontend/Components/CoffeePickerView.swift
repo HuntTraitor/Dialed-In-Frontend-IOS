@@ -23,6 +23,11 @@ struct CoffeePickerView: View {
         viewModel.coffees.first { $0.id == selectedCoffeeId }
     }
     
+    var shouldShowNoneOption: Bool {
+        searchTerm.isEmpty ||
+        "none".localizedCaseInsensitiveContains(searchTerm)
+    }
+    
     var body: some View {
         Button(action: {
             withAnimation {
@@ -50,26 +55,28 @@ struct CoffeePickerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    Button {
-                        selectedCoffeeId = nil
-                        showCoffeePicker = false
-                    } label: {
-                        CoffeeChoiceNone()
-                            .overlay(
-                                HStack {
-                                    Spacer()
-                                    if selectedCoffeeId == nil {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.accentColor)
-                                            .padding(.trailing, 8)
+                    if shouldShowNoneOption {
+                        Button {
+                            selectedCoffeeId = nil
+                            showCoffeePicker = false
+                        } label: {
+                            CoffeeChoiceNone()
+                                .overlay(
+                                    HStack {
+                                        Spacer()
+                                        if selectedCoffeeId == nil {
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(.accentColor)
+                                                .padding(.trailing, 8)
+                                        }
                                     }
-                                }
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
+                                )
+                        }
+                        .buttonStyle(PlainButtonStyle())
 
-                    Divider()
-                        .background(Color.gray.opacity(0.3))
+                        Divider()
+                            .background(Color.gray.opacity(0.3))
+                    }
 
                     ForEach(filteredCoffees.indices, id: \.self) { index in
                         Button {
@@ -86,9 +93,10 @@ struct CoffeePickerView: View {
                         }
                     }
                 }
-
             }
             .frame(maxHeight: 4 * 48)
+
+
 
 
             Button {
