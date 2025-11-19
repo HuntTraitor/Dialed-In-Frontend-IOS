@@ -20,14 +20,18 @@ struct CoffeeView: View {
     
     var filteredCoffees: [Coffee] {
         guard !searchTerm.isEmpty else { return viewModel.coffees }
-        return viewModel.coffees.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+        return viewModel.coffees.filter {
+            $0.info.name.localizedCaseInsensitiveContains(searchTerm)
+        }
     }
     
     var body: some View {
         ZStack {
             Color(.systemGray6)
                 .edgesIgnoringSafeArea(.all)
+            
             VStack {
+                // Header
                 HStack {
                     Text("Coffees")
                         .font(.title)
@@ -53,36 +57,30 @@ struct CoffeeView: View {
                     .padding(.top, 40)
                 }
                 
-                if viewModel.errorMessage != nil {
-                    FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
-                        .scaleEffect(0.8)
-                        .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if viewModel.coffees.isEmpty {
-                    NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
-                        .scaleEffect(0.8)
-                        .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        HStack {
-                            SearchBar(text: $searchTerm, placeholder: "Search Coffees")
-                                .padding(.horizontal, 10)
-                            Button(action: {
-                                isMinimized.toggle()
-                            }) {
-                                Image(systemName: isMinimized ? "chevron.up" : "chevron.down")
-                            }
+                VStack {
+                    HStack {
+                        SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+                            .padding(.horizontal, 10)
+                        Button(action: {
+                            isMinimized.toggle()
+                        }) {
+                            Image(systemName: isMinimized ? "chevron.up" : "chevron.down")
                         }
-                        .padding(.bottom, 5)
-                        
-                        if filteredCoffees.isEmpty && !searchTerm.isEmpty {
-                            NoSearchResultsFound(itemName: "coffee")
-                                .scaleEffect(0.8)
-                                .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        } else {
-                            ScrollView {
+                    }
+                    .padding(.bottom, 5)
+                    
+                    ScrollView {
+                        Group {
+                            if let errorMessage = viewModel.errorMessage {
+                                FetchErrorMessageScreen(errorMessage: errorMessage)
+                                    .scaleEffect(0.8)
+                            } else if viewModel.coffees.isEmpty {
+                                NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
+                                    .scaleEffect(0.8)
+                            } else if filteredCoffees.isEmpty && !searchTerm.isEmpty {
+                                NoSearchResultsFound(itemName: "coffee")
+                                    .scaleEffect(0.8)
+                            } else {
                                 ForEach(filteredCoffees, id: \.self) { coffee in
                                     VStack {
                                         CoffeeRow(coffee: coffee, isMinimized: $isMinimized)
@@ -93,24 +91,25 @@ struct CoffeeView: View {
                                     .shadow(color: .black.opacity(0.01), radius: 5, x: 0, y: 2)
                                 }
                             }
-                            .refreshable {
-                                Task {
-                                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
-                                }
-                            }
                         }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .refreshable {
+                        await Task {
+                            await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                        }.value
                     }
                 }
             }
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
             .padding(.horizontal)
-            .addNavigationSupport()
             .task {
-                if !hasAppeared {
+                if !hasAppeared && viewModel.coffees.isEmpty {
                     await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
                     hasAppeared = true
                 }
             }
+            
             if viewModel.isLoading {
                 LoadingCircle()
             }

@@ -52,33 +52,32 @@ struct ContentView: View {
                     authPath = NavigationPath()  // reset auth stack too
                 }
             } else {
-                // 🏠 MAIN APP TABS (unchanged)
                 TabView(selection: navigationManager.tabHandler) {
                     NavigationStack(path: $navigationManager.homeNavigator) {
                         HomeView()
-                            .addNavigationSupport()
                     }
+                    .appNavigationSupport()
                     .tabItem { Label("Home", systemImage: "house.fill") }
                     .tag(1)
                     
                     NavigationStack(path: $navigationManager.coffeeNavigator) {
                         CoffeeView()
-                            .addNavigationSupport()
                     }
+                    .appNavigationSupport()
                     .tabItem { Label("Coffee", systemImage: "cup.and.saucer.fill") }
                     .tag(2)
                     
                     NavigationStack(path: $navigationManager.recipesNavigator) {
                         GeneralRecipeView(curMethod: nil)
-                            .addNavigationSupport()
                     }
+                    .appNavigationSupport()
                     .tabItem { Label("Recipes", systemImage: "book.pages") }
                     .tag(3)
                     
                     NavigationStack(path: $navigationManager.settingsNavigator) {
                         ProfileView()
-                            .addNavigationSupport()
                     }
+                    .appNavigationSupport()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
                     .tag(4)
                 }
@@ -113,10 +112,9 @@ extension View {
             .navigationBarTitleDisplayMode(.inline)
     }
     
-    //addNavigationSupport
-    func addNavigationSupport() -> some View {
-        self
-            .navigationDestination(for: NavigationDestination.self) { destination in
+    //appNavigationSupport
+    func appNavigationSupport() -> some View {
+        self.navigationDestination(for: NavigationDestination.self) { destination in
             destination
         }
     }

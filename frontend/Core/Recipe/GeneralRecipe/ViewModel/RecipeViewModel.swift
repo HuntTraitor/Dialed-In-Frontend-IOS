@@ -21,7 +21,6 @@ class RecipeViewModel: ObservableObject {
         self.recipeService = recipeService
     }
 
-    // why not just have this fetch all recipes and then store it in the switchRecipes variable in a filter
     func fetchRecipes(withToken token: String) async {
         isLoading = true
         defer { isLoading = false }

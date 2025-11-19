@@ -3,14 +3,13 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isLogoutDialogActive: Bool = false
-    @State private var isLoading: Bool = true
     @EnvironmentObject var navigationManager: NavigationManager
 
     private let testingID = UIIdentifiers.HomeScreen.self
 
     var body: some View {
             ZStack {
-                if isLoading {
+                if viewModel.isLoading {
                     LoadingCircle()
                 } else {
                     VStack {
@@ -27,12 +26,9 @@ struct HomeView: View {
                             viewModel.signOut()
                         }
                     }
-                    isLoading = false
                 }
             }
-            .addNavigationSupport()
         }
-    
 }
 
 extension View {
@@ -52,6 +48,8 @@ extension View {
 
 #Preview {
     PreviewWrapper {
-        HomeView()
+        NavigationStack {
+            HomeView()
+        }
     }
 }

@@ -13,7 +13,7 @@ struct V60RecipeListView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var searchTerm = ""
     @State private var isShowingCreateRecipeView = false
-    @State private var hasApeared: Bool = false
+    @State private var hasAppeared: Bool = false
     
     var filteredRecipes: [Binding<V60Recipe>] {
         viewModel.v60Recipes.indices.compactMap { index in
@@ -31,6 +31,7 @@ struct V60RecipeListView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
+                // Header
                 HStack {
                     Text("Recipes")
                         .font(.title)
@@ -38,7 +39,9 @@ struct V60RecipeListView: View {
                         .padding(.top, 40)
                         .padding(.bottom, 10)
                         .padding(.leading, 30)
+                    
                     Spacer()
+                    
                     Button {
                         isShowingCreateRecipeView = true
                     } label: {
@@ -56,27 +59,30 @@ struct V60RecipeListView: View {
                     }
                 }
                 
-                if viewModel.errorMessage != nil {
-                    FetchErrorMessageScreen(errorMessage: viewModel.errorMessage)
-                        .scaleEffect(0.9)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 10)
-                } else if viewModel.v60Recipes.isEmpty {
-                    NoResultsFound(itemName: "recipe", systemImage: "book.pages")
-                        .scaleEffect(0.8)
-                        .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        SearchBar(text: $searchTerm, placeholder: "Search Recipes")
-                            .padding(.horizontal, 10)
-                        if filteredRecipes.isEmpty && !searchTerm.isEmpty {
-                            NoSearchResultsFound(itemName: "recipe")
-                                .scaleEffect(0.8)
-                                .offset(y: -(UIScreen.main.bounds.height) * 0.1)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        } else {
-                            ScrollView {
+                VStack {
+                    SearchBar(text: $searchTerm, placeholder: "Search Recipes")
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 5)
+                    
+                    ScrollView {
+                        VStack {
+                            if let errorMessage = viewModel.errorMessage {
+                                FetchErrorMessageScreen(errorMessage: errorMessage)
+                                    .scaleEffect(0.9)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.top, 20)
+                                    .frame(maxWidth: .infinity)
+                            } else if viewModel.v60Recipes.isEmpty {
+                                NoResultsFound(itemName: "recipe", systemImage: "book.pages")
+                                    .scaleEffect(0.8)
+                                    .padding(.top, 40)
+                                    .frame(maxWidth: .infinity)
+                            } else if filteredRecipes.isEmpty && !searchTerm.isEmpty {
+                                NoSearchResultsFound(itemName: "recipe")
+                                    .scaleEffect(0.8)
+                                    .padding(.top, 40)
+                                    .frame(maxWidth: .infinity)
+                            } else {
                                 ForEach(filteredRecipes, id: \.wrappedValue.id) { $recipe in
                                     NavigationLink(
                                         destination: V60RecipeView(recipe: recipe)
@@ -94,21 +100,24 @@ struct V60RecipeListView: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
-                            .refreshable {
-                                Task {
-                                    await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
-                                }
-                            }
+                            
+                            Spacer(minLength: 0)
                         }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .refreshable {
+                        await Task {
+                            await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
+                        }.value
                     }
                 }
             }
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
             .padding(.horizontal)
             .task {
-                if !hasApeared {
+                if !hasAppeared {
                     await viewModel.fetchRecipes(withToken: authViewModel.token ?? "")
-                    hasApeared = true
+                    hasAppeared = true
                 }
             }
         }
@@ -122,5 +131,3 @@ struct V60RecipeListView: View {
         }
     }
 }
-
-

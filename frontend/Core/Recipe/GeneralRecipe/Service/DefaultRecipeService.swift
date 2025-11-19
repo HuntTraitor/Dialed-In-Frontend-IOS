@@ -98,6 +98,7 @@ class DefaultRecipeService: RecipeService {
         } catch let apiError as APIError {
             throw apiError
         } catch {
+            print(error)
             throw APIError.unknownError(error: error)
         }
     }

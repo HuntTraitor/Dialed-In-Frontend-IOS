@@ -47,9 +47,9 @@ struct MethodListView: View {
                     .padding()
                 }
                 .refreshable {
-                    Task {
+                    await Task {
                         await viewModel.fetchMethods()
-                    }
+                    }.value
                 }
             }
         }
