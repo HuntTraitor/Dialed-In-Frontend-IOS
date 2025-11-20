@@ -8,37 +8,59 @@
 import UIKit
 
 extension UIImage {
-    func aspectFittedToHeight(_ newHeight: CGFloat) -> UIImage {
-        let scale = newHeight / self.size.height
-        let newWidth = self.size.width * scale
-        let newSize = CGSize(width: newWidth, height: newHeight)
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-
+    /// Resize while keeping aspect ratio so that the longest side == maxDimension
+    func aspectFitted(toMaxDimension maxDimension: CGFloat) -> UIImage {
+        let width = size.width
+        let height = size.height
+        
+        let maxCurrentDimension = max(width, height)
+        guard maxCurrentDimension > maxDimension else { return self }
+        
+        let scale = maxDimension / maxCurrentDimension
+        let newSize = CGSize(width: width * scale, height: height * scale)
+        
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        
+        let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
         return renderer.image { _ in
             self.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
 
-    /// Compresses image to under a given size (in KB), returns JPEG data
-    func compressTo(maxSizeInKB: Int) -> Data? {
-        let resized = self.aspectFittedToHeight(200) // adjust if needed
-        var compression: CGFloat = 0.2
+    /// Compresses image (after resizing) to under a given size (in KB), returns JPEG data
+    /// - Parameters:
+    ///   - maxSizeInKB: target max size in kilobytes
+    ///   - maxDimension: longest side (in pixels/points) after resize
+    func compressTo(maxSizeInKB: Int,
+                    maxDimension: CGFloat = 1600) -> Data? {
+        let resized = self.aspectFitted(toMaxDimension: maxDimension)
+        
         let maxSizeBytes = maxSizeInKB * 1024
-
+        
+        var compression: CGFloat = 0.8
+        let minCompression: CGFloat = 0.7  // don't go below this or it gets ugly
+        
         guard var compressedData = resized.jpegData(compressionQuality: compression) else {
             return nil
         }
         
-        while compressedData.count > maxSizeBytes && compression > 0 {
-            compression -= 0.1
+        if compressedData.count <= maxSizeBytes {
+            return compressedData
+        }
+        
+        while compressedData.count > maxSizeBytes && compression > minCompression {
+            compression -= 0.05
+            
             if let data = resized.jpegData(compressionQuality: compression) {
                 compressedData = data
             } else {
-                return nil
+                break
             }
         }
-
+        
         return compressedData.count <= maxSizeBytes ? compressedData : nil
     }
 }
+
 
