@@ -27,10 +27,7 @@ struct CoffeeCard: View {
                         Spacer()
                         ZStack {
                             if let imgString = coffee.info.img, !imgString.isEmpty, let url = URL(string: imgString) {
-                                ImageView(url)
-                                    .scaledToFit()
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding(.top, 16)
+                                URLImageLargeView(url: url, thumbnailHeight: 200)
                             }
                         }
                         .frame(width: 200, height: 200)
