@@ -18,36 +18,6 @@
             endingLineNumber = "35"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "0A3D9C5F-A3A4-4DDF-BAE6-D8A75294B2E8 - f95b994cb687ae91"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt;&gt;, Swift.Optional&lt;DialedIn.CustomDialog&gt;, Swift.Optional&lt;DialedIn.LoadingCircle&gt;)&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.addNavigationSupport() -&gt; some&gt;&gt;.0 in DialedIn.SettingsView.body.getter : some"
-                  moduleName = "DialedIn.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/huntertratar/Desktop/dialed_in/frontend/frontend/Core/Authentication/View/SettingsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "35"
-                  endingLineNumber = "35">
-               </Location>
-               <Location
-                  uuid = "0A3D9C5F-A3A4-4DDF-BAE6-D8A75294B2E8 - 294a7ba81845acec"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt;&gt;, Swift.Optional&lt;DialedIn.CustomDialog&gt;, Swift.Optional&lt;DialedIn.LoadingCircle&gt;)&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.addNavigationSupport() -&gt; some&gt;&gt;.0 in DialedIn.SettingsView.body.getter : some"
-                  moduleName = "DialedIn.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/huntertratar/Desktop/dialed_in/frontend/frontend/Core/Authentication/View/SettingsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "35"
-                  endingLineNumber = "35">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

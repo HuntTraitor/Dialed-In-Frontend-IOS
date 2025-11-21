@@ -59,7 +59,7 @@ struct ZoomableImageView: UIViewRepresentable {
 
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             // Center the image when zoomed out smaller than scroll view bounds
-            guard let imageView = imageView else { return }
+            guard imageView != nil else { return }
 
             let size = scrollView.bounds.size
             let contentSize = scrollView.contentSize
