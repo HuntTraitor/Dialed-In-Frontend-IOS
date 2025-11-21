@@ -56,12 +56,9 @@ struct URLImageLargeView: View {
                     .opacity(backgroundOpacity)
 
                 if let image = fullImage {
-                    // Zoomable, draggable image
                     ZoomableImageView(image: image)
                         .ignoresSafeArea()
-                        // Follow the drag a bit
                         .offset(y: dragOffset)
-                        // Slight scale effect while dragging
                         .scaleEffect(imageScale)
                         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: dragOffset)
                 } else if loadError {
@@ -74,7 +71,6 @@ struct URLImageLargeView: View {
                         }
                 }
 
-                // Close button (stays pinned to top-right)
                 VStack {
                     HStack {
                         Spacer()
@@ -88,24 +84,20 @@ struct URLImageLargeView: View {
                     Spacer()
                 }
             }
-            // Swipe down to close gesture
             .gesture(
                 DragGesture()
                     .onChanged { value in
-                        // Only consider downward drags
                         dragOffset = max(value.translation.height, 0)
                     }
                     .onEnded { value in
                         let translation = value.translation.height
                         let velocity = value.predictedEndTranslation.height
 
-                        // If it's dragged far enough OR flung down quickly, dismiss
                         let shouldDismiss = translation > 120 || velocity > 300
 
                         if shouldDismiss {
                             isPresented = false
                         } else {
-                            // Snap back if not enough
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 dragOffset = 0
                             }
@@ -123,14 +115,12 @@ struct URLImageLargeView: View {
         }
     }
 
-    // Background opacity changes slightly as you pull down
     private var backgroundOpacity: Double {
-        let maxFade: CGFloat = 0.4 // how much to fade at most
+        let maxFade: CGFloat = 0.4
         let progress = min(dragOffset / 300, 1)
         return 0.9 - Double(progress * maxFade)
     }
 
-    // Image scale when dragging
     private var imageScale: CGFloat {
         let maxScaleReduction: CGFloat = 0.08
         let progress = min(dragOffset / 300, 1)
