@@ -16,7 +16,7 @@ struct MethodCard: View {
             Image(image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 300, height: 175)
+                .frame(width: 300, height: 150)
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .clipped()
 
@@ -40,7 +40,7 @@ struct MethodCard: View {
                 }
             }
         }
-        .frame(width: 300, height: 200)
+        .frame(width: 300, height: 175)
         .cornerRadius(15)
         .shadow(radius: 5)
         .contentShape(Rectangle())

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WrappingHStack
 
 struct MethodListView: View {
     @EnvironmentObject private var viewModel: MethodViewModel
@@ -14,27 +15,27 @@ struct MethodListView: View {
     private let testingID = UIIdentifiers.MethodScreen.self
     
     var body: some View {
-        VStack {
-            Text("Methods")
-                .padding(.bottom, 20)
-                .italic()
-                .font(.title)
-                .accessibilityIdentifier(testingID.methodTitle)
-            
-            Text("Select a method you would like to use")
-                .font(.body)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-            
-            if viewModel.errorMessage != nil {
-                FetchErrorMessageScreen(errorMessage: viewModel.errorMessage ?? "An unexpected error has occurred")
-                    .scaleEffect(0.9)
-                    .frame(maxHeight: 200)
-                    .padding(.top, 40)
-                Spacer()
-            } else {
+            VStack(alignment: .center, spacing: 16) {
+                Text("Methods")
+                    .padding(.top, 20)
+                    .italic()
+                    .font(.title)
+                    .accessibilityIdentifier(testingID.methodTitle)
+                
+                Text("Select a method you would like to use")
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 10)
                 ScrollView {
-                    VStack(spacing: 16) {
+                
+                if let error = viewModel.errorMessage {
+                    FetchErrorMessageScreen(errorMessage: error)
+                        .scaleEffect(0.9)
+                        .frame(maxHeight: 200)
+                        .padding(.top, 40)
+                } else {
+                    VStack {
                         ForEach(viewModel.methods) { method in
                             NavigationLink {
                                 GeneralRecipeView(curMethod: method)
@@ -44,16 +45,29 @@ struct MethodListView: View {
                             }
                         }
                     }
-                    .padding()
-                }
-                .refreshable {
-                    await Task {
-                        await viewModel.fetchMethods()
-                    }.value
+                    .padding(.horizontal)
+                    
+                    Divider()
+                        .padding(.vertical, 8)
+                    
+                    let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
+
+                    LazyVGrid(columns: columns, spacing: 8) {
+                        GenericHomeSelectorBox(title: "Common Recipes", icon: "list.bullet.rectangle.portrait")
+                        GenericHomeSelectorBox(title: "Method Guide", icon: "flag.badge.ellipsis")
+                        GenericHomeSelectorBox(title: "Term Information", icon: "pencil.and.outline")
+                        GenericHomeSelectorBox(title: "Landing Page", icon: "airplane.departure")
+                        GenericHomeSelectorBox(title: "About", icon: "info.square")
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
             }
+            .padding(.horizontal)
         }
-        .padding()
+        .refreshable {
+            await viewModel.fetchMethods()
+        }
         .task {
             if !hasAppeared {
                 await viewModel.fetchMethods()
