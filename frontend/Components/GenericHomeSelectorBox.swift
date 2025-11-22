@@ -24,7 +24,7 @@ struct GenericHomeSelectorBox: View {
                         x: 0,
                         y: 2
                     )
-                    .frame(width: 80, height: 80)
+                    .frame(width: 70, height: 70)
 
                 Image(systemName: icon)
                     .font(.system(size: 30))

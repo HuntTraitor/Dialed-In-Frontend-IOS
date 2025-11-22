@@ -16,7 +16,7 @@ struct MethodCard: View {
             Image(image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 300, height: 150)
+                .frame(width: 300, height: 125)
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .clipped()
 
@@ -24,7 +24,6 @@ struct MethodCard: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-                .padding()
                 .shadow(color: .black, radius: 2, x: 2, y: 2)
 
             VStack {
@@ -40,7 +39,7 @@ struct MethodCard: View {
                 }
             }
         }
-        .frame(width: 300, height: 175)
+        .frame(width: 300, height: 150)
         .cornerRadius(15)
         .shadow(radius: 5)
         .contentShape(Rectangle())

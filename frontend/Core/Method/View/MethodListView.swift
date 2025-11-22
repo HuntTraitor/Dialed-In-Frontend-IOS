@@ -41,7 +41,6 @@ struct MethodListView: View {
                                 GeneralRecipeView(curMethod: method)
                             } label: {
                                 MethodCard(title: method.name, image: method.name)
-                                    .padding(5)
                             }
                         }
                     }
