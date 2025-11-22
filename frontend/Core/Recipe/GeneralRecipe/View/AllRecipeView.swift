@@ -13,9 +13,6 @@ struct AllRecipeView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var searchTerm = ""
     @State private var hasAppeared: Bool = false
-    @State private var navigationPath = NavigationPath()
-    @State private var showCreateRecipe = false
-    @State private var selectedRecipe: Recipe? = nil
     
     var filteredRecipes: [Binding<Recipe>] {
         viewModel.allRecipes.compactMap { recipe in
@@ -59,7 +56,7 @@ struct AllRecipeView: View {
                     Spacer()
                     
                     Button {
-                        navigationManager.recipesNavigator.append(.createRecipe)
+                        navigationManager.recipesNavigator.append(.create)
                     } label: {
                         Label("Add New Recipe", systemImage: "plus")
                             .font(.system(size: 15))
@@ -94,12 +91,11 @@ struct AllRecipeView: View {
                                     .padding(.top, 40)
                                     .frame(maxWidth: .infinity)
                             } else {
-                                // Normal / filtered list
-                                ForEach(filteredRecipes, id: \.wrappedValue.id) { $recipe in
+                                ForEach(filteredRecipes, id: \.wrappedValue.id) { recipeBinding in
                                     NavigationLink(
-                                        destination: destinationView(for: recipe)
+                                        value: route(for: recipeBinding.wrappedValue)
                                     ) {
-                                        recipeCard(for: $recipe)
+                                        recipeCard(for: recipeBinding)
                                             .padding(.vertical, 10)
                                             .background(Color.white)
                                             .cornerRadius(10)
@@ -148,6 +144,17 @@ extension AllRecipeView {
     }
 }
 
+extension AllRecipeView {
+    func route(for recipe: Recipe) -> RecipesRoute {
+        switch recipe {
+        case .switchRecipe(let r):
+            return .switchRecipe(r)
+        case .v60Recipe(let r):
+            return .v60Recipe(r)
+        }
+    }
+}
+
 #Preview {
     struct PreviewContainer: View {
         @ObservedObject private var navigationManager = NavigationManager.shared
@@ -156,8 +163,8 @@ extension AllRecipeView {
             PreviewWrapper {
                 NavigationStack(path: $navigationManager.recipesNavigator) {
                     AllRecipeView()
+                        .recipesNavigationSupport()
                 }
-                .appNavigationSupport()
             }
         }
     }

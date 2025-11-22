@@ -9,13 +9,20 @@
 
 import SwiftUI
 
+enum RecipesRoute: Hashable {
+    case all
+    case create
+    case switchRecipe(SwitchRecipe)
+    case v60Recipe(V60Recipe)
+}
+
 final class NavigationManager: ObservableObject {
     static let shared = NavigationManager()
     
     @Published var selectedTab = 1
     @Published var homeNavigator: [NavigationDestination] = []
     @Published var coffeeNavigator: [NavigationDestination] = []
-    @Published var recipesNavigator: [NavigationDestination] = []
+    @Published var recipesNavigator: [RecipesRoute] = []
     @Published var settingsNavigator: [NavigationDestination] = []
     
     var tabHandler: Binding<Int> {
@@ -36,5 +43,23 @@ final class NavigationManager: ObservableObject {
         )
     }
     private init() {}
+}
+
+extension View {
+    func recipesNavigationSupport() -> some View {
+        self
+            .navigationDestination(for: RecipesRoute.self) { route in
+                switch route {
+                case .all:
+                    AllRecipeView()
+                case .create:
+                    CreateAnyRecipeView()
+                case .switchRecipe(let recipe):
+                    SwitchRecipeView(recipe: recipe)
+                case .v60Recipe(let recipe):
+                    V60RecipeView(recipe: recipe)
+                }
+            }
+    }
 }
 

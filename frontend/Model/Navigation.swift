@@ -7,21 +7,8 @@
 
 import SwiftUI
 
-// Define your navigation data model
-enum NavigationDestination: Hashable, View {
+enum NavigationDestination: Hashable {
     case home
     case coffees
     case createRecipe
-    
-    // return the associated view for each case
-    var body: some View {
-        switch self {
-        case .home:
-            HomeView()
-        case .coffees:
-            CoffeeView()
-        case .createRecipe:
-            CreateAnyRecipeView()
-        }
-    }
 }

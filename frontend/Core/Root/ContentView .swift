@@ -49,7 +49,7 @@ struct ContentView: View {
                     navigationManager.coffeeNavigator = []
                     navigationManager.recipesNavigator = []
                     navigationManager.settingsNavigator = []
-                    authPath = NavigationPath()  // reset auth stack too
+                    authPath = NavigationPath()
                 }
             } else {
                 TabView(selection: navigationManager.tabHandler) {
@@ -69,8 +69,8 @@ struct ContentView: View {
                     
                     NavigationStack(path: $navigationManager.recipesNavigator) {
                         GeneralRecipeView(curMethod: nil)
+                            .recipesNavigationSupport() 
                     }
-                    .appNavigationSupport()
                     .tabItem { Label("Recipes", systemImage: "book.pages") }
                     .tag(3)
                     
@@ -112,11 +112,18 @@ extension View {
             .navigationBarTitleDisplayMode(.inline)
     }
     
-    //appNavigationSupport
     func appNavigationSupport() -> some View {
-        self.navigationDestination(for: NavigationDestination.self) { destination in
-            destination
-        }
+        self
+            .navigationDestination(for: NavigationDestination.self) { destination in
+                switch destination {
+                case .home:
+                    HomeView()
+                case .coffees:
+                    CoffeeView()
+                case .createRecipe:
+                    CreateAnyRecipeView()
+                }
+            }
     }
 }
 
