@@ -65,7 +65,9 @@ struct MethodListView: View {
             .padding(.horizontal)
         }
         .refreshable {
-            await viewModel.fetchMethods()
+            await Task {
+                await viewModel.fetchMethods()
+            }.value
         }
         .task {
             if !hasAppeared {

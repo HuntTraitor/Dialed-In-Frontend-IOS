@@ -56,14 +56,12 @@ struct ContentView: View {
                     NavigationStack(path: $navigationManager.homeNavigator) {
                         HomeView()
                     }
-                    .appNavigationSupport()
                     .tabItem { Label("Home", systemImage: "house.fill") }
                     .tag(1)
                     
                     NavigationStack(path: $navigationManager.coffeeNavigator) {
                         CoffeeView()
                     }
-                    .appNavigationSupport()
                     .tabItem { Label("Coffee", systemImage: "cup.and.saucer.fill") }
                     .tag(2)
                     
@@ -77,7 +75,6 @@ struct ContentView: View {
                     NavigationStack(path: $navigationManager.settingsNavigator) {
                         ProfileView()
                     }
-                    .appNavigationSupport()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
                     .tag(4)
                 }
@@ -87,50 +84,8 @@ struct ContentView: View {
 }
 
 
-
-
-
-
-extension View {
-    //addToolbar
-    func addToolbar() -> some View {
-        self
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Image("logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 28, height: 28)
-                        Text("Dialed-In")
-                            .font(.custom("Cochin-BoldItalic", size: 28))
-                            .foregroundColor(.black)
-                            .opacity(0.75)
-                    }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    func appNavigationSupport() -> some View {
-        self
-            .navigationDestination(for: NavigationDestination.self) { destination in
-                switch destination {
-                case .home:
-                    HomeView()
-                case .coffees:
-                    CoffeeView()
-                case .createRecipe:
-                    CreateAnyRecipeView()
-                }
-            }
-    }
-}
-
-
 #Preview {
     PreviewWrapper {
         ContentView()
-            .addToolbar()
     }
 }

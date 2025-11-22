@@ -10,5 +10,4 @@ import SwiftUI
 enum NavigationDestination: Hashable {
     case home
     case coffees
-    case createRecipe
 }
