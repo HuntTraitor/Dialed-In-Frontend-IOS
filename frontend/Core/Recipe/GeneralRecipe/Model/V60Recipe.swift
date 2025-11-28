@@ -205,6 +205,99 @@ extension V60Recipe {
     ]
 }
 
+extension V60Recipe {
+    static var JAMES_HOFFMAN_RECIPE = V60Recipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.V60,
+        info: RecipeInfo(
+            name: "James Hoffman V60 Recipe",
+            gramsIn: 15,
+            mlOut: 250,
+            phases: [
+                V60Phase(time: 45, amount: 50),
+                V60Phase(time: 20, amount: 50),
+                V60Phase(time: 25, amount: 50),
+                V60Phase(time: 20, amount: 50),
+                V60Phase(time: 70, amount: 50),
+            ]
+        )
+    )
+    
+    static var FOURTOSIX_RECIPE = V60Recipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.V60,
+        info: RecipeInfo(
+            name: "Tetsu Kasuya 4:6 V60 Recipe",
+            gramsIn: 20,
+            mlOut: 300,
+            phases: [
+                V60Phase(time: 45, amount: 60),
+                V60Phase(time: 45, amount: 60),
+                V60Phase(time: 45, amount: 60),
+                V60Phase(time: 45, amount: 60),
+                V60Phase(time: 75, amount: 60),
+            ]
+        )
+    )
+    
+    static var FIVE_POUR_METHOD = V60Recipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.V60,
+        info: RecipeInfo(
+            name: "Matt Winton Five Pour Method",
+            gramsIn: 20,
+            mlOut: 300,
+            phases: [
+                V60Phase(time: 35, amount: 60),
+                V60Phase(time: 40, amount: 60),
+                V60Phase(time: 40, amount: 60),
+                V60Phase(time: 40, amount: 60),
+                V60Phase(time: 75, amount: 60),
+            ]
+        )
+    )
+    
+    static var LANCE_HEDRICK_HIGH_EXTRACTION = V60Recipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.V60,
+        info: RecipeInfo(
+            name: "Lance Hedrick High Extraction",
+            gramsIn: 20,
+            mlOut: 320,
+            phases: [
+                V60Phase(time: 30, amount: 60),
+                V60Phase(time: 30, amount: 60),
+                V60Phase(time: 30, amount: 100),
+                V60Phase(time: 75, amount: 100),
+            ]
+        )
+    )
+    
+    static var LANCE_HEDRICK_PREFERRED = V60Recipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.V60,
+        info: RecipeInfo(
+            name: "Lance Hedrick Preferred Method",
+            gramsIn: 15,
+            mlOut: 250,
+            phases: [
+                V60Phase(time: 60, amount: 45),
+                V60Phase(time: 120, amount: 205)
+            ]
+        )
+    )
+}
+
 
 
 

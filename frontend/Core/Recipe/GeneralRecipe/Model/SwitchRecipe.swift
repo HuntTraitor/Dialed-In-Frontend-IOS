@@ -213,7 +213,7 @@ extension SwitchRecipe {
         coffee: nil,
         method: Method.SWITCH,
         info: SwitchRecipe.RecipeInfo(
-            name: "Classic Switch Recipe",
+            name: "Coffee Chronicler Hario Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
             phases: [
