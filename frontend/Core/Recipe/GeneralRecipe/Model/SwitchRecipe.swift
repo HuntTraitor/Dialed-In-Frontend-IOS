@@ -206,4 +206,23 @@ extension SwitchRecipe {
     ]
 }
 
+extension SwitchRecipe {
+    static var COFFEE_CHRONICLER_RECIPE = SwitchRecipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.SWITCH,
+        info: SwitchRecipe.RecipeInfo(
+            name: "Classic Switch Recipe",
+            gramsIn: 20,
+            mlOut: 320,
+            phases: [
+                SwitchPhase(open: true, time: 45, amount: 160),
+                SwitchPhase(open: false, time: 75, amount: 160),
+                SwitchPhase(open: true, time: 60, amount: 0)
+            ]
+        )
+    )
+}
+
 

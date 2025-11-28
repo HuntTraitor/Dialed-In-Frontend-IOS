@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SwitchCreateRecipeView: View {
+    let existingRecipe: SwitchRecipe?
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
@@ -22,6 +23,12 @@ struct SwitchCreateRecipeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var phases: [SwitchPhase] = []
     @State private var validationError: String? = nil
+    
+    @State private var hasPrefilledFromExisting = false
+
+    init(existingRecipe: SwitchRecipe? = nil) {
+        self.existingRecipe = existingRecipe
+    }
     
     var isFormValid: Bool {
         return validateRecipeInput() == nil
@@ -87,6 +94,8 @@ struct SwitchCreateRecipeView: View {
             .onAppear {
                 Task {
                     await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    
+                    prefillFromExistingRecipeIfNeeded()
                 }
             }
             .sheet(isPresented: $isShowingCreateCoffeeView) {
@@ -217,6 +226,20 @@ struct SwitchCreateRecipeView: View {
             }
         }
     }
+    
+    private func prefillFromExistingRecipeIfNeeded() {
+        guard !hasPrefilledFromExisting, let recipe = existingRecipe else { return }
+
+        hasPrefilledFromExisting = true
+
+        recipeName = recipe.info.name
+        gramsIn = String(recipe.info.gramsIn)
+        mlOut   = String(recipe.info.mlOut)
+        phases  = recipe.info.phases
+
+        selectedCoffeeId = recipe.coffee?.id
+    }
+
 }
 
 #Preview {

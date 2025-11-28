@@ -63,4 +63,7 @@ extension Method {
         Method(id: 1, type: .v60, createdAt: "2025-07-17T17:53:48Z"),
         Method(id: 2, type: .harioSwitch, createdAt: "2025-07-17T17:53:48Z")
     ]
+    
+    static var V60 = Method(id: 1, type: .v60, createdAt: "2025-07-17T17:53:48Z")
+    static var SWITCH = Method(id: 2, type: .harioSwitch, createdAt: "2025-07-17T17:53:48Z")
 }
