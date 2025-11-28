@@ -223,6 +223,27 @@ extension SwitchRecipe {
             ]
         )
     )
+    
+    static var SPROMETHEUS_RECIPE = SwitchRecipe(
+        id: -1,
+        userId: -1,
+        coffee: nil,
+        method: Method.SWITCH,
+        info: SwitchRecipe.RecipeInfo(
+            name: "The Real Sprometheus Method",
+            gramsIn: 18,
+            mlOut: 288,
+            phases: [
+                SwitchPhase(open: true, time: 45, amount: 72),
+                SwitchPhase(open: false, time: 25, amount: 72),
+                SwitchPhase(open: true, time: 30, amount: 0),
+                SwitchPhase(open: false, time: 25, amount: 72),
+                SwitchPhase(open: true, time: 30, amount: 0),
+                SwitchPhase(open: false, time: 25, amount: 72),
+                SwitchPhase(open: true, time: 30, amount: 0),
+            ]
+        )
+    )
 }
 
 
