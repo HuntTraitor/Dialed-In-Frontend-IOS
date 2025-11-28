@@ -33,7 +33,7 @@ struct ProfileView: View {
                         Image("logo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 80, height: 80)
+                            .frame(width: 160, height: 160)
                             .clipShape(Circle())
                             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                         

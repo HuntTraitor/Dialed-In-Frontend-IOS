@@ -13,6 +13,9 @@ struct CommonRecipeView: View {
     var description: String
     var link: String
 
+    /// Called when a recipe is successfully created
+    var onRecipeCreated: (() -> Void)? = nil
+
     @State private var isShowingCreateRecipeView: Bool = false
     @State private var isExpanded: Bool = false
 
@@ -92,7 +95,6 @@ struct CommonRecipeView: View {
                         .buttonStyle(.plain)
                     }
 
-                    // Add recipe button
                     Button {
                         isShowingCreateRecipeView = true
                     } label: {
@@ -129,18 +131,32 @@ struct CommonRecipeView: View {
         }
     }
 
+    // MARK: - Sheet content
 
     @ViewBuilder
     private var createRecipeSheet: some View {
         switch recipe {
         case .switchRecipe(let switchRecipe):
-            SwitchCreateRecipeView(existingRecipe: switchRecipe)
+            SwitchCreateRecipeView(
+                existingRecipe: switchRecipe,
+                onSuccess: handleRecipeCreated
+            )
 
         case .v60Recipe(let v60Recipe):
-            V60CreateRecipeView(existingRecipe: v60Recipe)
+            V60CreateRecipeView(
+                existingRecipe: v60Recipe,
+                onSuccess: handleRecipeCreated
+            )
         }
     }
 
+    private func handleRecipeCreated() {
+        // Close the sheet and notify parent
+        isShowingCreateRecipeView = false
+        onRecipeCreated?()
+    }
+
+    // MARK: - Thumbnail
 
     @ViewBuilder
     private var linkThumbnail: some View {
@@ -154,6 +170,7 @@ struct CommonRecipeView: View {
             )
     }
 }
+
 
 #Preview {
     PreviewWrapper {

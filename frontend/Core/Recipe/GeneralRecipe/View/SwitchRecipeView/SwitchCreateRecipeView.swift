@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SwitchCreateRecipeView: View {
     let existingRecipe: SwitchRecipe?
+    let onSuccess: (() -> Void)?
+    
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
@@ -26,8 +28,9 @@ struct SwitchCreateRecipeView: View {
     
     @State private var hasPrefilledFromExisting = false
 
-    init(existingRecipe: SwitchRecipe? = nil) {
+    init(existingRecipe: SwitchRecipe? = nil, onSuccess: (() -> Void)? = nil) {
         self.existingRecipe = existingRecipe
+        self.onSuccess = onSuccess
     }
     
     var isFormValid: Bool {
@@ -219,10 +222,14 @@ struct SwitchCreateRecipeView: View {
             await viewModel.postRecipe(withToken: authViewModel.token ?? "", recipe: newRecipe)
             
             if viewModel.errorMessage == nil {
-                if !navigationManager.recipesNavigator.isEmpty {
-                    navigationManager.recipesNavigator.removeLast()
+                if onSuccess != nil {
+                    onSuccess?()
+                } else {
+                    if !navigationManager.recipesNavigator.isEmpty {
+                        navigationManager.recipesNavigator.removeLast()
+                    }
+                    dismiss()
                 }
-                dismiss()
             }
         }
     }

@@ -52,7 +52,17 @@ struct MethodListView: View {
                     let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
 
                     LazyVGrid(columns: columns, spacing: 8) {
-                        GenericHomeSelectorBox(title: "Common Recipes", icon: "list.bullet.rectangle.portrait")
+                        NavigationLink {
+                            CommonRecipeList()
+                        } label: {
+                            GenericHomeSelectorBox(
+                                title: "Common Recipes",
+                                icon: "list.bullet.rectangle.portrait"
+                            )
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                         GenericHomeSelectorBox(title: "Method Guide", icon: "flag.badge.ellipsis")
                         GenericHomeSelectorBox(title: "Term Information", icon: "pencil.and.outline")
                         GenericHomeSelectorBox(title: "Landing Page", icon: "airplane.departure")
