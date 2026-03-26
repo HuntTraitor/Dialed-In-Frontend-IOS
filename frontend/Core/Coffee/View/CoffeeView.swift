@@ -10,26 +10,39 @@ import SwiftUI
 struct CoffeeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: CoffeeViewModel
-    @State private var pressedItemId: Int?
     @State private var searchTerm = ""
     @State private var isShowingCreateCoffeeView = false
+    @State private var isShowingFilterView = false
     @State private var hasAppeared: Bool = false
     @State private var isMinimized: Bool = false
-    
+    @State private var filter = CoffeeFilter()
+
     private let testingID = UIIdentifiers.CoffeeScreen.self
-    
+
     var filteredCoffees: [Coffee] {
-        guard !searchTerm.isEmpty else { return viewModel.coffees }
-        return viewModel.coffees.filter {
-            $0.info.name.localizedCaseInsensitiveContains(searchTerm)
+        let filtered = filter.apply(to: viewModel.coffees)
+        guard !searchTerm.isEmpty else { return filtered }
+        return filtered.filter { coffee in
+            let info = coffee.info
+            let term = searchTerm.lowercased()
+            return info.name.localizedCaseInsensitiveContains(term)
+                || (info.roaster?.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.variety?.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.region?.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.process?.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.roastLevel?.displayName.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.originType?.displayName.localizedCaseInsensitiveContains(term) ?? false)
+                || (info.tastingNotes?.contains {
+                    $0.displayName.localizedCaseInsensitiveContains(term)
+                } ?? false)
         }
     }
-    
+
     var body: some View {
         ZStack {
             Color(.systemGray6)
                 .edgesIgnoringSafeArea(.all)
-            
+
             VStack {
                 // Header
                 HStack {
@@ -40,9 +53,29 @@ struct CoffeeView: View {
                         .padding(.bottom, 10)
                         .padding(.leading, 30)
                         .accessibilityIdentifier(testingID.coffeesTitle)
-                    
+
                     Spacer()
-                    
+
+                    // Filter button with active badge
+                    Button {
+                        isShowingFilterView = true
+                    } label: {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                                .font(.system(size: 20))
+                            if filter.isActive {
+                                Circle()
+                                    .fill(Color.accentColor)
+                                    .frame(width: 8, height: 8)
+                                    .offset(x: 4, y: -4)
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $isShowingFilterView) {
+                        CoffeeFilterView(filter: $filter)
+                    }
+                    .padding(.top, 40)
+
                     Button {
                         isShowingCreateCoffeeView = true
                     } label: {
@@ -56,7 +89,7 @@ struct CoffeeView: View {
                     }
                     .padding(.top, 40)
                 }
-                
+
                 VStack {
                     HStack {
                         SearchBar(text: $searchTerm, placeholder: "Search Coffees")
@@ -68,16 +101,19 @@ struct CoffeeView: View {
                         }
                     }
                     .padding(.bottom, 5)
-                    
+
                     ScrollView {
                         Group {
                             if let errorMessage = viewModel.errorMessage {
                                 FetchErrorMessageScreen(errorMessage: errorMessage)
                                     .scaleEffect(0.8)
                             } else if viewModel.coffees.isEmpty {
-                                NoResultsFound(itemName: "coffee", systemImage: "cup.and.heat.waves")
-                                    .scaleEffect(0.8)
-                            } else if filteredCoffees.isEmpty && !searchTerm.isEmpty {
+                                NoResultsFound(
+                                    itemName: "coffee",
+                                    systemImage: "cup.and.heat.waves"
+                                )
+                                .scaleEffect(0.8)
+                            } else if filteredCoffees.isEmpty {
                                 NoSearchResultsFound(itemName: "coffee")
                                     .scaleEffect(0.8)
                             } else {
@@ -95,9 +131,7 @@ struct CoffeeView: View {
                         .frame(maxWidth: .infinity)
                     }
                     .refreshable {
-                        await Task {
-                            await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
-                        }.value
+                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
                     }
                 }
             }
@@ -109,7 +143,7 @@ struct CoffeeView: View {
                     hasAppeared = true
                 }
             }
-            
+
             if viewModel.isLoading {
                 LoadingCircle()
             }
