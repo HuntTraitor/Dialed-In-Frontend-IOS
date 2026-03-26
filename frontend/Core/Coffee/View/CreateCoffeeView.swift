@@ -25,6 +25,7 @@ struct CreateCoffeeView: View {
     @State private var roastLevel: RoastLevel = .unknown
     @State private var cost: Double = 0.0
     @State private var tasteNotes: [TastingNote] = []
+    @State private var variety: String = ""
     @State private var imageSelection: PhotosPickerItem?
     @State private var imageObject: UIImage?
     @State private var imageData: Data?
@@ -116,6 +117,9 @@ struct CreateCoffeeView: View {
             LabeledTextField(label: "Region", text: $region, placeholder: "Add region")
             Divider()
             LabeledTextField(label: "Process", text: $process, placeholder: "Add process")
+            Divider()
+            LabeledTextField(label: "Variety", text: $variety,
+                             placeholder: "Add variety")
             Divider()
             FixedOptionPicker(label: "Origin Type", selection: $originType)
             Divider()
@@ -288,6 +292,7 @@ struct CreateCoffeeView: View {
                     rating: rating,
                     roastLevel: roastLevel,
                     tastingNotes: tasteNotes,
+                    variety: variety,
                     cost: cost,
                     img: imageData
                 )

@@ -35,11 +35,12 @@ struct CoffeeInfo: Codable, Hashable {
     var rating: Rating?
     var roastLevel: RoastLevel?
     var tastingNotes: [TastingNote]?
+    var variety: String?
     var cost: Double?
     var img: String?
 
     private enum CodingKeys: String, CodingKey {
-        case name, roaster, decaf, region, process, description, originType = "origin_type", rating, roastLevel = "roast_level", tastingNotes = "tasting_notes", cost, img
+        case name, roaster, decaf, region, process, description, originType = "origin_type", rating, roastLevel = "roast_level", tastingNotes = "tasting_notes", variety, cost, img
     }
 }
 
@@ -56,6 +57,7 @@ extension CoffeeInfo {
         originType  = try container.decodeIfPresent(OriginType.self, forKey: .originType)
         rating      = try container.decodeIfPresent(Rating.self, forKey: .rating)
         roastLevel  = try container.decodeIfPresent(RoastLevel.self, forKey: .roastLevel)
+        variety     = try container.decodeIfPresent(String.self, forKey: .variety)
         cost        = try container.decodeIfPresent(Double.self, forKey: .cost)
         img         = try container.decodeIfPresent(String.self, forKey: .img)
 
@@ -635,6 +637,7 @@ struct CoffeeInput: Identifiable {
     let rating: Rating?
     let roastLevel: RoastLevel?
     let tastingNotes: [TastingNote]?
+    let variety: String?
     let cost: Double?
     let img: Data?
 
@@ -684,6 +687,10 @@ struct CoffeeInput: Identifiable {
                 appendField(name: "tasting_notes", value: note.rawValue)
             }
         }
+        
+        if let variety = variety {
+            appendField(name: "variety", value: variety)
+        }
 
         if let cost = cost {
             appendField(name: "cost", value: String(format: "%.2f", cost))
@@ -721,6 +728,7 @@ extension Coffee {
             rating: .four,
             roastLevel: .medium,
             tastingNotes: [.caramel, .guava, .aniseSeed],
+            variety: "Pink Bourban",
             cost: 24.99,
             img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
         ),
@@ -740,6 +748,7 @@ extension Coffee {
         rating: .four,
         roastLevel: .medium,
         tastingNotes: [.caramel, .milkChocolate, .vanilla],
+        variety: "Pink Bourban",
         cost: 24.99,
         img: nil
     )
@@ -772,6 +781,7 @@ extension Coffee {
                     rating: .five,
                     roastLevel: .medium,
                     tastingNotes: [.caramel, .milkChocolate, .vanilla],
+                    variety: "Pink Bourban",
                     cost: 24.99,
                     img: "https://st.kofio.co/img_product/boeV9yxzHn2OwWv/9628/sq_350_MFbecow28XW0zprTGaVA_102573.png"
                 ),
@@ -792,6 +802,7 @@ extension Coffee {
                     rating: .four,
                     roastLevel: .light,
                     tastingNotes: [.jasmine, .blueberry, .lemon],
+                    variety: "Pink Bourban",
                     cost: 28.50,
                     img: "https://images.squarespace-cdn.com/content/v1/55ecfe19e4b01667f1806baa/1709056782338-HWNUY7HUQMQ97XAT4RW1/Custom-Label-Coffee_8-12oz.jpg?format=1000w"
                 ),
@@ -812,6 +823,7 @@ extension Coffee {
                     rating: .three,
                     roastLevel: .mediumDark,
                     tastingNotes: [.milkChocolate, .hazelnut, .almond],
+                    variety: "Pink Bourban",
                     cost: 19.99,
                     img: nil
                 ),
@@ -832,6 +844,7 @@ extension Coffee {
                     rating: .four,
                     roastLevel: .dark,
                     tastingNotes: [.smoky, .acaciaBlossom, .darkChocolate],
+                    variety: "Pink Bourban",
                     cost: 22.75,
                     img: nil
                 ),
@@ -852,6 +865,7 @@ extension Coffee {
                     rating: nil,
                     roastLevel: nil,
                     tastingNotes: nil,
+                    variety: nil,
                     cost: nil,
                     img: nil
                 ),

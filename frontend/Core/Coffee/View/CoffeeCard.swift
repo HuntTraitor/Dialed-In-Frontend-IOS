@@ -73,6 +73,9 @@ struct CoffeeCard: View {
 
                         Divider()
                         KeyValueView(key: "Process", value: coffee.info.process ?? "-")
+                        
+                        Divider()
+                        KeyValueView(key: "Variety", value: coffee.info.variety ?? "-")
 
                         Divider()
                         KeyValueView(

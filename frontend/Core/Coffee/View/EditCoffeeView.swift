@@ -28,6 +28,7 @@ struct EditCoffeeView: View {
     @State private var tempRating: Rating
     @State private var tempRoastLevel: RoastLevel
     @State private var tempTastingNotes: [TastingNote]
+    @State private var tempVariety: String
     @State private var tempCost: Double
     @State private var tempImg: String
     
@@ -43,6 +44,7 @@ struct EditCoffeeView: View {
         self._tempRating = State(initialValue: coffee.wrappedValue.info.rating ?? .zero)
         self._tempRoastLevel = State(initialValue: coffee.wrappedValue.info.roastLevel ?? .unknown)
         self._tempTastingNotes = State(initialValue: coffee.wrappedValue.info.tastingNotes ?? [])
+        self._tempVariety = State(initialValue: coffee.wrappedValue.info.variety ?? "")
         self._tempCost = State(initialValue: coffee.wrappedValue.info.cost ?? 0)
         self._tempImg = State(initialValue: coffee.wrappedValue.info.img ?? "")
     }
@@ -134,6 +136,8 @@ struct EditCoffeeView: View {
             LabeledTextField(label: "Region", text: $tempRegion, placeholder: "Add region")
             Divider()
             LabeledTextField(label: "Process", text: $tempProcess, placeholder: "Add process")
+            Divider()
+            LabeledTextField(label: "Variety", text: $tempVariety, placeholder: "Add variety")
             Divider()
             FixedOptionPicker(label: "Origin Type", selection: $tempOriginType)
             Divider()
@@ -311,6 +315,7 @@ struct EditCoffeeView: View {
                     rating: tempRating,
                     roastLevel: tempRoastLevel,
                     tastingNotes: tempTastingNotes,
+                    variety: tempVariety,
                     cost: tempCost,
                     img: imageData
                 )
@@ -332,6 +337,7 @@ struct EditCoffeeView: View {
                 coffee.info.rating = updatedCoffee.info.rating
                 coffee.info.roastLevel = updatedCoffee.info.roastLevel
                 coffee.info.tastingNotes = updatedCoffee.info.tastingNotes
+                coffee.info.variety = updatedCoffee.info.variety
                 coffee.info.cost = updatedCoffee.info.cost
                 coffee.info.img = updatedCoffee.info.img
                 
@@ -360,6 +366,7 @@ struct EditCoffeeView: View {
                 process: "Washed",
                 description: "Bright and floral with notes of citrus and jasmine",
                 originType: .singleOrigin,
+                variety: "Pink Bourban",
                 img: "https://media.istockphoto.com/id/484234714/vector/example-free-grunge-retro-blue-isolated-stamp.jpg?s=612x612&w=0&k=20&c=97KgKGpcAKnn50Ubd8PawjUybzIesoXws7PdU_MJGzE="
             )
         )
