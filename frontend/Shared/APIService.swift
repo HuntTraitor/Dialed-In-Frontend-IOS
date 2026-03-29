@@ -15,13 +15,28 @@ class BaseApiService {
     }
     
     // MARK: - Request Building
-    func authorizedRequest(path: String, method: String, token: String, body: Data? = nil) -> URLRequest {
-        var request = URLRequest(url: baseURL.appendingPathComponent(path))
+    func authorizedRequest(
+        path: String,
+        method: String,
+        token: String,
+        queryItems: [URLQueryItem]? = nil,
+        body: Data? = nil
+    ) -> URLRequest {
+        
+        let baseForPath = baseURL.appendingPathComponent(path)
+        let resolvedURL: URL
+        if let queryItems, !queryItems.isEmpty, var components = URLComponents(url: baseForPath, resolvingAgainstBaseURL: false) {
+            components.queryItems = queryItems
+            resolvedURL = components.url ?? baseForPath
+        } else {
+            resolvedURL = baseForPath
+        }
+        
+        var request = URLRequest(url: resolvedURL)
         request.httpMethod = method
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = body
