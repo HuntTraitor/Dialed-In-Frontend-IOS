@@ -7,71 +7,85 @@
 
 import Foundation
 
-struct APIResponse: Decodable {
-    let success: Bool
-    let message: String
+class BaseApiService {
+    let baseURL: URL
+    
+    init(baseURL: URL) {
+        self.baseURL = baseURL
+    }
+    
+    // MARK: - Request Building
+    func authorizedRequest(path: String, method: String, token: String, body: Data? = nil) -> URLRequest {
+        var request = URLRequest(url: baseURL.appendingPathComponent(path))
+        request.httpMethod = method
+        if !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        if let body {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = body
+        }
+        return request
+    }
+    
+    func encoded(_ input: some Encodable) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return try encoder.encode(input)
+    }
+    
+    // MARK: - Performing Requests
+    
+    func perform(
+        _ request: URLRequest,
+        customValidation: ((Int) throws -> Void)? = nil,
+        errorParser: (([String: Any]) throws -> Void)? = nil,
+    ) async throws -> Data {
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            try validate(response: response, data: data, customValidation: customValidation, errorParser: errorParser)
+            return data
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            throw APIError.unknownError(error: error)
+        }
+    }
+    
+    // MARK: - Validation
+    
+    private func validate(
+        response: URLResponse,
+        data: Data,
+        customValidation: ((Int) throws -> Void)? = nil,
+        errorParser: (([String: Any]) throws -> Void)? = nil
+    ) throws {
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.requestFailed(description: "No valid HTTP response")
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            try customValidation?(http.statusCode)
+            
+            let json = (try? JSONSerialization.jsonObject(with: data) as? [String: Any]) ?? [:]
+            
+            try errorParser?(json)
+            
+            if let message = json["error"] as? String {
+                throw APIError.custom(message: message)
+            }
+            throw APIError.invalidStatusCode(statusCode: http.statusCode)
+        }
+    }
+    
+    func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        do {
+            return try decoder.decode(type, from: data)
+        } catch {
+            throw APIError.jsonParsingFailure(error: error)
+        }
+    }
+    
 }
-
-// Send a post request with a specific body
-func Post(to urlString: String, with body: [String: Any], withHeaders headers: [String: Any]) async throws -> [String: Any] {
-    guard let url = URL(string: urlString) else {
-        throw URLError(.badURL)
-    }
-    
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    
-    for (key, value) in headers {
-        request.setValue("\(value)", forHTTPHeaderField: key)
-    }
-    
-    request.httpBody = try JSONSerialization.data(withJSONObject: body)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-
-    guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        throw URLError(.cannotParseResponse)
-    }
-    return json
-}
-
-// Send a get request with any specific headers
-func Get(to urlString: String, with headers: [String: Any]) async throws -> [String: Any] {
-    guard let url = URL(string: urlString) else {
-        throw URLError(.badURL)
-    }
-    
-    var request = URLRequest(url: url)
-    request.httpMethod = "GET"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    
-    for (key, value) in headers {
-        request.setValue("\(value)", forHTTPHeaderField: key)
-    }
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        throw URLError(.cannotParseResponse)
-    }
-    return json
-}
-
-func Delete(to urlString: String, with headers: [String: Any]) async throws -> [String: Any] {
-    guard let url = URL(string: urlString) else {
-        throw URLError(.badURL)
-    }
-    var request = URLRequest(url: url)
-    request.httpMethod = "DELETE"
-    for (key, value) in headers {
-        request.setValue("\(value)", forHTTPHeaderField: key)
-    }
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-        throw URLError(.cannotParseResponse)
-    }
-    return json
-}
-
