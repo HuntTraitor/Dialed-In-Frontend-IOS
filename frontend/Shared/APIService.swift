@@ -33,6 +33,7 @@ class BaseApiService {
         }
         
         var request = URLRequest(url: resolvedURL)
+        print(resolvedURL)
         request.httpMethod = method
         if !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -41,6 +42,7 @@ class BaseApiService {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = body
         }
+        print(request)
         return request
     }
     
@@ -95,6 +97,7 @@ class BaseApiService {
     
     func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
         let decoder = JSONDecoder()
+        print(String(data: data, encoding: .utf8) ?? "Unable to decode data")
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
             return try decoder.decode(type, from: data)

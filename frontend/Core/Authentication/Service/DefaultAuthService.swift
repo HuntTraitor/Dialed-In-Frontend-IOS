@@ -18,6 +18,7 @@ final class DefaultAuthService: BaseApiService, AuthService {
                 default: break
             }
         })
+        print("here...")
         return try decode(AuthenticationTokenResponse.self, from: data).authenticationToken
     }
     

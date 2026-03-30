@@ -14,14 +14,6 @@ struct User: Identifiable, Codable, Equatable {
     let email: String
     let createdAt: String
     let activated: Bool
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case email
-        case createdAt = "created_at"
-        case activated
-    }
 }
 
 struct Token: Codable {
@@ -41,10 +33,6 @@ struct UserResponse: Codable {
 
 struct AuthenticationTokenResponse: Codable {
     let authenticationToken: Token
-    
-    enum CodingKeys: String, CodingKey {
-        case authenticationToken = "authentication_token"
-    }
 }
 
 struct EmailSentResponse: Codable {
