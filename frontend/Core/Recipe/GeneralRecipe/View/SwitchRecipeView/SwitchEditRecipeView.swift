@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SwitchEditRecipeView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var recipe: SwitchRecipe
+    @Binding var recipe: BaseRecipe<SwitchInfo>
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
@@ -26,7 +26,7 @@ struct SwitchEditRecipeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var validationError: String? = nil
     
-    init(recipe: Binding<SwitchRecipe>) {
+    init(recipe: Binding<BaseRecipe<SwitchInfo>>) {
         self._recipe = recipe
         self._tempRecipeName = State(initialValue: recipe.wrappedValue.info.name)
         self._tempGramsIn = State(initialValue: String(recipe.wrappedValue.info.gramsIn))
@@ -199,14 +199,14 @@ struct SwitchEditRecipeView: View {
                 return
             }
             
-            let recipeInfo = SwitchRecipeInput.RecipeInfo(
+            let recipeInfo = SwitchInfo(
                 name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 phases: tempPhases
             )
             
-            let newRecipe = SwitchRecipeInput(
+            let newRecipe = SwitchInfo(
                 methodId: 2,
                 coffeeId: selectedCoffeeId,
                 info: recipeInfo
@@ -236,7 +236,7 @@ struct SwitchEditRecipeView: View {
 
 #Preview {
     PreviewWrapper {
-        SwitchEditRecipeView(recipe: .constant(SwitchRecipe.MOCK_SWITCH_RECIPE))
+        SwitchEditRecipeView(recipe: .constant(BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE))
     }
 }
 

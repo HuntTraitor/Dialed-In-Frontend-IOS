@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SwitchRecipeView: View {
-    @State var recipe: SwitchRecipe
+    @State var recipe: BaseRecipe<SwitchInfo>
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showCountdown = false
@@ -218,7 +218,7 @@ struct SwitchRecipeView: View {
 #Preview {
     PreviewWrapper {
         NavigationStack {
-            SwitchRecipeView(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+            SwitchRecipeView(recipe: BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE)
         }
     }
 }

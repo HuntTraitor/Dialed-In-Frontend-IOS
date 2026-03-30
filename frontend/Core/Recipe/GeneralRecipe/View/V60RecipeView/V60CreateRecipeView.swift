@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct V60CreateRecipeView: View {
-    let existingRecipe: V60Recipe?
+    let existingRecipe: BaseRecipe<V60Info>?
     let onSuccess: (() -> Void)?
     
     @Environment(\.dismiss) var dismiss
@@ -27,7 +27,7 @@ struct V60CreateRecipeView: View {
     @State private var validationError: String? = nil
     @State private var hasPrefilledFromExisting = false
 
-    init(existingRecipe: V60Recipe? = nil, onSuccess: (() -> Void)? = nil) {
+    init(existingRecipe: BaseRecipe<V60Info>? = nil, onSuccess: (() -> Void)? = nil) {
         self.existingRecipe = existingRecipe
         self.onSuccess = onSuccess
     }
@@ -202,14 +202,14 @@ struct V60CreateRecipeView: View {
                 return
             }
             
-            let recipeInfo = V60RecipeInput.RecipeInfo(
+            let recipeInfo = V60Info(
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 phases: phases
             )
             
-            let newRecipe = V60RecipeInput(
+            let newRecipe = BaseRecipeInput<V60Info>(
                 methodId: 1,
                 coffeeId: selectedCoffeeId,
                 info: recipeInfo

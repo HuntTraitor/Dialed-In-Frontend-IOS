@@ -12,8 +12,8 @@ import SwiftUI
 enum RecipesRoute: Hashable {
     case all
     case create
-    case switchRecipe(SwitchRecipe)
-    case v60Recipe(V60Recipe)
+    case switchRecipe(BaseRecipe<SwitchInfo>)
+    case v60Recipe(BaseRecipe<V60Info>)
 }
 
 final class NavigationManager: ObservableObject {

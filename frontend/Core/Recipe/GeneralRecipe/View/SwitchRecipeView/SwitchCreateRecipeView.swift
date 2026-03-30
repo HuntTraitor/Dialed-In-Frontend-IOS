@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SwitchCreateRecipeView: View {
-    let existingRecipe: SwitchRecipe?
+    let existingRecipe: BaseRecipe<SwitchInfo>?
     let onSuccess: (() -> Void)?
     
     @Environment(\.dismiss) var dismiss
@@ -28,7 +28,7 @@ struct SwitchCreateRecipeView: View {
     
     @State private var hasPrefilledFromExisting = false
 
-    init(existingRecipe: SwitchRecipe? = nil, onSuccess: (() -> Void)? = nil) {
+    init(existingRecipe: BaseRecipe<SwitchInfo>? = nil, onSuccess: (() -> Void)? = nil) {
         self.existingRecipe = existingRecipe
         self.onSuccess = onSuccess
     }
@@ -204,14 +204,14 @@ struct SwitchCreateRecipeView: View {
                 return
             }
             
-            let recipeInfo = SwitchRecipeInput.RecipeInfo(
+            let recipeInfo = SwitchInfo(
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 phases: phases
             )
             
-            let newRecipe = SwitchRecipeInput(
+            let newRecipe = BaseRecipeInput<SwitchInfo>(
                 methodId: 2,
                 coffeeId: selectedCoffeeId,
                 info: recipeInfo

@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct V60Animation: View {
-    let recipe: V60Recipe
+    let recipe: BaseRecipe<V60Info>
     @Binding var showAnimation: Bool
 
     @State private var currentPhaseIndex: Int = 0
@@ -212,7 +212,7 @@ struct V60Animation: View {
 
 
 #Preview {
-    V60Animation(recipe: V60Recipe.MOCK_V60_RECIPE, showAnimation: .constant(true))
+    V60Animation(recipe: BaseRecipe<V60Info>.MOCK_V60_RECIPE, showAnimation: .constant(true))
 }
 
 

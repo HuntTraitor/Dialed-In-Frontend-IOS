@@ -9,7 +9,7 @@ import SwiftUI
 
 struct V60EditRecipeView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var recipe: V60Recipe
+    @Binding var recipe: BaseRecipe<V60Info>
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
@@ -26,7 +26,7 @@ struct V60EditRecipeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var validationError: String? = nil
     
-    init(recipe: Binding<V60Recipe>) {
+    init(recipe: Binding<BaseRecipe<V60Info>>) {
         self._recipe = recipe
         self._tempRecipeName = State(initialValue: recipe.wrappedValue.info.name)
         self._tempGramsIn = State(initialValue: String(recipe.wrappedValue.info.gramsIn))
@@ -199,14 +199,14 @@ struct V60EditRecipeView: View {
                 return
             }
             
-            let recipeInfo = V60RecipeInput.RecipeInfo(
+            let recipeInfo = V60Info(
                 name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 phases: tempPhases
             )
             
-            let newRecipe = V60RecipeInput(
+            let newRecipe = BaseRecipeInput<V60Info>(
                 methodId: 1,
                 coffeeId: selectedCoffeeId,
                 info: recipeInfo
@@ -236,7 +236,7 @@ struct V60EditRecipeView: View {
 
 #Preview {
     PreviewWrapper {
-        V60EditRecipeView(recipe: .constant(V60Recipe.MOCK_V60_RECIPE))
+        V60EditRecipeView(recipe: .constant(BaseRecipe<V60Info>.MOCK_V60_RECIPE))
     }
 }
 

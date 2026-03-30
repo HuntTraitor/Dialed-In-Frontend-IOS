@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct V60RecipeViewImage: View {
-    var recipe: V60Recipe
+    var recipe: BaseRecipe<V60Info>
     
     private func rectangleHeight(for phase: V60Phase, in phases: [V60Phase]) -> CGFloat {
         let totalTime = phases.reduce(0) { $0 + $1.time }
@@ -33,6 +33,6 @@ struct V60RecipeViewImage: View {
 }
 
 #Preview {
-    V60RecipeViewImage(recipe: V60Recipe.MOCK_V60_RECIPE)
+    V60RecipeViewImage(recipe: BaseRecipe<V60Info>.MOCK_V60_RECIPE)
 }
 

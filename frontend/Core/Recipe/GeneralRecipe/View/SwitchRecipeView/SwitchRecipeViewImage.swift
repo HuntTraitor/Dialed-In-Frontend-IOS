@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SwitchRecipeViewImage: View {
-    var recipe: SwitchRecipe
+    var recipe: BaseRecipe<SwitchInfo>
     
     private func rectangleHeight(for phase: SwitchPhase, in phases: [SwitchPhase]) -> CGFloat {
         let totalTime = phases.reduce(0) { $0 + $1.time }
@@ -33,5 +33,5 @@ struct SwitchRecipeViewImage: View {
 }
 
 #Preview {
-    SwitchRecipeViewImage(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE)
+    SwitchRecipeViewImage(recipe: BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE)
 }

@@ -179,9 +179,9 @@ struct RecipeCard: View {
 }
 
 extension Binding where Value == Recipe {
-    var switchRecipeBinding: Binding<SwitchRecipe>? {
+    var switchRecipeBinding: Binding<BaseRecipe<SwitchInfo>>? {
         guard case .switchRecipe = wrappedValue else { return nil }
-        return Binding<SwitchRecipe>(
+        return Binding<BaseRecipe<SwitchInfo>>(
             get: {
                 if case .switchRecipe(let sr) = self.wrappedValue {
                     return sr
@@ -194,9 +194,9 @@ extension Binding where Value == Recipe {
         )
     }
     
-    var v60RecipeBinding: Binding<V60Recipe>? {
+    var v60RecipeBinding: Binding<BaseRecipe<V60Info>>? {
         guard case .v60Recipe = wrappedValue else { return nil }
-        return Binding<V60Recipe>(
+        return Binding<BaseRecipe<V60Info>>(
             get: {
                 if case .v60Recipe(let vr) = self.wrappedValue {
                     return vr
@@ -212,7 +212,7 @@ extension Binding where Value == Recipe {
 
 
 #Preview {
-    @Previewable @State var recipe = Recipe.switchRecipe(SwitchRecipe.MOCK_SWITCH_RECIPE)
+    @Previewable @State var recipe = Recipe.switchRecipe(BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE)
     PreviewWrapper {
         RecipeCard(recipe: $recipe)
     }

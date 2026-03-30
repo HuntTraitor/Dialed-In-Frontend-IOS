@@ -9,7 +9,7 @@ import SwiftUI
 import Lottie
 
 struct SwitchRecipeSummary: View {
-    var recipe: SwitchRecipe
+    var recipe: BaseRecipe<SwitchInfo>
     @Binding var showAnimation: Bool
     var brewTime: String {
         timeString(from: recipe.info.phases.reduce(0) { $0 + $1.time })
@@ -228,5 +228,5 @@ struct SwitchRecipeSummary: View {
 }
 
 #Preview {
-    SwitchRecipeSummary(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE_NO_COFFEE, showAnimation: .constant(true))
+    SwitchRecipeSummary(recipe: BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE_NO_COFFEE, showAnimation: .constant(true))
 }

@@ -9,7 +9,7 @@ import SwiftUI
 import Lottie
 
 struct V60RecipeSummary: View {
-    var recipe: V60Recipe
+    var recipe: BaseRecipe<V60Info>
     @Binding var showAnimation: Bool
     var brewTime: String {
         timeString(from: recipe.info.phases.reduce(0) { $0 + $1.time })
@@ -227,7 +227,7 @@ struct V60RecipeSummary: View {
 }
 
 #Preview {
-    V60RecipeSummary(recipe: V60Recipe.MOCK_V60_RECIPE_NO_COFFEE, showAnimation: .constant(true))
+    V60RecipeSummary(recipe: BaseRecipe<V60Info>.MOCK_V60_RECIPE_NO_COFFEE, showAnimation: .constant(true))
 }
 
 

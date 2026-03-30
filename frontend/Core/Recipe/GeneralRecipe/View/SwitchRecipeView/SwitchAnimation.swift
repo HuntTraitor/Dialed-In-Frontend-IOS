@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct SwitchAnimation: View {
-    let recipe: SwitchRecipe
+    let recipe: BaseRecipe<SwitchInfo>
     @Binding var showAnimation: Bool
 
     @State private var currentPhaseIndex: Int = 0
@@ -272,6 +272,6 @@ extension SwitchAnimation {
 }
 
 #Preview {
-    SwitchAnimation(recipe: SwitchRecipe.MOCK_SWITCH_RECIPE, showAnimation: .constant(true))
+    SwitchAnimation(recipe: BaseRecipe.MOCK_SWITCH_RECIPE, showAnimation: .constant(true))
 }
 

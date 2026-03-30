@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct V60RecipeView: View {
-    @State var recipe: V60Recipe
+    @State var recipe: BaseRecipe<V60Info>
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showCountdown = false
@@ -227,7 +227,7 @@ struct V60RecipeView: View {
 #Preview {
     PreviewWrapper {
         NavigationStack {
-            V60RecipeView(recipe: V60Recipe.MOCK_V60_RECIPE)
+            V60RecipeView(recipe: BaseRecipe<V60Info>.MOCK_V60_RECIPE)
         }
     }
 }
