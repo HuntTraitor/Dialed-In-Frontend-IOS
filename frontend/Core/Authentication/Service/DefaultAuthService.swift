@@ -7,237 +7,62 @@
 
 import Foundation
 
-final class DefaultAuthService: AuthService {
-    
-    private let baseURL: URL
-    
-    init(baseURL: URL) {
-        self.baseURL = baseURL
-    }
+final class DefaultAuthService: BaseApiService, AuthService {
     
     func signIn(withEmail email: String, password: String) async throws -> Token {
-        let url = baseURL.appendingPathComponent("tokens/authentication")
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody: [String: String] = ["email": email, "password": password]
-        request.httpBody = try JSONEncoder().encode(requestBody)
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response")
+        let body = try encoded(["email": email, "password": password])
+        let request = authorizedRequest(path: "tokens/authentication", method: "POST", token: "", body: body)
+        let data = try await perform(request, customValidation: {statusCode in
+                switch statusCode {
+                case 401: throw APIError.custom(message: "Invalid email or password")
+                default: break
             }
-
-            guard (200..<300).contains(httpResponse.statusCode) else {
-                switch httpResponse.statusCode {
-                case 401:
-                    throw APIError.custom(message: "Invalid email or password.")
-                case 404:
-                    throw APIError.custom(message: "We couldn't find an account with that email.")
-                default:
-                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                       let errorMessage = json["error"] as? String {
-                        throw APIError.custom(message: errorMessage)
-                    } else {
-                        throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
-                    }
-                }
-            }
-            if let decoded = try? JSONDecoder().decode(AuthenticationTokenResponse.self, from: data) {
-                return decoded.authenticationToken
-            } else {
-                throw APIError.jsonParsingFailure(error: NSError(domain: "Unable to decode token", code: 0))
-            }
-        } catch let apiError as APIError {
-            throw apiError
-        } catch {
-            throw APIError.unknownError(error: error)
-        }
+        })
+        return try decode(AuthenticationTokenResponse.self, from: data).authenticationToken
     }
     
     func createUser(withEmail email: String, password: String, name: String) async throws -> User {
-        let url = baseURL.appendingPathComponent("users")
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody = ["name": name, "email": email, "password": password]
-        request.httpBody = try JSONEncoder().encode(requestBody)
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response")
-            }
-
-            guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let errorDict = json["error"] as? [String: Any] {
-                    
-                    if let emailError = errorDict["email"] as? String {
-                        throw APIError.custom(message: emailError.prefix(1).capitalized + emailError.dropFirst()) // capitalize first letter
-                    } else if let generalError = errorDict.values.first as? String {
-                        throw APIError.custom(message: generalError)
-                    }
+        let body = try encoded(["name": name, "email": email, "password": password])
+        let request = authorizedRequest(path: "users", method: "POST", token: "", body: body)
+        let data = try await perform(request, customValidation: { [weak self] _ in
+                
+        }, errorParser: { json in
+            if let errorDict = json["error"] as? [String:Any] {
+                let message = (errorDict["email"] as? String) ?? (errorDict.values.first as? String) ?? ""
+                if !message.isEmpty {
+                    throw APIError.custom(message: message.prefix(1).uppercased() + message.dropFirst())
                 }
-                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
             }
-
-            let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
-            return decoded.user
-
-        } catch let apiError as APIError {
-            throw apiError
-        } catch {
-            throw APIError.unknownError(error: error)
-        }
+        })
+        return try decode(UserResponse.self, from: data).user
     }
-
-    func verifyUser(withToken token: String) async throws -> User {
-        let url = baseURL.appendingPathComponent("users/verify")
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response")
-            }
-
-            guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let errorMessage = json["error"] as? String {
-                    throw APIError.custom(message: errorMessage)
-                }
-                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
-            }
-
-            let decoded = try JSONDecoder().decode(UserResponse.self, from: data)
-            return decoded.user
-
-        } catch let apiError as APIError {
-            throw apiError
-        } catch {
-            throw APIError.unknownError(error: error)
-        }
+    func verifyUser(withToken token: String) async throws -> User {
+        let request = authorizedRequest(path: "users/verify", method: "GET", token: token)
+        let data = try await perform(request)
+        return try decode(UserResponse.self, from: data).user
     }
     
     func sendPasswordResetEmail(toEmail email: String) async throws -> EmailSentResponse {
-        let url = baseURL.appendingPathComponent("tokens/password-reset")
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody = ["email": email]
-        request.httpBody = try JSONEncoder().encode(requestBody)
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response")
-            }
-            
-            guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("Email sending failed with response: \(json)")
-                    if let errorMessage = json["error"] as? String {
-                        throw APIError.custom(message: errorMessage)
-                    }
-                }
-                if httpResponse.statusCode == 422 {
-                    throw APIError.custom(message: "No account found with that email address.")
-                }
-                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
-            }
-            
-            do {
-                let decoded = try JSONDecoder().decode(EmailSentResponse.self, from: data)
-                return decoded
-            } catch let decodingError as DecodingError {
-                switch decodingError {
-                case .typeMismatch(let type, let context):
-                    print("Type mismatch for type \(type) at \(context.codingPath): \(context.debugDescription)")
-                case .valueNotFound(let type, let context):
-                    print("Value of type \(type) not found at \(context.codingPath): \(context.debugDescription)")
-                case .keyNotFound(let key, let context):
-                    print("Key '\(key)' not found at \(context.codingPath): \(context.debugDescription)")
-                case .dataCorrupted(let context):
-                    print("Data corrupted at \(context.codingPath): \(context.debugDescription)")
-                @unknown default:
-                    print("Unknown decoding error: \(decodingError)")
-                }
-                throw APIError.jsonParsingFailure(error: decodingError)
-            } catch {
-                // For non-DecodingErrors (e.g., data issues)
-                print("Unexpected error: \(error)")
-                throw APIError.jsonParsingFailure(error: error)
-            }
-            
-        } catch let apiError as APIError {
-            throw apiError
-        } catch {
-            throw APIError.unknownError(error: error)
-        }
+        let body = try encoded(["email": email])
+        let request = authorizedRequest(path: "tokens/password-reset", method: "POST", token: "", body: body)
+        let data = try await perform(request, customValidation: { statusCode in
+            if statusCode == 422 { throw APIError.custom(message: "No account found with that email address.")}
+        })
+        return try decode(EmailSentResponse.self, from: data)
     }
     
     func resetPassword(password: String, code: String) async throws -> PasswordResetResponse {
-        let url = baseURL.appendingPathComponent("users/password")
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body = try encoded(["password": password, "token": code])
+        let request = authorizedRequest(path: "users/password", method: "PUT", token: "", body: body)
+        let data = try await perform(request, errorParser: { json in
+            if let tokenError = (json["error"] as? [String: String])?["token"] {
+                throw APIError.custom(message: tokenError)
+            }
+        })
         
-        let requestBody = ["password": password, "token": code]
-        request.httpBody = try JSONEncoder().encode(requestBody)
+        return try decode(PasswordResetResponse.self, from: data)
         
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw APIError.requestFailed(description: "No valid HTTP response")
-            }
-            
-            guard (200..<300).contains(httpResponse.statusCode) else {
-                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("Email sending failed with response: \(json)")
-                    if let errorMessage = json["error"] as? String {
-                        throw APIError.custom(message: errorMessage)
-                    } else if let errorMessage = json["error"] as? [String: String] {
-                        throw APIError.custom(message: errorMessage["token"] ?? "An unexpected error has occured")
-                    }
-                }
-                throw APIError.invalidStatusCode(statusCode: httpResponse.statusCode)
-            }
-            
-            do {
-                let decoded = try JSONDecoder().decode(PasswordResetResponse.self, from: data)
-                return decoded
-            } catch let decodingError as DecodingError {
-                switch decodingError {
-                case .typeMismatch(let type, let context):
-                    print("Type mismatch for type \(type) at \(context.codingPath): \(context.debugDescription)")
-                case .valueNotFound(let type, let context):
-                    print("Value of type \(type) not found at \(context.codingPath): \(context.debugDescription)")
-                case .keyNotFound(let key, let context):
-                    print("Key '\(key)' not found at \(context.codingPath): \(context.debugDescription)")
-                case .dataCorrupted(let context):
-                    print("Data corrupted at \(context.codingPath): \(context.debugDescription)")
-                @unknown default:
-                    print("Unknown decoding error: \(decodingError)")
-                }
-                throw APIError.jsonParsingFailure(error: decodingError)
-            } catch {
-                // For non-DecodingErrors (e.g., data issues)
-                print("Unexpected error: \(error)")
-                throw APIError.jsonParsingFailure(error: error)
-            }
-            
-        } catch let apiError as APIError {
-            throw apiError
-        } catch {
-            throw APIError.unknownError(error: error)
-        }
     }
+    
 }
-
