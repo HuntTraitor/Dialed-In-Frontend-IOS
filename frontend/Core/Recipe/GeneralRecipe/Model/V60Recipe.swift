@@ -12,6 +12,8 @@ struct V60Info: RecipeInfo {
     var name: String
     var gramsIn: Int
     var mlOut: Int
+    var waterTemp: String
+    var grindSize: String?
     var phases: [V60Phase]
 }
 
@@ -30,6 +32,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 45, amount: 160),
                 V60Phase(time: 75, amount: 160),
@@ -45,6 +48,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 3, amount: 160),
                 V60Phase(time: 3, amount: 160),
@@ -61,6 +65,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 3, amount: 160),
                 V60Phase(time: 3, amount: 160),
@@ -79,6 +84,7 @@ extension BaseRecipe where Info == V60Info {
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     V60Phase(time: 3, amount: 160),
                     V60Phase(time: 3, amount: 160),
@@ -95,6 +101,7 @@ extension BaseRecipe where Info == V60Info {
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     V60Phase(time: 3, amount: 160),
                     V60Phase(time: 3, amount: 160),
@@ -111,6 +118,7 @@ extension BaseRecipe where Info == V60Info {
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     V60Phase(time: 3, amount: 160),
                     V60Phase(time: 3, amount: 160),
@@ -127,6 +135,7 @@ extension BaseRecipe where Info == V60Info {
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     V60Phase(time: 3, amount: 160),
                     V60Phase(time: 3, amount: 160),
@@ -147,6 +156,7 @@ extension BaseRecipe where Info == V60Info {
             name: "James Hoffman V60 Recipe",
             gramsIn: 15,
             mlOut: 250,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 45, amount: 50),
                 V60Phase(time: 20, amount: 50),
@@ -166,6 +176,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Tetsu Kasuya 4:6 V60 Recipe",
             gramsIn: 20,
             mlOut: 300,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 45, amount: 60),
                 V60Phase(time: 45, amount: 60),
@@ -185,6 +196,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Matt Winton Five Pour Method",
             gramsIn: 20,
             mlOut: 300,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 35, amount: 60),
                 V60Phase(time: 40, amount: 60),
@@ -204,6 +216,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Lance Hedrick High Extraction",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 30, amount: 60),
                 V60Phase(time: 30, amount: 60),
@@ -222,6 +235,7 @@ extension BaseRecipe where Info == V60Info {
             name: "Lance Hedrick Preferred Method",
             gramsIn: 15,
             mlOut: 250,
+            waterTemp: "100°C",
             phases: [
                 V60Phase(time: 60, amount: 45),
                 V60Phase(time: 120, amount: 205)

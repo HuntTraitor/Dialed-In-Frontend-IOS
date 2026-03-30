@@ -12,6 +12,8 @@ struct SwitchInfo: RecipeInfo {
     var name: String
     var gramsIn: Int
     var mlOut: Int
+    var waterTemp: String
+    var grindSize: String?
     var phases: [SwitchPhase]
 }
 
@@ -32,6 +34,7 @@ extension BaseRecipe where Info == SwitchInfo {
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 SwitchPhase(open: true, time: 45, amount: 160),
                 SwitchPhase(open: false, time: 75, amount: 160),
@@ -47,6 +50,7 @@ extension BaseRecipe where Info == SwitchInfo {
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 SwitchPhase(open: true, time: 3, amount: 160),
                 SwitchPhase(open: false, time: 3, amount: 160),
@@ -63,6 +67,7 @@ extension BaseRecipe where Info == SwitchInfo {
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 SwitchPhase(open: true, time: 3, amount: 160),
                 SwitchPhase(open: false, time: 3, amount: 160),
@@ -81,6 +86,7 @@ extension BaseRecipe where Info == SwitchInfo {
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     SwitchPhase(open: true, time: 3, amount: 160),
                     SwitchPhase(open: false, time: 3, amount: 160),
@@ -97,6 +103,7 @@ extension BaseRecipe where Info == SwitchInfo {
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     SwitchPhase(open: true, time: 3, amount: 160),
                     SwitchPhase(open: false, time: 3, amount: 160),
@@ -113,6 +120,7 @@ extension BaseRecipe where Info == SwitchInfo {
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     SwitchPhase(open: true, time: 3, amount: 160),
                     SwitchPhase(open: false, time: 3, amount: 160),
@@ -129,6 +137,7 @@ extension BaseRecipe where Info == SwitchInfo {
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
+                waterTemp: "100°C",
                 phases: [
                     SwitchPhase(open: true, time: 3, amount: 160),
                     SwitchPhase(open: false, time: 3, amount: 160),
@@ -149,6 +158,7 @@ extension BaseRecipe where Info == SwitchInfo {
             name: "Coffee Chronicler Hario Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
+            waterTemp: "100°C",
             phases: [
                 SwitchPhase(open: true, time: 45, amount: 160),
                 SwitchPhase(open: false, time: 75, amount: 160),
@@ -166,6 +176,7 @@ extension BaseRecipe where Info == SwitchInfo {
             name: "The Real Sprometheus Method",
             gramsIn: 18,
             mlOut: 288,
+            waterTemp: "100°C",
             phases: [
                 SwitchPhase(open: true, time: 45, amount: 72),
                 SwitchPhase(open: false, time: 25, amount: 72),

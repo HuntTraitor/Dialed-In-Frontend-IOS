@@ -13,6 +13,8 @@ protocol RecipeInfo: Codable, Hashable {
     var name: String { get }
     var gramsIn: Int { get }
     var mlOut: Int { get }
+    var waterTemp: String { get }
+    var grindSize: String? { get }
 }
 
 // MARK: - RecipeData Protocol
@@ -76,6 +78,8 @@ enum Recipe: Identifiable, Codable {
     var method: Method { base.method }
     var gramsIn: Int { base.info.gramsIn }
     var mlOut: Int { base.info.mlOut }
+    var waterTemp: String { base.info.waterTemp }
+    var grindSize: String? { base.info.grindSize }
     
     init(from decoder: Decoder) throws {
         let envelope = try RecipeEnvelope(from: decoder)
