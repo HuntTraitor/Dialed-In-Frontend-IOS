@@ -27,7 +27,6 @@ struct SwitchCreateRecipeView: View {
     @State private var validationError: String? = nil
     @State private var waterTemp: String = ""
     @State private var isCelsius: Bool = false
-    @State private var waterTempDisplay: String = ""
 
     // Add this computed property:
     var tempUnit: String { isCelsius ? "°C" : "°F" }
@@ -71,13 +70,9 @@ struct SwitchCreateRecipeView: View {
                 Section("Water Temperature") {
                     HStack {
                         TextField("Temperature", text: $waterTemp)
-                            .keyboardType(.decimalPad)
+                            .keyboardType(.numberPad)
                             .onChange(of: waterTemp) {
-                                if !waterTemp.isEmpty {
-                                    waterTempDisplay = "\(waterTemp)\(tempUnit)"
-                                } else {
-                                    waterTempDisplay = ""
-                                }
+                                waterTemp = waterTemp.filter { $0.isNumber }
                             }
                         
                         Divider()
@@ -88,17 +83,6 @@ struct SwitchCreateRecipeView: View {
                         }
                         .pickerStyle(.segmented)
                         .frame(width: 80)
-                        .onChange(of: isCelsius) {
-                            if !waterTemp.isEmpty {
-                                waterTempDisplay = "\(waterTemp)\(tempUnit)"
-                            }
-                        }
-                    }
-                    
-                    if !waterTempDisplay.isEmpty {
-                        Text(waterTempDisplay)
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
                     }
                 }
                 
@@ -244,11 +228,14 @@ struct SwitchCreateRecipeView: View {
                 return
             }
             
+            let unit = isCelsius ? "°C" : "°F"
+            let waterTempString = waterTemp.isEmpty ? "" : "\(waterTemp)\(unit)"
+            
             let recipeInfo = SwitchInfo(
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
-                waterTemp: waterTempDisplay,
+                waterTemp: waterTempString,
                 phases: phases
             )
             

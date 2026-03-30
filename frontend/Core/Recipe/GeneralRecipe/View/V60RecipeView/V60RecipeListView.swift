@@ -15,7 +15,7 @@ struct V60RecipeListView: View {
     @State private var isShowingCreateRecipeView = false
     @State private var hasAppeared: Bool = false
     
-    var filteredRecipes: [Binding<V60Recipe>] {
+    var filteredRecipes: [Binding<BaseRecipe<V60Info>>] {
         viewModel.v60Recipes.indices.compactMap { index in
             let recipe = viewModel.v60Recipes[index]
             guard searchTerm.isEmpty || recipe.info.name.localizedCaseInsensitiveContains(searchTerm) else {

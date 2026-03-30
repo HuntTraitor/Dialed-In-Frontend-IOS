@@ -27,7 +27,6 @@ struct V60EditRecipeView: View {
     @State private var validationError: String? = nil
     @State private var waterTemp: String = ""
     @State private var isCelsius: Bool = false
-    @State private var waterTempDisplay: String = ""
 
     var tempUnit: String { isCelsius ? "°C" : "°F" }
     
@@ -81,13 +80,9 @@ struct V60EditRecipeView: View {
                 Section("Water Temperature") {
                     HStack {
                         TextField("Temperature", text: $waterTemp)
-                            .keyboardType(.decimalPad)
+                            .keyboardType(.numberPad)
                             .onChange(of: waterTemp) {
-                                if !waterTemp.isEmpty {
-                                    waterTempDisplay = "\(waterTemp)\(tempUnit)"
-                                } else {
-                                    waterTempDisplay = ""
-                                }
+                                waterTemp = waterTemp.filter { $0.isNumber }
                             }
                         
                         Divider()
@@ -98,17 +93,6 @@ struct V60EditRecipeView: View {
                         }
                         .pickerStyle(.segmented)
                         .frame(width: 80)
-                        .onChange(of: isCelsius) {
-                            if !waterTemp.isEmpty {
-                                waterTempDisplay = "\(waterTemp)\(tempUnit)"
-                            }
-                        }
-                    }
-                    
-                    if !waterTempDisplay.isEmpty {
-                        Text(waterTempDisplay)
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
                     }
                 }
                 
@@ -238,11 +222,14 @@ struct V60EditRecipeView: View {
                 return
             }
             
+            let unit = isCelsius ? "°C" : "°F"
+            let waterTempString = waterTemp.isEmpty ? "" : "\(waterTemp)\(unit)"
+            
             let recipeInfo = V60Info(
                 name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
-                waterTemp: waterTempDisplay,
+                waterTemp: waterTempString,
                 phases: tempPhases
             )
             

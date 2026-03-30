@@ -12,8 +12,8 @@ class RecipeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var allRecipes: [Recipe] = []
-    @Published var switchRecipes: [SwitchRecipe] = []
-    @Published var v60Recipes: [V60Recipe] = []
+    @Published var switchRecipes: [BaseRecipe<SwitchInfo>] = []
+    @Published var v60Recipes: [BaseRecipe<V60Info>] = []
 
     private let recipeService: RecipeService
 

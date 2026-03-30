@@ -15,7 +15,7 @@ struct SwitchRecipeListView: View {
     @State private var isShowingCreateRecipeView = false
     @State private var hasAppeared: Bool = false
     
-    var filteredRecipes: [Binding<SwitchRecipe>] {
+    var filteredRecipes: [Binding<BaseRecipe<SwitchInfo>>] {
         viewModel.switchRecipes.indices.compactMap { index in
             let recipe = viewModel.switchRecipes[index]
             guard searchTerm.isEmpty || recipe.info.name.localizedCaseInsensitiveContains(searchTerm) else {
