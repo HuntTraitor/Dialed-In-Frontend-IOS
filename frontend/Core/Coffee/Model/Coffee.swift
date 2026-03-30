@@ -14,14 +14,6 @@ struct Coffee: Identifiable, Codable, Hashable {
     var info: CoffeeInfo
     var createdAt: String?
     var version: Int?
-    
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case userId = "user_id"
-        case info
-        case createdAt = "created_at"
-        case version
-    }
 }
 
 struct CoffeeInfo: Codable, Hashable {
@@ -38,10 +30,6 @@ struct CoffeeInfo: Codable, Hashable {
     var variety: String?
     var cost: Double?
     var img: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case name, roaster, decaf, region, process, description, originType = "origin_type", rating, roastLevel = "roast_level", tastingNotes = "tasting_notes", variety, cost, img
-    }
 }
 
 extension CoffeeInfo {

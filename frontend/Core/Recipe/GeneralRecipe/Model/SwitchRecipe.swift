@@ -8,94 +8,27 @@
 import Foundation
 import UIKit
 
-struct SwitchRecipe: Identifiable, Codable, Hashable {
-        var id: Int
-        var userId: Int
-        var coffee: Coffee?
-        var method: Method
-        var info: RecipeInfo
-        var createdAt: String?
-        var version: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case userId = "user_id"
-        case coffee
-        case method
-        case info
-        case createdAt = "created_at"
-        case version
-    }
-    
-    struct RecipeInfo: Codable, Hashable{
-        var name: String
-        var gramsIn: Int
-        var mlOut: Int
-        var phases: [SwitchPhase]
-        
-            
-        enum CodingKeys: String, CodingKey {
-            case name
-            case gramsIn = "grams_in"
-            case mlOut = "ml_out"
-            case phases
-        }
-    }
+struct SwitchInfo: RecipeInfo {
+    var name: String
+    var gramsIn: Int
+    var mlOut: Int
+    var phases: [SwitchPhase]
 }
 
-struct SwitchRecipeInput: Codable, Hashable, RecipeInput {
-    var methodId: Int
-    var coffeeId: Int?
-    var info: RecipeInfo
-    
-    
-    enum CodingKeys: String, CodingKey {
-        case methodId = "method_id"
-        case coffeeId = "coffee_id"
-        case info
-    }
-    
-    struct RecipeInfo: Codable, Hashable {
-        var name: String
-        var gramsIn: Int
-        var mlOut: Int
-        var phases: [SwitchPhase]
-        
-        enum CodingKeys: String, CodingKey {
-            case name
-            case gramsIn = "grams_in"
-            case mlOut = "ml_out"
-            case phases
-        }
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(methodId, forKey: .methodId)
-        try container.encode(info, forKey: .info)
-
-        if let coffeeId {
-            try container.encode(coffeeId, forKey: .coffeeId)
-        } else {
-            try container.encodeNil(forKey: .coffeeId)
-        }
-    }
-}
-
+// MARK: - Phase
 struct SwitchPhase: Codable, Hashable {
     var open: Bool
     var time: Int
     var amount: Int
 }
 
-extension SwitchRecipe {
-    static var MOCK_SWITCH_RECIPE = SwitchRecipe(
+extension BaseRecipe where Info == SwitchInfo {
+    static var MOCK_SWITCH_RECIPE = BaseRecipe<SwitchInfo>(
         id: 1,
         userId: User.MOCK_USER.id,
         coffee: Coffee.MOCK_COFFEE,
         method: Method.MOCK_METHOD,
-        info: RecipeInfo(
+        info: SwitchInfo(
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -107,10 +40,10 @@ extension SwitchRecipe {
         )
     )
     
-    static var MOCK_SWITCH_RECIPE_INPUT = SwitchRecipeInput(
+    static var MOCK_SWITCH_RECIPE_INPUT = BaseRecipeInput<SwitchInfo>(
         methodId: 1,
         coffeeId: Coffee.MOCK_COFFEE.id,
-        info: SwitchRecipeInput.RecipeInfo(
+        info: SwitchInfo(
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -122,11 +55,11 @@ extension SwitchRecipe {
         )
     )
     
-    static var MOCK_SWITCH_RECIPE_NO_COFFEE = SwitchRecipe(
+    static var MOCK_SWITCH_RECIPE_NO_COFFEE = BaseRecipe<SwitchInfo>(
         id: 1,
         userId: User.MOCK_USER.id,
         method: Method.MOCK_METHOD,
-        info: SwitchRecipe.RecipeInfo(
+        info: SwitchInfo(
             name: "Classic Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -139,12 +72,12 @@ extension SwitchRecipe {
     )
     
     static var MOCK_SWITCH_RECIPES = [
-        SwitchRecipe(
+        BaseRecipe<SwitchInfo>(
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: SwitchInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -155,12 +88,12 @@ extension SwitchRecipe {
                 ]
             )
         ),
-        SwitchRecipe(
+        BaseRecipe<SwitchInfo>(
             id: 2,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: SwitchInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -171,12 +104,12 @@ extension SwitchRecipe {
                 ]
             )
         ),
-        SwitchRecipe(
+        BaseRecipe<SwitchInfo>(
             id: 3,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: SwitchInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -187,12 +120,12 @@ extension SwitchRecipe {
                 ]
             )
         ),
-        SwitchRecipe(
+        BaseRecipe<SwitchInfo>(
             id: 4,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: SwitchInfo(
                 name: "Classic Switch Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -206,13 +139,13 @@ extension SwitchRecipe {
     ]
 }
 
-extension SwitchRecipe {
-    static var COFFEE_CHRONICLER_RECIPE = SwitchRecipe(
+extension BaseRecipe where Info == SwitchInfo {
+    static var COFFEE_CHRONICLER_RECIPE = BaseRecipe<SwitchInfo>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.SWITCH,
-        info: SwitchRecipe.RecipeInfo(
+        info: SwitchInfo(
             name: "Coffee Chronicler Hario Switch Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -224,12 +157,12 @@ extension SwitchRecipe {
         )
     )
     
-    static var SPROMETHEUS_RECIPE = SwitchRecipe(
+    static var SPROMETHEUS_RECIPE = BaseRecipe<SwitchInfo>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.SWITCH,
-        info: SwitchRecipe.RecipeInfo(
+        info: SwitchInfo(
             name: "The Real Sprometheus Method",
             gramsIn: 18,
             mlOut: 288,

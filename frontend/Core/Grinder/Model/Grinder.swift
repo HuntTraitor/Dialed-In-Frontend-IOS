@@ -14,14 +14,6 @@ struct Grinder: Identifiable, Codable, Hashable {
     var name: String
     var createdAt: String?
     var version: String?
-    
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case userId = "user_id"
-        case name
-        case createdAt = "created_at"
-        case version
-    }
 }
 
 struct GrinderInput: Codable {

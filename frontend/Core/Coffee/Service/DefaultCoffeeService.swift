@@ -16,6 +16,7 @@ final class DefaultCoffeeService: BaseApiService, CoffeeService {
     }
     
     func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee {
+        print(token)
         let request = multipartRequest(path: "coffees", method: "POST", token: token, input: input)
         let data = try await perform(request)
         return try decode(SingleCoffeeResponse.self, from: data).coffee
@@ -42,7 +43,7 @@ final class DefaultCoffeeService: BaseApiService, CoffeeService {
         let boundary = "Boundary-\(UUID().uuidString)"
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = method
-        request.setValue("Barer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.httpBody = input.toMultiPartData(boundary: boundary)
         return request

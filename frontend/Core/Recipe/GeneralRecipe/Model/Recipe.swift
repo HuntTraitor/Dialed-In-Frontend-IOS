@@ -7,212 +7,97 @@
 
 import Foundation
 
-enum Recipe: Identifiable, Codable {
-    case switchRecipe(SwitchRecipe)
-    case v60Recipe(V60Recipe)
+// MARK: - RecipeInfo Protocol
 
-    var id: Int {
-        switch self {
-        case .switchRecipe(let data): return data.id
-        case .v60Recipe(let data): return data.id
-        }
-    }
-
-    var name: String {
-        switch self {
-        case .switchRecipe(let data): return data.info.name
-        case .v60Recipe(let data): return data.info.name
-        }
-    }
-    
-    var coffee: Coffee? {
-        switch self {
-        case .switchRecipe(let data): return data.coffee
-        case .v60Recipe(let data): return data.coffee
-        }
-    }
-    
-    var method: Method {
-        switch self {
-        case .switchRecipe(let data): return data.method
-        case .v60Recipe(let data): return data.method
-        }
-    }
-    
-    var gramsIn: Int {
-        switch self {
-        case .switchRecipe(let data): return data.info.gramsIn
-        case.v60Recipe(let data): return data.info.gramsIn
-        }
-    }
-    
-    var mlOut: Int {
-        switch self {
-        case .switchRecipe(let data): return data.info.mlOut
-        case .v60Recipe(let data): return data.info.mlOut
-        }
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case type
-    }
-
-    private enum RecipeType: String, Codable {
-        case switchRecipe
-        case v60Recipe
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        
-        // Decode raw dictionary
-        let rawRecipe: [String: AnyCodable]
-        do {
-            rawRecipe = try container.decode([String: AnyCodable].self)
-        } catch {
-            print("❌ Failed to decode rawRecipe")
-            throw error
-        }
-
-        // Attempt to get method dictionary
-        guard let methodValue = rawRecipe["method"]?.value else {
-            print("❌ Missing 'method' in rawRecipe")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Missing method")
-        }
-
-        guard let methodDict = methodValue as? [String: AnyCodable] else {
-            print("❌ method is not [String: AnyCodable], got: \(type(of: methodValue))")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "method was not a dictionary")
-        }
-
-        guard let nameValue = methodDict["name"]?.value else {
-            print("❌ Missing 'name' in methodDict")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Missing method.name")
-        }
-
-        guard let methodName = nameValue as? String else {
-            print("❌ method.name is not a String, got: \(type(of: nameValue))")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "method.name was not a string")
-        }
-
-        // Now encode and re-decode safely
-        let plainJSON = unwrap(rawRecipe.mapValues { $0.value })
-        guard JSONSerialization.isValidJSONObject(plainJSON) else {
-            print("❌ Invalid JSON serialization object")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot re-encode object")
-        }
-
-        let jsonData = try JSONSerialization.data(withJSONObject: plainJSON, options: [])
-        let decoder = JSONDecoder()
-
-        switch methodName {
-        case "Hario Switch":
-            do {
-                let switchRecipe = try decoder.decode(SwitchRecipe.self, from: jsonData)
-                self = .switchRecipe(switchRecipe)
-            } catch {
-                print("❌ Failed to decode as SwitchRecipe")
-                throw error
-            }
-        
-        case "V60":
-            do {
-                let v60Recipe = try decoder.decode(V60Recipe.self, from: jsonData)
-                self = .v60Recipe(v60Recipe)
-            } catch {
-                print("❌ Failed to decode as V60Recipe")
-                throw error
-            }
-            
-        default:
-            print("❌ Unknown method: \(methodName)")
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown method \(methodName)")
-        }
-    }
-
-
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        switch self {
-        case .switchRecipe(let data):
-            try container.encode(RecipeType.switchRecipe, forKey: .type)
-            try data.encode(to: encoder)
-        case .v60Recipe(let data):
-            try container.encode(RecipeType.v60Recipe, forKey: .type)
-            try data.encode(to: encoder)
-        }
-    }
+protocol RecipeInfo: Codable, Hashable {
+    var name: String { get }
+    var gramsIn: Int { get }
+    var mlOut: Int { get }
 }
 
-struct AnyCodable: Codable {
-    let value: Any
+// MARK: - RecipeData Protocol
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-
-        if let int = try? container.decode(Int.self) {
-            value = int
-        } else if let double = try? container.decode(Double.self) {
-            value = double
-        } else if let string = try? container.decode(String.self) {
-            value = string
-        } else if let bool = try? container.decode(Bool.self) {
-            value = bool
-        } else if let array = try? container.decode([AnyCodable].self) {
-            value = array
-        } else if let dict = try? container.decode([String: AnyCodable].self) {
-            value = dict
-        } else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown type")
-        }
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch value {
-        case let int as Int:
-            try container.encode(int)
-        case let double as Double:
-            try container.encode(double)
-        case let string as String:
-            try container.encode(string)
-        case let bool as Bool:
-            try container.encode(bool)
-        case let array as [AnyCodable]:
-            try container.encode(array)
-        case let dict as [String: AnyCodable]:
-            try container.encode(dict)
-        default:
-            throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported value"))
-        }
-    }
+protocol RecipeData: Codable {
+    associatedtype Info: RecipeInfo
+    var id: Int { get }
+    var info: Info { get }
+    var coffee: Coffee? { get }
+    var method: Method { get }
 }
 
-func unwrap(_ value: Any) -> Any {
-    if let codable = value as? AnyCodable {
-        return unwrap(codable.value)
-    } else if let dict = value as? [String: Any] {
-        return dict.mapValues(unwrap)
-    } else if let dict = value as? [String: AnyCodable] {
-        return dict.mapValues { unwrap($0.value) }
-    } else if let array = value as? [Any] {
-        return array.map(unwrap)
-    } else if let array = value as? [AnyCodable] {
-        return array.map { unwrap($0.value) }
-    } else {
-        return value
-    }
+// MARK: - Base Recipe
+
+struct BaseRecipe<Info: RecipeInfo>: Identifiable, Codable, Hashable, RecipeData {
+    var id: Int
+    var userId: Int
+    var coffee: Coffee?
+    var method: Method
+    var info: Info
+    var createdAt: String?
+    var version: Int?
 }
+
+// MARK: - Base Recipe Input
+
+struct BaseRecipeInput<Info: RecipeInfo>: Codable, Hashable, RecipeInput {
+    var methodId: Int
+    var coffeeId: Int?
+    var info: Info
+}
+
+// MARK: - RecipeInput Protocol
 
 protocol RecipeInput: Codable {
     var methodId: Int { get }
     var coffeeId: Int? { get }
 }
 
+// MARK: - Recipe Enum
 
+private struct RecipeEnvelope: Decodable {
+    struct MethodName: Decodable { let name: String }
+    let method: MethodName
+}
 
-
-// Read data[i] -> check the method -> decode it into the method
-
+enum Recipe: Identifiable, Codable {
+    case switchRecipe(BaseRecipe<SwitchInfo>)
+    case v60Recipe(BaseRecipe<V60Info>)
+    
+    private var base: any RecipeData {
+        switch self {
+        case .switchRecipe(let data): return data
+        case .v60Recipe(let data): return data
+        }
+    }
+    
+    var id: Int { base.id }
+    var name: String { base.info.name }
+    var coffee: Coffee? { base.coffee }
+    var method: Method { base.method }
+    var gramsIn: Int { base.info.gramsIn }
+    var mlOut: Int { base.info.mlOut }
+    
+    init(from decoder: Decoder) throws {
+        let envelope = try RecipeEnvelope(from: decoder)
+        
+        switch envelope.method.name {
+        case "Hario Switch":
+            self = .switchRecipe(try BaseRecipe<SwitchInfo>(from: decoder))
+        case "V60":
+            self = .v60Recipe(try BaseRecipe<V60Info>(from: decoder))
+        default:
+            throw DecodingError.dataCorruptedError(
+                in: try decoder.singleValueContainer(),
+                debugDescription: "Unknown method: \(envelope.method.name)"
+            )
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        switch self {
+        case .switchRecipe(let data): try data.encode(to: encoder)
+        case .v60Recipe(let data): try data.self.encode(to: encoder)
+        }
+    }
+    
+ }

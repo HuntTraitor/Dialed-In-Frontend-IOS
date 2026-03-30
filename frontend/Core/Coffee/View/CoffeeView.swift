@@ -131,7 +131,9 @@ struct CoffeeView: View {
                         .frame(maxWidth: .infinity)
                     }
                     .refreshable {
-                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                        await Task {
+                            await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                        }.value
                     }
                 }
             }

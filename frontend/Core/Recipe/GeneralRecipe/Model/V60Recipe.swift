@@ -8,79 +8,11 @@
 import Foundation
 import UIKit
 
-struct V60Recipe: Identifiable, Codable, Hashable {
-        var id: Int
-        var userId: Int
-        var coffee: Coffee?
-        var method: Method
-        var info: RecipeInfo
-        var createdAt: String?
-        var version: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case userId = "user_id"
-        case coffee
-        case method
-        case info
-        case createdAt = "created_at"
-        case version
-    }
-    
-    struct RecipeInfo: Codable, Hashable{
-        var name: String
-        var gramsIn: Int
-        var mlOut: Int
-        var phases: [V60Phase]
-        
-            
-        enum CodingKeys: String, CodingKey {
-            case name
-            case gramsIn = "grams_in"
-            case mlOut = "ml_out"
-            case phases
-        }
-    }
-}
-
-struct V60RecipeInput: Codable, Hashable, RecipeInput {
-    var methodId: Int
-    var coffeeId: Int?
-    var info: RecipeInfo
-    
-    
-    enum CodingKeys: String, CodingKey {
-        case methodId = "method_id"
-        case coffeeId = "coffee_id"
-        case info
-    }
-    
-    struct RecipeInfo: Codable, Hashable {
-        var name: String
-        var gramsIn: Int
-        var mlOut: Int
-        var phases: [V60Phase]
-        
-        enum CodingKeys: String, CodingKey {
-            case name
-            case gramsIn = "grams_in"
-            case mlOut = "ml_out"
-            case phases
-        }
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(methodId, forKey: .methodId)
-        try container.encode(info, forKey: .info)
-
-        if let coffeeId {
-            try container.encode(coffeeId, forKey: .coffeeId)
-        } else {
-            try container.encodeNil(forKey: .coffeeId)
-        }
-    }
+struct V60Info: RecipeInfo {
+    var name: String
+    var gramsIn: Int
+    var mlOut: Int
+    var phases: [V60Phase]
 }
 
 struct V60Phase: Codable, Hashable {
@@ -88,13 +20,13 @@ struct V60Phase: Codable, Hashable {
     var amount: Int
 }
 
-extension V60Recipe {
-    static var MOCK_V60_RECIPE = V60Recipe(
+extension BaseRecipe where Info == V60Info {
+    static var MOCK_V60_RECIPE = BaseRecipe<V60Info>(
         id: 1,
         userId: User.MOCK_USER.id,
         coffee: Coffee.MOCK_COFFEE,
         method: Method.MOCK_METHOD,
-        info: RecipeInfo(
+        info: V60Info(
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -106,10 +38,10 @@ extension V60Recipe {
         )
     )
     
-    static var MOCK_V60_RECIPE_INPUT = V60RecipeInput(
+    static var MOCK_V60_RECIPE_INPUT = BaseRecipeInput<V60Info>(
         methodId: 1,
         coffeeId: Coffee.MOCK_COFFEE.id,
-        info: V60RecipeInput.RecipeInfo(
+        info: V60Info(
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -121,11 +53,11 @@ extension V60Recipe {
         )
     )
     
-    static var MOCK_V60_RECIPE_NO_COFFEE = V60Recipe(
+    static var MOCK_V60_RECIPE_NO_COFFEE = BaseRecipe<V60Info>(
         id: 1,
         userId: User.MOCK_USER.id,
         method: Method.MOCK_METHOD,
-        info: V60Recipe.RecipeInfo(
+        info: V60Info(
             name: "Classic V60 Recipe",
             gramsIn: 20,
             mlOut: 320,
@@ -138,12 +70,12 @@ extension V60Recipe {
     )
     
     static var MOCK_V60_RECIPES = [
-        V60Recipe(
+        BaseRecipe<V60Info>(
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: V60Info(
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -154,12 +86,12 @@ extension V60Recipe {
                 ]
             )
         ),
-        V60Recipe(
+        BaseRecipe<V60Info>(
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: V60Info(
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -170,12 +102,12 @@ extension V60Recipe {
                 ]
             )
         ),
-        V60Recipe(
+        BaseRecipe<V60Info>(
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: V60Info(
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -186,12 +118,12 @@ extension V60Recipe {
                 ]
             )
         ),
-        V60Recipe(
+        BaseRecipe<V60Info>(
             id: 1,
             userId: User.MOCK_USER.id,
             coffee: Coffee.MOCK_COFFEE,
             method: Method.MOCK_METHOD,
-            info: RecipeInfo(
+            info: V60Info(
                 name: "Classic V60 Recipe",
                 gramsIn: 20,
                 mlOut: 320,
@@ -205,13 +137,13 @@ extension V60Recipe {
     ]
 }
 
-extension V60Recipe {
-    static var JAMES_HOFFMAN_RECIPE = V60Recipe(
+extension BaseRecipe where Info == V60Info {
+    static var JAMES_HOFFMAN_RECIPE = BaseRecipe<V60Info>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.V60,
-        info: RecipeInfo(
+        info: V60Info(
             name: "James Hoffman V60 Recipe",
             gramsIn: 15,
             mlOut: 250,
@@ -225,12 +157,12 @@ extension V60Recipe {
         )
     )
     
-    static var FOURTOSIX_RECIPE = V60Recipe(
+    static var FOURTOSIX_RECIPE = BaseRecipe<V60Info>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.V60,
-        info: RecipeInfo(
+        info: V60Info(
             name: "Tetsu Kasuya 4:6 V60 Recipe",
             gramsIn: 20,
             mlOut: 300,
@@ -244,12 +176,12 @@ extension V60Recipe {
         )
     )
     
-    static var FIVE_POUR_METHOD = V60Recipe(
+    static var FIVE_POUR_METHOD = BaseRecipe<V60Info>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.V60,
-        info: RecipeInfo(
+        info: V60Info(
             name: "Matt Winton Five Pour Method",
             gramsIn: 20,
             mlOut: 300,
@@ -263,12 +195,12 @@ extension V60Recipe {
         )
     )
     
-    static var LANCE_HEDRICK_HIGH_EXTRACTION = V60Recipe(
+    static var LANCE_HEDRICK_HIGH_EXTRACTION = BaseRecipe<V60Info>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.V60,
-        info: RecipeInfo(
+        info: V60Info(
             name: "Lance Hedrick High Extraction",
             gramsIn: 20,
             mlOut: 320,
@@ -281,12 +213,12 @@ extension V60Recipe {
         )
     )
     
-    static var LANCE_HEDRICK_PREFERRED = V60Recipe(
+    static var LANCE_HEDRICK_PREFERRED = BaseRecipe<V60Info>(
         id: -1,
         userId: -1,
         coffee: nil,
         method: Method.V60,
-        info: RecipeInfo(
+        info: V60Info(
             name: "Lance Hedrick Preferred Method",
             gramsIn: 15,
             mlOut: 250,
