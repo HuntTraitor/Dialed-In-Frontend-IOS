@@ -26,6 +26,11 @@ struct V60CreateRecipeView: View {
     @State private var phases: [V60Phase] = []
     @State private var validationError: String? = nil
     @State private var hasPrefilledFromExisting = false
+    @State private var waterTemp: String = ""
+    @State private var isCelsius: Bool = false
+    @State private var waterTempDisplay: String = ""
+
+    var tempUnit: String { isCelsius ? "°C" : "°F" }
 
     init(existingRecipe: BaseRecipe<V60Info>? = nil, onSuccess: (() -> Void)? = nil) {
         self.existingRecipe = existingRecipe
@@ -68,6 +73,40 @@ struct V60CreateRecipeView: View {
                         isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
                         searchTerm: $searchTerm
                     )
+                }
+                
+                Section("Water Temperature") {
+                    HStack {
+                        TextField("Temperature", text: $waterTemp)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: waterTemp) {
+                                if !waterTemp.isEmpty {
+                                    waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                                } else {
+                                    waterTempDisplay = ""
+                                }
+                            }
+                        
+                        Divider()
+                        
+                        Picker("Unit", selection: $isCelsius) {
+                            Text("°F").tag(false)
+                            Text("°C").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 80)
+                        .onChange(of: isCelsius) {
+                            if !waterTemp.isEmpty {
+                                waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                            }
+                        }
+                    }
+                    
+                    if !waterTempDisplay.isEmpty {
+                        Text(waterTempDisplay)
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                    }
                 }
                 
                 Section("Pours") {
@@ -206,6 +245,7 @@ struct V60CreateRecipeView: View {
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
+                waterTemp: waterTempDisplay,
                 phases: phases
             )
             

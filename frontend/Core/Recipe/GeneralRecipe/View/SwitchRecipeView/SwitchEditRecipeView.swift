@@ -25,6 +25,11 @@ struct SwitchEditRecipeView: View {
     @State private var searchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
     @State private var validationError: String? = nil
+    @State private var waterTemp: String = ""
+    @State private var isCelsius: Bool = false
+    @State private var waterTempDisplay: String = ""
+
+    var tempUnit: String { isCelsius ? "°C" : "°F" }
     
     init(recipe: Binding<BaseRecipe<SwitchInfo>>) {
         self._recipe = recipe
@@ -71,6 +76,40 @@ struct SwitchEditRecipeView: View {
                         isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
                         searchTerm: $searchTerm
                     )
+                }
+                
+                Section("Water Temperature") {
+                    HStack {
+                        TextField("Temperature", text: $waterTemp)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: waterTemp) {
+                                if !waterTemp.isEmpty {
+                                    waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                                } else {
+                                    waterTempDisplay = ""
+                                }
+                            }
+                        
+                        Divider()
+                        
+                        Picker("Unit", selection: $isCelsius) {
+                            Text("°F").tag(false)
+                            Text("°C").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 80)
+                        .onChange(of: isCelsius) {
+                            if !waterTemp.isEmpty {
+                                waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                            }
+                        }
+                    }
+                    
+                    if !waterTempDisplay.isEmpty {
+                        Text(waterTempDisplay)
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                    }
                 }
                 
                 Section("Pours") {
@@ -203,10 +242,11 @@ struct SwitchEditRecipeView: View {
                 name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
+                waterTemp: waterTempDisplay,
                 phases: tempPhases
             )
             
-            let newRecipe = SwitchInfo(
+            let newRecipe = BaseRecipeInput<SwitchInfo>(
                 methodId: 2,
                 coffeeId: selectedCoffeeId,
                 info: recipeInfo

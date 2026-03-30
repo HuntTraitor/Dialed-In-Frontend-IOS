@@ -25,6 +25,12 @@ struct SwitchCreateRecipeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var phases: [SwitchPhase] = []
     @State private var validationError: String? = nil
+    @State private var waterTemp: String = ""
+    @State private var isCelsius: Bool = false
+    @State private var waterTempDisplay: String = ""
+
+    // Add this computed property:
+    var tempUnit: String { isCelsius ? "°C" : "°F" }
     
     @State private var hasPrefilledFromExisting = false
 
@@ -61,6 +67,40 @@ struct SwitchCreateRecipeView: View {
                     Text("Please enter all the information above.")
                 }
                 .headerProminence(.increased)
+                
+                Section("Water Temperature") {
+                    HStack {
+                        TextField("Temperature", text: $waterTemp)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: waterTemp) {
+                                if !waterTemp.isEmpty {
+                                    waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                                } else {
+                                    waterTempDisplay = ""
+                                }
+                            }
+                        
+                        Divider()
+                        
+                        Picker("Unit", selection: $isCelsius) {
+                            Text("°F").tag(false)
+                            Text("°C").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 80)
+                        .onChange(of: isCelsius) {
+                            if !waterTemp.isEmpty {
+                                waterTempDisplay = "\(waterTemp)\(tempUnit)"
+                            }
+                        }
+                    }
+                    
+                    if !waterTempDisplay.isEmpty {
+                        Text(waterTempDisplay)
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                    }
+                }
                 
                 Section("Coffee") {
                     CoffeePickerView(
@@ -208,6 +248,7 @@ struct SwitchCreateRecipeView: View {
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
+                waterTemp: waterTempDisplay,
                 phases: phases
             )
             
