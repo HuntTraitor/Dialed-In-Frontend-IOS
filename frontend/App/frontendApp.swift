@@ -23,6 +23,7 @@ struct MyApp: App {
     @StateObject private var methodViewModel = MethodViewModel(methodService: DefaultMethodService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var recipeViewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
+    @StateObject private var grinderViewModel = GrinderViewModel(grinderService: DefaultGrinderService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var navigationManager = NavigationManager.shared
 
     var body: some Scene {
@@ -33,6 +34,7 @@ struct MyApp: App {
                 .environmentObject(methodViewModel)
                 .environmentObject(coffeeViewModel)
                 .environmentObject(recipeViewModel)
+                .environmentObject(grinderViewModel)
                 .preferredColorScheme(.light)
         }
     }

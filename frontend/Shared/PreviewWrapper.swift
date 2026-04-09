@@ -14,7 +14,9 @@ struct PreviewWrapper<Content: View>: View {
     @StateObject private var methodViewModel = MethodViewModel(methodService: DefaultMethodService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var coffeeViewModel = CoffeeViewModel(coffeeService: DefaultCoffeeService(baseURL: EnvironmentManager.current.baseURL))
     @StateObject private var recipeViewModel = RecipeViewModel(recipeService: DefaultRecipeService(baseURL: EnvironmentManager.current.baseURL))
+    @StateObject private var grinderViewModel = GrinderViewModel(grinderService: DefaultGrinderService(baseURL: EnvironmentManager.current.baseURL))
     @ObservedObject private var navigationManager = NavigationManager.shared
+//    @StateObject private var grinderViewModel = GrinderViewModel(grinderService: MockGrinderService())
 
     var body: some View {
         content()
@@ -23,6 +25,7 @@ struct PreviewWrapper<Content: View>: View {
             .environmentObject(coffeeViewModel)
             .environmentObject(recipeViewModel)
             .environmentObject(navigationManager)
+            .environmentObject(grinderViewModel)
         
     }
 }

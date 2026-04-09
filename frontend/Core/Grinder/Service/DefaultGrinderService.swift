@@ -25,7 +25,9 @@ final class DefaultGrinderService: BaseApiService, GrinderService {
         guard let id = input.id else {
             throw APIError.requestFailed(description: "Missing grinder ID for update")
         }
-        let request = authorizedRequest(path: "grinders/\(id)", method: "PATCH", token: token, body: try encoded(input))
+        struct UpdateGrinderPayload: Encodable { let name: String }
+        let payload = UpdateGrinderPayload(name: input.name)
+        let request = authorizedRequest(path: "grinders/\(id)", method: "PATCH", token: token, body: try encoded(payload))
         let data = try await perform(request)
         return try decode(SingleGrinderResponse.self, from: data).grinder
     }
