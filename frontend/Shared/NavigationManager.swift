@@ -23,6 +23,7 @@ final class NavigationManager: ObservableObject {
     @Published var homeNavigator: [NavigationDestination] = []
     @Published var coffeeNavigator: [NavigationDestination] = []
     @Published var recipesNavigator: [RecipesRoute] = []
+    @Published var grinderNavigator: [NavigationDestination] = []
     @Published var settingsNavigator: [NavigationDestination] = []
     
     var tabHandler: Binding<Int> {
@@ -34,7 +35,8 @@ final class NavigationManager: ObservableObject {
                     case 1: self.homeNavigator = []
                     case 2: self.coffeeNavigator = []
                     case 3: self.recipesNavigator = []
-                    case 4: self.settingsNavigator = []
+                    case 4: self.grinderNavigator = []
+                    case 5: self.settingsNavigator = []
                     default: self.homeNavigator = []
                     }
                 }

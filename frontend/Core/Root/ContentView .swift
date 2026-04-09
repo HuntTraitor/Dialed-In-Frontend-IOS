@@ -72,11 +72,28 @@ struct ContentView: View {
                     .tabItem { Label("Recipes", systemImage: "book.pages") }
                     .tag(3)
                     
+                    NavigationStack(path: $navigationManager.grinderNavigator) {
+                        GrinderListView()
+                    }
+                    .tabItem {
+                        VStack(spacing: 2) {
+                            Image("coffee.grinder")
+                                .renderingMode(.original)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                            Text("Grinders")
+                                .font(.system(size: 12, weight: .regular))
+                                .baselineOffset(1)
+                        }
+                    }
+                    .tag(4)
+                    
                     NavigationStack(path: $navigationManager.settingsNavigator) {
                         ProfileView()
                     }
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                    .tag(4)
+                    .tag(5)
                 }
             }
         }
