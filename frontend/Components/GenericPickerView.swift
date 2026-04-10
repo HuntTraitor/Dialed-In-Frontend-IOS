@@ -1,42 +1,47 @@
 //
-//  CoffeePickerView.swift
+//  GenericPickerView.swift
 //  DialedIn
 //
-//  Created by Hunter Tratar on 6/23/25.
+//  Created by Hunter Tratar on 4/9/26.
 //
 
 import SwiftUI
 
-struct CoffeePickerView: View {
-    @EnvironmentObject var viewModel: CoffeeViewModel
-    @Binding var selectedCoffeeId: Int?
-    @Binding var showCoffeePicker: Bool
-    @Binding var isShowingCreateCoffeeView: Bool
+struct GenericPickerView<Item, ChoiceContent: View, NoneContent: View>: View where Item: Identifiable, Item.ID: Hashable {
+    let items: [Item]
+    @Binding var selectedItemId: Item.ID?
+    @Binding var showPicker: Bool
+    @Binding var isShowingCreateView: Bool
     @Binding var searchTerm: String
-    
-    var filteredCoffees: [Coffee] {
-        guard !searchTerm.isEmpty else { return viewModel.coffees }
-        return viewModel.coffees.filter {$0.info.name.localizedCaseInsensitiveContains(searchTerm)}
+
+    let searchPlaceholder: String
+    let addButtonTitle: String
+    let matchesSearch: (Item, String) -> Bool
+    let choiceView: (Item) -> ChoiceContent
+    let noneChoiceView: () -> NoneContent
+
+    var filteredItems: [Item] {
+        guard !searchTerm.isEmpty else { return items }
+        return items.filter { matchesSearch($0, searchTerm) }
     }
-    
-    var selectedCoffee: Coffee? {
-        viewModel.coffees.first { $0.id == selectedCoffeeId }
+
+    var selectedItem: Item? {
+        items.first { $0.id == selectedItemId }
     }
-    
+
     var shouldShowNoneOption: Bool {
-        searchTerm.isEmpty ||
-        "none".localizedCaseInsensitiveContains(searchTerm)
+        searchTerm.isEmpty || "none".localizedCaseInsensitiveContains(searchTerm)
     }
-    
+
     var body: some View {
         Button(action: {
             withAnimation {
-                showCoffeePicker.toggle()
+                showPicker.toggle()
             }
         }) {
             HStack {
-                if let coffee = selectedCoffee {
-                    CoffeeChoice(coffee: coffee)
+                if let item = selectedItem {
+                    choiceView(item)
                         .frame(height: 35)
                         .padding(.vertical, 1)
                 } else {
@@ -44,27 +49,27 @@ struct CoffeePickerView: View {
                         .foregroundColor(.gray)
                 }
                 Spacer()
-                Image(systemName: showCoffeePicker ? "chevron.up" : "chevron.down")
+                Image(systemName: showPicker ? "chevron.up" : "chevron.down")
                     .foregroundColor(.gray)
             }
         }
+        .buttonStyle(PlainButtonStyle())
 
-
-        if showCoffeePicker {
-            SearchBar(text: $searchTerm, placeholder: "Search Coffees")
+        if showPicker {
+            SearchBar(text: $searchTerm, placeholder: searchPlaceholder)
 
             ScrollView {
                 VStack(spacing: 0) {
                     if shouldShowNoneOption {
                         Button {
-                            selectedCoffeeId = nil
-                            showCoffeePicker = false
+                            selectedItemId = nil
+                            showPicker = false
                         } label: {
-                            CoffeeChoiceNone()
+                            noneChoiceView()
                                 .overlay(
                                     HStack {
                                         Spacer()
-                                        if selectedCoffeeId == nil {
+                                        if selectedItemId == nil {
                                             Image(systemName: "checkmark")
                                                 .foregroundColor(.accentColor)
                                                 .padding(.trailing, 8)
@@ -78,16 +83,16 @@ struct CoffeePickerView: View {
                             .background(Color.gray.opacity(0.3))
                     }
 
-                    ForEach(filteredCoffees.indices, id: \.self) { index in
+                    ForEach(filteredItems.indices, id: \.self) { index in
                         Button {
-                            selectedCoffeeId = filteredCoffees[index].id
-                            showCoffeePicker = false
+                            selectedItemId = filteredItems[index].id
+                            showPicker = false
                         } label: {
-                            CoffeeChoice(coffee: filteredCoffees[index])
+                            choiceView(filteredItems[index])
                         }
                         .buttonStyle(PlainButtonStyle())
 
-                        if index != filteredCoffees.indices.last {
+                        if index != filteredItems.indices.last {
                             Divider()
                                 .background(Color.gray.opacity(0.3))
                         }
@@ -96,13 +101,10 @@ struct CoffeePickerView: View {
             }
             .frame(maxHeight: 4 * 48)
 
-
-
-
             Button {
-                isShowingCreateCoffeeView = true
+                isShowingCreateView = true
             } label: {
-                Label("Add a new coffee...", systemImage: "plus")
+                Label(addButtonTitle, systemImage: "plus")
                     .font(.system(size: 15))
                     .bold()
                     .padding(.trailing, 30)
@@ -111,6 +113,3 @@ struct CoffeePickerView: View {
         }
     }
 }
-
-
-

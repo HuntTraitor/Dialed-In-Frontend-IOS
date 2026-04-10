@@ -24,6 +24,7 @@ protocol RecipeData: Codable {
     var id: Int { get }
     var info: Info { get }
     var coffee: Coffee? { get }
+    var grinder: Grinder? { get }
     var method: Method { get }
 }
 
@@ -33,6 +34,7 @@ struct BaseRecipe<Info: RecipeInfo>: Identifiable, Codable, Hashable, RecipeData
     var id: Int
     var userId: Int
     var coffee: Coffee?
+    var grinder: Grinder?
     var method: Method
     var info: Info
     var createdAt: String?
@@ -44,6 +46,7 @@ struct BaseRecipe<Info: RecipeInfo>: Identifiable, Codable, Hashable, RecipeData
 struct BaseRecipeInput<Info: RecipeInfo>: Codable, Hashable, RecipeInput {
     var methodId: Int
     var coffeeId: Int?
+    var grinderId: Int?
     var info: Info
 }
 
@@ -52,6 +55,7 @@ struct BaseRecipeInput<Info: RecipeInfo>: Codable, Hashable, RecipeInput {
 protocol RecipeInput: Codable {
     var methodId: Int { get }
     var coffeeId: Int? { get }
+    var grinderId: Int? { get }
 }
 
 // MARK: - Recipe Enum
@@ -75,6 +79,7 @@ enum Recipe: Identifiable, Codable {
     var id: Int { base.id }
     var name: String { base.info.name }
     var coffee: Coffee? { base.coffee }
+    var grinder: Grinder? { base.grinder }
     var method: Method { base.method }
     var gramsIn: Int { base.info.gramsIn }
     var mlOut: Int { base.info.mlOut }

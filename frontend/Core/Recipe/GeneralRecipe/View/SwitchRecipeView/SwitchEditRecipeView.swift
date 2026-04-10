@@ -69,11 +69,23 @@ struct SwitchEditRecipeView: View {
                 .headerProminence(.increased)
                 
                 Section("Coffee") {
-                    CoffeePickerView(
-                        selectedCoffeeId: $selectedCoffeeId,
-                        showCoffeePicker: $showCoffeePicker,
-                        isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
-                        searchTerm: $searchTerm
+                    GenericPickerView(
+                        items: coffeeViewModel.coffees,
+                        selectedItemId: $selectedCoffeeId,
+                        showPicker: $showCoffeePicker,
+                        isShowingCreateView: $isShowingCreateCoffeeView,
+                        searchTerm: $searchTerm,
+                        searchPlaceholder: "Search Coffees",
+                        addButtonTitle: "Add a new coffee...",
+                        matchesSearch: { coffee, term in
+                            coffee.info.name.localizedCaseInsensitiveContains(term)
+                        },
+                        choiceView: { coffee in
+                            CoffeeChoice(coffee: coffee)
+                        },
+                        noneChoiceView: {
+                            CoffeeChoiceNone()
+                        }
                     )
                 }
                 
@@ -266,4 +278,3 @@ struct SwitchEditRecipeView: View {
         SwitchEditRecipeView(recipe: .constant(BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE))
     }
 }
-

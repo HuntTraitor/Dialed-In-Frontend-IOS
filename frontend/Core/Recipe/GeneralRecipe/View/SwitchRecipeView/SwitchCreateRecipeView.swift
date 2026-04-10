@@ -15,14 +15,19 @@ struct SwitchCreateRecipeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
+    @EnvironmentObject var grinderViewModel: GrinderViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var recipeName: String = ""
     @State private var gramsIn: String = ""
     @State private var mlOut: String = ""
     @State private var selectedCoffeeId: Int?
+    @State private var selectedGrinderId: Int?
     @State private var showCoffeePicker = false
+    @State private var showGrinderPicker = false
     @State private var searchTerm: String = ""
+    @State private var grinderSearchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
+    @State private var isShowingCreateGrinderView = false
     @State private var phases: [SwitchPhase] = []
     @State private var validationError: String? = nil
     @State private var waterTemp: String = ""
@@ -87,11 +92,44 @@ struct SwitchCreateRecipeView: View {
                 }
                 
                 Section("Coffee") {
-                    CoffeePickerView(
-                        selectedCoffeeId: $selectedCoffeeId,
-                        showCoffeePicker: $showCoffeePicker,
-                        isShowingCreateCoffeeView: $isShowingCreateCoffeeView,
-                        searchTerm: $searchTerm
+                    GenericPickerView(
+                        items: coffeeViewModel.coffees,
+                        selectedItemId: $selectedCoffeeId,
+                        showPicker: $showCoffeePicker,
+                        isShowingCreateView: $isShowingCreateCoffeeView,
+                        searchTerm: $searchTerm,
+                        searchPlaceholder: "Search Coffees",
+                        addButtonTitle: "Add a new coffee...",
+                        matchesSearch: { coffee, term in
+                            coffee.info.name.localizedCaseInsensitiveContains(term)
+                        },
+                        choiceView: { coffee in
+                            CoffeeChoice(coffee: coffee)
+                        },
+                        noneChoiceView: {
+                            CoffeeChoiceNone()
+                        }
+                    )
+                }
+                
+                Section("Grinder") {
+                    GenericPickerView(
+                        items: grinderViewModel.grinders,
+                        selectedItemId: $selectedGrinderId,
+                        showPicker: $showGrinderPicker,
+                        isShowingCreateView: $isShowingCreateGrinderView,
+                        searchTerm: $grinderSearchTerm,
+                        searchPlaceholder: "Search Grinders",
+                        addButtonTitle: "Add a new grinder...",
+                        matchesSearch: { grinder, term in
+                            grinder.name.localizedCaseInsensitiveContains(term)
+                        },
+                        choiceView: { grinder in
+                            GrinderChoice(grinder: grinder)
+                        },
+                        noneChoiceView: {
+                            GrinderChoiceNone()
+                        }
                     )
                 }
                 
@@ -121,12 +159,16 @@ struct SwitchCreateRecipeView: View {
             .onAppear {
                 Task {
                     await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    await grinderViewModel.fetchGrinders(withToken: authViewModel.token ?? "")
                     
                     prefillFromExistingRecipeIfNeeded()
                 }
             }
             .sheet(isPresented: $isShowingCreateCoffeeView) {
                 CreateCoffeeView()
+            }
+            .sheet(isPresented: $isShowingCreateGrinderView) {
+                NavigationStack { CreateGrinderView() }
             }
             .navigationTitle("New Switch Recipe")
             .navigationBarTitleDisplayMode(.inline)
@@ -242,6 +284,7 @@ struct SwitchCreateRecipeView: View {
             let newRecipe = BaseRecipeInput<SwitchInfo>(
                 methodId: 2,
                 coffeeId: selectedCoffeeId,
+                grinderId: selectedGrinderId,
                 info: recipeInfo
             )
             
@@ -273,6 +316,7 @@ struct SwitchCreateRecipeView: View {
         phases  = recipe.info.phases
 
         selectedCoffeeId = recipe.coffee?.id
+        selectedGrinderId = recipe.grinder?.id
     }
 
 }
@@ -282,4 +326,3 @@ struct SwitchCreateRecipeView: View {
         SwitchCreateRecipeView()
     }
 }
-
