@@ -36,7 +36,7 @@ struct RecipeCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 10) {
-                RecipeCardLogoPlaceholder(method: recipe.method)
+                RecipeCardMethodLogo(method: recipe.method)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(recipe.name)
@@ -264,53 +264,24 @@ private struct RecipeInlineMetric: View {
     }
 }
 
-private struct RecipeCardLogoPlaceholder: View {
+private struct RecipeCardMethodLogo: View {
     let method: Method
 
-    private var badgeText: String {
+    private var assetName: String {
         switch method.type {
         case .harioSwitch:
-            return "HS"
+            return "hario switch logo"
         case .v60:
-            return "V60"
+            return "v60 logo"
         }
     }
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .fill(
-                Color("background").opacity(0.08)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(
-                        Color("background").opacity(0.16),
-                        lineWidth: 1
-                    )
-            )
-            .overlay(alignment: .topLeading) {
-                VStack(alignment: .leading, spacing: 8) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.85))
-
-                        Text(badgeText)
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color("background"))
-                    }
-                    .frame(width: 24, height: 24)
-
-                    Spacer(minLength: 0)
-
-                    Text("LOGO")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .tracking(0.8)
-                        .foregroundStyle(Color.primary.opacity(0.45))
-                }
-                .padding(9)
-            }
+        Image(assetName)
+            .resizable()
+            .scaledToFit()
             .frame(width: 46, height: 58)
-            .accessibilityLabel("\(method.name) logo placeholder")
+            .accessibilityLabel("\(method.name) logo")
     }
 }
 
@@ -419,7 +390,7 @@ extension Binding where Value == Recipe {
 
 
 #Preview {
-    @Previewable @State var recipe = Recipe.switchRecipe(BaseRecipe<SwitchInfo>.MOCK_SWITCH_RECIPE)
+    @Previewable @State var recipe = Recipe.v60Recipe(BaseRecipe<V60Info>.MOCK_V60_RECIPE)
     PreviewWrapper {
         RecipeCard(recipe: $recipe)
     }
