@@ -28,7 +28,7 @@ extension BaseRecipe where Info == SwitchInfo {
     static var MOCK_SWITCH_RECIPE = BaseRecipe<SwitchInfo>(
         id: 1,
         userId: User.MOCK_USER.id,
-        coffee: Coffee.MOCK_COFFEE,
+//        coffee: Coffee.MOCK_COFFEE,
         grinder: Grinder.MOCK_GRINDER,
         method: Method.MOCK_METHOD,
         info: SwitchInfo(

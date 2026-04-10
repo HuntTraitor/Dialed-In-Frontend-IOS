@@ -22,7 +22,7 @@ struct SwitchRecipeViewImage: View {
                  ForEach(0..<recipe.info.phases.count, id: \.self) { index in
                      Rectangle()
                          .foregroundColor(brownShade(for: index, total: recipe.info.phases.count))
-                         .frame(width: 230, height: rectangleHeight(for: recipe.info.phases[index], in: recipe.info.phases))
+                         .frame(width: 225, height: rectangleHeight(for: recipe.info.phases[index], in: recipe.info.phases))
                  }
              }
              Image("V60 animation logo")
