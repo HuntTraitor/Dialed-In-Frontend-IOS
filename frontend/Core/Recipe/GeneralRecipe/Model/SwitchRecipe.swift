@@ -29,6 +29,7 @@ extension BaseRecipe where Info == SwitchInfo {
         id: 1,
         userId: User.MOCK_USER.id,
         coffee: Coffee.MOCK_COFFEE,
+        grinder: Grinder.MOCK_GRINDER,
         method: Method.MOCK_METHOD,
         info: SwitchInfo(
             name: "Classic Switch Recipe",
