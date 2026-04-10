@@ -12,11 +12,13 @@ struct SearchBar: View {
     var placeholder: String
 
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
+                .frame(width: 16, height: 16)
 
             TextField(placeholder, text: $text)
+                .font(.system(size: 16))
                 .foregroundColor(.black)
 
             if !text.isEmpty {
@@ -28,7 +30,8 @@ struct SearchBar: View {
                 }
             }
         }
-        .padding(10)
+        .frame(height: 42)
+        .padding(.horizontal, 4)
         .background(Color.white)
         .cornerRadius(10)
     }

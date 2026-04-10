@@ -13,6 +13,7 @@ struct V60EditRecipeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: RecipeViewModel
     @EnvironmentObject var coffeeViewModel: CoffeeViewModel
+    @EnvironmentObject var grinderViewModel: GrinderViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     
     @State private var tempRecipeName: String = ""
@@ -21,9 +22,13 @@ struct V60EditRecipeView: View {
     @State private var tempPhases: [V60Phase] = []
     
     @State private var selectedCoffeeId: Int?
+    @State private var selectedGrinderId: Int?
     @State private var showCoffeePicker = false
+    @State private var showGrinderPicker = false
     @State private var searchTerm: String = ""
+    @State private var grinderSearchTerm: String = ""
     @State private var isShowingCreateCoffeeView = false
+    @State private var isShowingCreateGrinderView = false
     @State private var validationError: String? = nil
     @State private var waterTemp: String = ""
     @State private var isCelsius: Bool = false
@@ -37,6 +42,7 @@ struct V60EditRecipeView: View {
         self._tempMlOut = State(initialValue: String(recipe.wrappedValue.info.mlOut))
         self._tempPhases = State(initialValue: recipe.wrappedValue.info.phases)
         self._selectedCoffeeId = State(initialValue: recipe.wrappedValue.coffee?.id)
+        self._selectedGrinderId = State(initialValue: recipe.wrappedValue.grinder?.id)
     }
     
     var isFormValid: Bool {
@@ -88,6 +94,27 @@ struct V60EditRecipeView: View {
                         }
                     )
                 }
+
+                Section("Grinder") {
+                    GenericPickerView(
+                        items: grinderViewModel.grinders,
+                        selectedItemId: $selectedGrinderId,
+                        showPicker: $showGrinderPicker,
+                        isShowingCreateView: $isShowingCreateGrinderView,
+                        searchTerm: $grinderSearchTerm,
+                        searchPlaceholder: "Search Grinders",
+                        addButtonTitle: "Add a new grinder...",
+                        matchesSearch: { grinder, term in
+                            grinder.name.localizedCaseInsensitiveContains(term)
+                        },
+                        choiceView: { grinder in
+                            GrinderChoice(grinder: grinder)
+                        },
+                        noneChoiceView: {
+                            GrinderChoiceNone()
+                        }
+                    )
+                }
                 
                 Section("Water Temperature") {
                     HStack {
@@ -134,10 +161,14 @@ struct V60EditRecipeView: View {
             .onAppear {
                 Task {
                     await coffeeViewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    await grinderViewModel.fetchGrinders(withToken: authViewModel.token ?? "")
                 }
             }
             .sheet(isPresented: $isShowingCreateCoffeeView) {
                 CreateCoffeeView()
+            }
+            .sheet(isPresented: $isShowingCreateGrinderView) {
+                NavigationStack { CreateGrinderView() }
             }
             .navigationTitle("Edit V60 Recipe")
             .navigationBarTitleDisplayMode(.inline)
@@ -248,6 +279,7 @@ struct V60EditRecipeView: View {
             let newRecipe = BaseRecipeInput<V60Info>(
                 methodId: 1,
                 coffeeId: selectedCoffeeId,
+                grinderId: selectedGrinderId,
                 info: recipeInfo
             )
             
@@ -278,5 +310,4 @@ struct V60EditRecipeView: View {
         V60EditRecipeView(recipe: .constant(BaseRecipe<V60Info>.MOCK_V60_RECIPE))
     }
 }
-
 

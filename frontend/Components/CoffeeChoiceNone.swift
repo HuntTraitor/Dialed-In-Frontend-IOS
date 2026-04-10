@@ -9,26 +9,10 @@ import SwiftUI
 
 struct CoffeeChoiceNone: View {
     var body: some View {
-        HStack(spacing: 8) {
-            Image("No Image")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .shadow(radius: 1)
-                .opacity(0.4)
-            
-            Text("None")
-                .foregroundColor(.gray)
-                .font(.subheadline)
-                .lineLimit(1)
-                .truncationMode(.tail)
-            
-            Spacer()
+        PickerChoiceRow(title: "None", titleColor: .gray) {
+            Image(systemName: "photo")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(.secondary.opacity(0.7))
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
     }
 }
-
-
