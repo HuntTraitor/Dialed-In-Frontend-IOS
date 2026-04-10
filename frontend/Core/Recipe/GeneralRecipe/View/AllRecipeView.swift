@@ -96,7 +96,6 @@ struct AllRecipeView: View {
                                         value: route(for: recipeBinding.wrappedValue)
                                     ) {
                                         recipeCard(for: recipeBinding)
-                                            .padding(.vertical, 10)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }

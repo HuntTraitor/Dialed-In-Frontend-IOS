@@ -17,6 +17,38 @@ protocol RecipeInfo: Codable, Hashable {
     var grindSize: String? { get }
 }
 
+struct RecipeWaterTemperatureFormValue: Hashable {
+    var temperature: String
+    var isCelsius: Bool
+}
+
+extension RecipeInfo {
+    var waterTemperatureFormValue: RecipeWaterTemperatureFormValue {
+        let trimmedTemperature = waterTemp.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmedTemperature.hasSuffix("°C") {
+            return RecipeWaterTemperatureFormValue(
+                temperature: String(trimmedTemperature.dropLast(2)),
+                isCelsius: true
+            )
+        }
+
+        if trimmedTemperature.hasSuffix("°F") {
+            return RecipeWaterTemperatureFormValue(
+                temperature: String(trimmedTemperature.dropLast(2)),
+                isCelsius: false
+            )
+        }
+
+        let numericTemperature = trimmedTemperature.filter(\.isNumber)
+
+        return RecipeWaterTemperatureFormValue(
+            temperature: numericTemperature,
+            isCelsius: trimmedTemperature.localizedCaseInsensitiveContains("c")
+        )
+    }
+}
+
 // MARK: - RecipeData Protocol
 
 protocol RecipeData: Codable {

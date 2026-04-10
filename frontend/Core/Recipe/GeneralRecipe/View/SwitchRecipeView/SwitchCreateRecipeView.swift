@@ -32,6 +32,7 @@ struct SwitchCreateRecipeView: View {
     @State private var validationError: String? = nil
     @State private var waterTemp: String = ""
     @State private var isCelsius: Bool = false
+    @State private var grindSize: String = ""
 
     // Add this computed property:
     var tempUnit: String { isCelsius ? "°C" : "°F" }
@@ -131,6 +132,10 @@ struct SwitchCreateRecipeView: View {
                             GrinderChoiceNone()
                         }
                     )
+                    .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+
+                    TextField("Grind Size", text: $grindSize)
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                 }
                 
                 Section("Pours") {
@@ -225,6 +230,10 @@ struct SwitchCreateRecipeView: View {
         guard let mlOutInt = Int(mlOut) else {
             return "ML Out must be a number."
         }
+
+        guard !waterTemp.isEmpty else {
+            return "Water Temperature must be provided."
+        }
         
         if phases.count <= 0 {
             return "At least one phase must be provided."
@@ -272,12 +281,14 @@ struct SwitchCreateRecipeView: View {
             
             let unit = isCelsius ? "°C" : "°F"
             let waterTempString = waterTemp.isEmpty ? "" : "\(waterTemp)\(unit)"
+            let trimmedGrindSize = grindSize.trimmingCharacters(in: .whitespacesAndNewlines)
             
             let recipeInfo = SwitchInfo(
                 name: recipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 waterTemp: waterTempString,
+                grindSize: trimmedGrindSize.isEmpty ? nil : trimmedGrindSize,
                 phases: phases
             )
             
@@ -314,6 +325,11 @@ struct SwitchCreateRecipeView: View {
         gramsIn = String(recipe.info.gramsIn)
         mlOut   = String(recipe.info.mlOut)
         phases  = recipe.info.phases
+        grindSize = recipe.info.grindSize ?? ""
+
+        let waterTemperatureFormValue = recipe.info.waterTemperatureFormValue
+        waterTemp = waterTemperatureFormValue.temperature
+        isCelsius = waterTemperatureFormValue.isCelsius
 
         selectedCoffeeId = recipe.coffee?.id
         selectedGrinderId = recipe.grinder?.id

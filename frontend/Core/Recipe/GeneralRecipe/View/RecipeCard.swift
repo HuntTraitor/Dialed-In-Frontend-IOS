@@ -80,11 +80,19 @@ struct RecipeCard: View {
                         }
                         .frame(maxWidth: .infinity)
 
-                        RecipeInlineMetric(
-                            label: "Grinder",
-                            value: recipe.grinderDisplayName,
-                            centered: true
-                        )
+                        HStack(alignment: .top, spacing: 16) {
+                            RecipeInlineMetric(
+                                label: "Grinder",
+                                value: recipe.grinderDisplayName,
+                                centered: true
+                            )
+                            RecipeInlineMetric(
+                                label: "Grind",
+                                value: recipe.grindSizeDisplay,
+                                centered: true
+                            )
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -104,11 +112,19 @@ struct RecipeCard: View {
                     }
                     .frame(maxWidth: .infinity)
 
-                    RecipeInlineMetric(
-                        label: "Grinder",
-                        value: recipe.grinderDisplayName,
-                        centered: true
-                    )
+                    HStack(alignment: .top, spacing: 16) {
+                        RecipeInlineMetric(
+                            label: "Grinder",
+                            value: recipe.grinderDisplayName,
+                            centered: true
+                        )
+                        RecipeInlineMetric(
+                            label: "Grind",
+                            value: recipe.grindSizeDisplay,
+                            centered: true
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
@@ -338,6 +354,14 @@ private extension Recipe {
 
     var grinderDisplayName: String {
         grinder?.name ?? "Any grinder"
+    }
+
+    var grindSizeDisplay: String {
+        guard let grindSize, !grindSize.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return "Not set"
+        }
+
+        return grindSize
     }
 
     var ratioText: String {

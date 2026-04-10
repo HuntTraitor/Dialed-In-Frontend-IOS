@@ -19,6 +19,7 @@ struct V60EditRecipeView: View {
     @State private var tempRecipeName: String = ""
     @State private var tempGramsIn: String = ""
     @State private var tempMlOut: String = ""
+    @State private var tempGrindSize: String = ""
     @State private var tempPhases: [V60Phase] = []
     
     @State private var selectedCoffeeId: Int?
@@ -36,13 +37,17 @@ struct V60EditRecipeView: View {
     var tempUnit: String { isCelsius ? "°C" : "°F" }
     
     init(recipe: Binding<BaseRecipe<V60Info>>) {
+        let waterTemperatureFormValue = recipe.wrappedValue.info.waterTemperatureFormValue
         self._recipe = recipe
         self._tempRecipeName = State(initialValue: recipe.wrappedValue.info.name)
         self._tempGramsIn = State(initialValue: String(recipe.wrappedValue.info.gramsIn))
         self._tempMlOut = State(initialValue: String(recipe.wrappedValue.info.mlOut))
+        self._tempGrindSize = State(initialValue: recipe.wrappedValue.info.grindSize ?? "")
         self._tempPhases = State(initialValue: recipe.wrappedValue.info.phases)
         self._selectedCoffeeId = State(initialValue: recipe.wrappedValue.coffee?.id)
         self._selectedGrinderId = State(initialValue: recipe.wrappedValue.grinder?.id)
+        self._waterTemp = State(initialValue: waterTemperatureFormValue.temperature)
+        self._isCelsius = State(initialValue: waterTemperatureFormValue.isCelsius)
     }
     
     var isFormValid: Bool {
@@ -114,6 +119,10 @@ struct V60EditRecipeView: View {
                             GrinderChoiceNone()
                         }
                     )
+                    .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+
+                    TextField("Grind Size", text: $tempGrindSize)
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                 }
                 
                 Section("Water Temperature") {
@@ -224,6 +233,10 @@ struct V60EditRecipeView: View {
         guard let mlOutInt = Int(tempMlOut) else {
             return "ML Out must be a number."
         }
+
+        guard !waterTemp.isEmpty else {
+            return "Water Temperature must be provided."
+        }
         
         if gramsInInt <= 0 {
             return "Grams In must be greater than zero."
@@ -267,12 +280,14 @@ struct V60EditRecipeView: View {
             
             let unit = isCelsius ? "°C" : "°F"
             let waterTempString = waterTemp.isEmpty ? "" : "\(waterTemp)\(unit)"
+            let trimmedGrindSize = tempGrindSize.trimmingCharacters(in: .whitespacesAndNewlines)
             
             let recipeInfo = V60Info(
                 name: tempRecipeName,
                 gramsIn: gramsInInt,
                 mlOut: mlOutInt,
                 waterTemp: waterTempString,
+                grindSize: trimmedGrindSize.isEmpty ? nil : trimmedGrindSize,
                 phases: tempPhases
             )
             
@@ -310,4 +325,3 @@ struct V60EditRecipeView: View {
         V60EditRecipeView(recipe: .constant(BaseRecipe<V60Info>.MOCK_V60_RECIPE))
     }
 }
-
