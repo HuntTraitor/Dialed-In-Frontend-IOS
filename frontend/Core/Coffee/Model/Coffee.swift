@@ -16,6 +16,49 @@ struct Coffee: Identifiable, Codable, Hashable {
     var version: Int?
 }
 
+struct CoffeeMetadata: Codable, Hashable {
+    var currentPage: Int?
+    var pageSize: Int?
+    var firstPage: Int?
+    var lastPage: Int?
+    var totalRecords: Int?
+}
+
+struct CoffeeQuery: Hashable {
+    var page: Int
+    var name: String?
+    var roaster: String?
+
+    var queryItems: [URLQueryItem] {
+        var items: [URLQueryItem] = []
+        
+        items.append(URLQueryItem(name: QueryItemName.page, value: String(page)))
+
+        if let name = nonEmptyValue(name) {
+            items.append(URLQueryItem(name: QueryItemName.name, value: name))
+        }
+
+        if let roaster = nonEmptyValue(roaster) {
+            items.append(URLQueryItem(name: QueryItemName.roaster, value: roaster))
+        }
+
+        return items
+    }
+
+    private func nonEmptyValue(_ value: String?) -> String? {
+        guard let value else { return nil }
+
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    private enum QueryItemName {
+        static let page = "page"
+        static let name = "name"
+        static let roaster = "roaster"
+    }
+}
+
 struct CoffeeInfo: Codable, Hashable {
     var name: String
     var roaster: String?
@@ -601,8 +644,9 @@ enum RoastLevel: String, Codable, Identifiable, Equatable, FixedOption {
 }
 
 
-struct MultiCoffeeResponse: Codable {
+struct MultiCoffeeResponse: Codable, Hashable {
     var coffees: [Coffee]
+    var metadata: CoffeeMetadata
 }
 
 struct SingleCoffeeResponse: Codable {
@@ -754,7 +798,7 @@ extension Coffee {
 }
 
 extension Coffee {
-    static var MOCK_COFFEES = [
+    static var MOCK_COFFEE_RECORDS: [Coffee] = [
             Coffee(
                 id: 1,
                 userId: 123,
@@ -861,4 +905,17 @@ extension Coffee {
                 version: nil
             )
         ]
+
+    static var MOCK_METADATA = CoffeeMetadata(
+        currentPage: 1,
+        pageSize: MOCK_COFFEE_RECORDS.count,
+        firstPage: 1,
+        lastPage: 1,
+        totalRecords: MOCK_COFFEE_RECORDS.count
+    )
+
+    static var MOCK_COFFEES = MultiCoffeeResponse(
+        coffees: MOCK_COFFEE_RECORDS,
+        metadata: MOCK_METADATA
+    )
 }

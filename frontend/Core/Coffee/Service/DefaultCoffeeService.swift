@@ -9,10 +9,10 @@ import Foundation
 
 final class DefaultCoffeeService: BaseApiService, CoffeeService {
     
-    func fetchCoffees(withToken token: String) async throws -> [Coffee] {
-        let request = authorizedRequest(path: "coffees", method: "GET", token: token)
+    func fetchCoffees(withToken token: String, query: [URLQueryItem]) async throws -> MultiCoffeeResponse {
+        let request = authorizedRequest(path: "coffees", method: "GET", token: token, queryItems: query)
         let data = try await perform(request)
-        return try decode(MultiCoffeeResponse.self, from: data).coffees
+        return try decode(MultiCoffeeResponse.self, from: data)
     }
     
     func postCoffee(input: CoffeeInput, token: String) async throws -> Coffee {

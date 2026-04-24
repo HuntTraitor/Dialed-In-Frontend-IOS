@@ -10,12 +10,44 @@ import Testing
 
 @MainActor
 struct CoffeeViewModelTests {
+    @Test func coffee_query_builds_url_query_items() {
+        var query = CoffeeQuery()
+        query.page = 2
+        query.name = " Milky Cake "
+        query.roaster = "Dak"
+
+        #expect(query.queryItems.map(\.name) == ["page", "name", "roaster"])
+        #expect(query.queryItems.map(\.value) == ["2", "Milky Cake", "Dak"])
+    }
+
+    @Test func coffee_view_model_query_updates_query_items() {
+        let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
+        viewModel.query.page = 2
+        viewModel.query.name = "Milky Cake"
+        viewModel.query.roaster = "Dak"
+
+        #expect(viewModel.coffeeQueryItems.map(\.name) == ["page", "name", "roaster"])
+        #expect(viewModel.coffeeQueryItems.map(\.value) == ["2", "Milky Cake", "Dak"])
+    }
+
+    @Test func fetching_coffee_uses_structured_query_items() async throws {
+        let mockCoffeeService = MockCoffeeService()
+        let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
+        viewModel.query.page = 2
+        viewModel.query.name = "Milky Cake"
+
+        await viewModel.fetchCoffees(withToken: Token.MOCK_TOKEN.token)
+
+        #expect(mockCoffeeService.lastQuery.map(\.name) == ["page", "name"])
+        #expect(mockCoffeeService.lastQuery.map(\.value) == ["2", "Milky Cake"])
+    }
+
     @Test func fetching_coffee_succesfully_updates_coffees() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
         await viewModel.fetchCoffees(withToken: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage == nil)
-        #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
+        #expect(viewModel.coffees == Coffee.MOCK_COFFEES.coffees)
     }
     
     @Test func fetching_coffee_with_bad_token_returns_401() async throws {
@@ -40,7 +72,7 @@ struct CoffeeViewModelTests {
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
         await viewModel.postCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage == nil)
-        #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
+        #expect(viewModel.coffees == Coffee.MOCK_COFFEES.coffees)
     }
     
     @Test func posting_coffee_with_bad_token_returns_401() async throws {
@@ -65,7 +97,7 @@ struct CoffeeViewModelTests {
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
         await viewModel.deleteCoffee(coffeeId: Coffee.MOCK_COFFEE.id, token: Token.MOCK_TOKEN.token)
         #expect(viewModel.errorMessage == nil)
-        #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
+        #expect(viewModel.coffees == Coffee.MOCK_COFFEES.coffees)
     }
     
     @Test func deleting_coffee_with_unknown_token_fails() async throws {
@@ -98,7 +130,7 @@ struct CoffeeViewModelTests {
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
         let coffee = await viewModel.updateCoffee(input: Coffee.MOCK_COFFEE_INPUT, token: Token.MOCK_TOKEN.token)
         #expect(coffee == Coffee.MOCK_COFFEE)
-        #expect(viewModel.coffees == Coffee.MOCK_COFFEES)
+        #expect(viewModel.coffees == Coffee.MOCK_COFFEES.coffees)
         #expect(viewModel.errorMessage == nil)
     }
     

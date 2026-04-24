@@ -9,9 +9,17 @@ import Foundation
 
 @MainActor
 class CoffeeViewModel: ObservableObject {
+    @Published var coffeeMetadata: CoffeeMetadata?
     @Published var coffees: [Coffee] = []
     @Published var isLoading = false
+    @Published var isLoadingMore = false
     @Published var errorMessage: String?
+    @Published private(set) var coffeeQueryItems: [URLQueryItem] = []
+    @Published var query = CoffeeQuery(page: 1) {
+        didSet {
+            coffeeQueryItems = query.queryItems
+        }
+    }
     
     private let coffeeService: CoffeeService
     
@@ -25,11 +33,50 @@ class CoffeeViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let coffees = try await coffeeService.fetchCoffees(withToken: token)
-            self.coffees = coffees
+            query.page = 1
+            coffeeQueryItems = query.queryItems
+            let response = try await coffeeService.fetchCoffees(withToken: token, query: coffeeQueryItems)
+            self.coffees = response.coffees
+            self.coffeeMetadata = response.metadata
         } catch {
             errorMessage = "Failed to fetch coffees: \(error.localizedDescription)"
         }
+    }
+    
+    func shouldFetchMore(after coffee: Coffee) -> Bool {
+        guard !isLoadingMore, !isLoading else { return false }
+        guard let currentPage = coffeeMetadata?.currentPage,
+              let lastPage = coffeeMetadata?.lastPage,
+              currentPage < lastPage else { return false }
+        guard let coffeeIndex = coffees.firstIndex(where: { $0.id == coffee.id }) else { return false }
+        guard !coffees.isEmpty else { return false }
+
+        let thresholdIndex = max(coffees.count - 3, 0)
+        let lastIndex = coffees.index(before: coffees.endIndex)
+        return coffeeIndex == thresholdIndex || coffeeIndex == lastIndex
+    }
+
+    func fetchMore(withToken token: String) async {
+        guard !isLoadingMore, !isLoading else { return }
+        guard let currentPage = coffeeMetadata?.currentPage,
+              let lastPage = coffeeMetadata?.lastPage,
+              currentPage < lastPage else { return }
+
+        query.page += 1
+        
+        isLoadingMore = true
+        errorMessage = nil
+        defer { isLoadingMore = false }
+        
+        do {
+            coffeeQueryItems = query.queryItems
+            let response = try await coffeeService.fetchCoffees(withToken: token, query: coffeeQueryItems)
+            self.coffees.append(contentsOf: response.coffees)
+            self.coffeeMetadata = response.metadata
+        } catch {
+            errorMessage = "Failed to fetch more coffees: \(error.localizedDescription)"
+        }
+
     }
     
     func postCoffee(input: CoffeeInput, token: String) async {

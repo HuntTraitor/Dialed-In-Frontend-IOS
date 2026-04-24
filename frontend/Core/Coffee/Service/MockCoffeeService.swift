@@ -5,15 +5,32 @@
 //  Created by Hunter Tratar on 6/26/25.
 //
 
+import Foundation
+
 final class MockCoffeeService: CoffeeService {
     var isErrorThrown = false
     var noCoffeesFound = false
-    func fetchCoffees(withToken token: String) async throws -> [Coffee] {
+    private(set) var lastQuery: [URLQueryItem] = []
+
+    private func validateToken(_ token: String) throws {
+        if token != Token.MOCK_TOKEN.token {
+            throw APIError.invalidStatusCode(statusCode: 401)
+        }
+    }
+
+    func fetchCoffees(withToken token: String, query: [URLQueryItem]) async throws -> MultiCoffeeResponse {
+        lastQuery = query
+
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if noCoffeesFound {
-            return []
+            try validateToken(token)
+            return MultiCoffeeResponse(
+                coffees: [],
+                metadata: CoffeeMetadata()
+            )
         } else {
+            try validateToken(token)
             return Coffee.MOCK_COFFEES
         }
     }
@@ -22,6 +39,7 @@ final class MockCoffeeService: CoffeeService {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else {
+            try validateToken(token)
             return Coffee.MOCK_COFFEE
         }
     }
@@ -30,8 +48,10 @@ final class MockCoffeeService: CoffeeService {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else if coffeeId != Coffee.MOCK_COFFEE.id {
+            try validateToken(token)
             throw APIError.invalidStatusCode(statusCode: 404)
         } else {
+            try validateToken(token)
             return true
         }
     }
@@ -40,8 +60,8 @@ final class MockCoffeeService: CoffeeService {
         if isErrorThrown {
             throw APIError.unknownError(error: DummyError.someError)
         } else {
+            try validateToken(token)
             return Coffee.MOCK_COFFEE
         }
     }
 }
-
