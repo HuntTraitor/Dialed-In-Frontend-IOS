@@ -25,7 +25,8 @@ struct CoffeeMetadata: Codable, Hashable {
 }
 
 struct CoffeeQuery: Hashable {
-    var page: Int
+    var page: Int = 1
+    var search: String?
     var name: String?
     var roaster: String?
 
@@ -33,6 +34,10 @@ struct CoffeeQuery: Hashable {
         var items: [URLQueryItem] = []
         
         items.append(URLQueryItem(name: QueryItemName.page, value: String(page)))
+
+        if let search = nonEmptyValue(search) {
+            items.append(URLQueryItem(name: QueryItemName.search, value: search))
+        }
 
         if let name = nonEmptyValue(name) {
             items.append(URLQueryItem(name: QueryItemName.name, value: name))
@@ -54,6 +59,7 @@ struct CoffeeQuery: Hashable {
 
     private enum QueryItemName {
         static let page = "page"
+        static let search = "search"
         static let name = "name"
         static let roaster = "roaster"
     }

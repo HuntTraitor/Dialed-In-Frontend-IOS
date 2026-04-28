@@ -14,6 +14,7 @@ struct CoffeeView: View {
     @State private var isShowingCreateCoffeeView = false
     @State private var hasAppeared: Bool = false
     @State private var isMinimized: Bool = false
+    @State private var searchTask: Task<Void, Never>?
 
     private let testingID = UIIdentifiers.CoffeeScreen.self
 
@@ -111,6 +112,16 @@ struct CoffeeView: View {
                     hasAppeared = true
                 }
             }
+            .onChange(of: searchTerm) { newValue, _ in
+                searchTask?.cancel()
+                searchTask = Task {
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    guard !Task.isCancelled else { return }
+
+                    viewModel.query.search = newValue
+                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                }
+            }
 
             if viewModel.isLoading {
                 LoadingCircle()
@@ -126,3 +137,4 @@ struct CoffeeView: View {
         }
     }
 }
+

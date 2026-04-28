@@ -13,32 +13,34 @@ struct CoffeeViewModelTests {
     @Test func coffee_query_builds_url_query_items() {
         var query = CoffeeQuery()
         query.page = 2
+        query.search = " washed "
         query.name = " Milky Cake "
         query.roaster = "Dak"
 
-        #expect(query.queryItems.map(\.name) == ["page", "name", "roaster"])
-        #expect(query.queryItems.map(\.value) == ["2", "Milky Cake", "Dak"])
+        #expect(query.queryItems.map(\.name) == ["page", "search", "name", "roaster"])
+        #expect(query.queryItems.map(\.value) == ["2", "washed", "Milky Cake", "Dak"])
     }
 
     @Test func coffee_view_model_query_updates_query_items() {
         let viewModel = CoffeeViewModel(coffeeService: MockCoffeeService())
         viewModel.query.page = 2
+        viewModel.query.search = "washed"
         viewModel.query.name = "Milky Cake"
         viewModel.query.roaster = "Dak"
 
-        #expect(viewModel.coffeeQueryItems.map(\.name) == ["page", "name", "roaster"])
-        #expect(viewModel.coffeeQueryItems.map(\.value) == ["2", "Milky Cake", "Dak"])
+        #expect(viewModel.coffeeQueryItems.map(\.name) == ["page", "search", "name", "roaster"])
+        #expect(viewModel.coffeeQueryItems.map(\.value) == ["2", "washed", "Milky Cake", "Dak"])
     }
 
     @Test func fetching_coffee_uses_structured_query_items() async throws {
         let mockCoffeeService = MockCoffeeService()
         let viewModel = CoffeeViewModel(coffeeService: mockCoffeeService)
         viewModel.query.page = 2
-        viewModel.query.name = "Milky Cake"
+        viewModel.query.search = "Milky Cake"
 
         await viewModel.fetchCoffees(withToken: Token.MOCK_TOKEN.token)
 
-        #expect(mockCoffeeService.lastQuery.map(\.name) == ["page", "name"])
+        #expect(mockCoffeeService.lastQuery.map(\.name) == ["page", "search"])
         #expect(mockCoffeeService.lastQuery.map(\.value) == ["2", "Milky Cake"])
     }
 
