@@ -11,6 +11,8 @@ struct CoffeeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: CoffeeViewModel
     @State private var searchTerm = ""
+    @State private var coffeeFilter = CoffeeFilter()
+    @State private var isShowingCoffeeFilterView = false
     @State private var isShowingCreateCoffeeView = false
     @State private var hasAppeared: Bool = false
     @State private var isMinimized: Bool = false
@@ -35,6 +37,24 @@ struct CoffeeView: View {
                         .accessibilityIdentifier(testingID.coffeesTitle)
 
                     Spacer()
+
+                    Button {
+                        isShowingCoffeeFilterView = true
+                    } label: {
+                        Image(systemName: coffeeFilter.isActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                            .font(.system(size: 20))
+                            .foregroundColor(Color("background"))
+                            .padding(.trailing, 12)
+                    }
+                    .sheet(isPresented: $isShowingCoffeeFilterView) {
+                        CoffeeFilterView(filter: $coffeeFilter) {
+                            Task {
+                                viewModel.query.apply(filter: coffeeFilter)
+                                await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                            }
+                        }
+                    }
+                    .padding(.top, 40)
 
                     Button {
                         isShowingCreateCoffeeView = true
@@ -112,8 +132,18 @@ struct CoffeeView: View {
                     hasAppeared = true
                 }
             }
-            .onChange(of: searchTerm) { newValue, _ in
+            .onChange(of: searchTerm) { _, newValue in
                 searchTask?.cancel()
+
+                if newValue.isEmpty {
+                    searchTask = nil
+                    viewModel.query.search = nil
+                    Task {
+                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    }
+                    return
+                }
+
                 searchTask = Task {
                     try? await Task.sleep(nanoseconds: 200_000_000)
                     guard !Task.isCancelled else { return }
@@ -137,4 +167,3 @@ struct CoffeeView: View {
         }
     }
 }
-

@@ -29,6 +29,16 @@ struct CoffeeQuery: Hashable {
     var search: String?
     var name: String?
     var roaster: String?
+    var region: String?
+    var process: String?
+    var variety: String?
+    var originType: [String] = []
+    var roastLevel: [String] = []
+    var decaf: Bool?
+    var rating: [String] = []
+    var tastingNotes: [String] = []
+    var minCost: Double?
+    var maxCost: Double?
 
     var queryItems: [URLQueryItem] {
         var items: [URLQueryItem] = []
@@ -47,7 +57,70 @@ struct CoffeeQuery: Hashable {
             items.append(URLQueryItem(name: QueryItemName.roaster, value: roaster))
         }
 
+        if let region = nonEmptyValue(region) {
+            items.append(URLQueryItem(name: QueryItemName.region, value: region))
+        }
+
+        if let process = nonEmptyValue(process) {
+            items.append(URLQueryItem(name: QueryItemName.process, value: process))
+        }
+
+        if let variety = nonEmptyValue(variety) {
+            items.append(URLQueryItem(name: QueryItemName.variety, value: variety))
+        }
+
+        if let originType = commaSeparatedValue(originType) {
+            items.append(URLQueryItem(name: QueryItemName.originType, value: originType))
+        }
+
+        if let roastLevel = commaSeparatedValue(roastLevel) {
+            items.append(URLQueryItem(name: QueryItemName.roastLevel, value: roastLevel))
+        }
+
+        if let decaf {
+            items.append(URLQueryItem(name: QueryItemName.decaf, value: String(decaf)))
+        }
+
+        if let rating = commaSeparatedValue(rating) {
+            items.append(URLQueryItem(name: QueryItemName.rating, value: rating))
+        }
+
+        if let tastingNotes = commaSeparatedValue(tastingNotes) {
+            items.append(URLQueryItem(name: QueryItemName.tastingNotes, value: tastingNotes))
+        }
+
+        if let minCost {
+            items.append(URLQueryItem(name: QueryItemName.minCost, value: String(minCost)))
+        }
+
+        if let maxCost {
+            items.append(URLQueryItem(name: QueryItemName.maxCost, value: String(maxCost)))
+        }
+
         return items
+    }
+
+    mutating func apply(filter: CoffeeFilter) {
+        name = filter.name
+        roaster = filter.roaster
+        region = filter.region
+        process = filter.process
+        variety = filter.variety
+        originType = filter.originTypes
+            .map(\.displayName)
+            .sorted()
+        roastLevel = filter.roastLevels
+            .map(\.displayName)
+            .sorted()
+        decaf = filter.decaf
+        rating = filter.ratings
+            .map { String($0.rawValue) }
+            .sorted()
+        tastingNotes = filter.tastingNotes
+            .map(\.rawValue)
+            .sorted()
+        minCost = filter.minCost
+        maxCost = filter.maxCost
     }
 
     private func nonEmptyValue(_ value: String?) -> String? {
@@ -57,11 +130,28 @@ struct CoffeeQuery: Hashable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    private func commaSeparatedValue(_ values: [String]) -> String? {
+        let joined = values
+            .compactMap(nonEmptyValue)
+            .joined(separator: ",")
+        return joined.isEmpty ? nil : joined
+    }
+
     private enum QueryItemName {
         static let page = "page"
         static let search = "search"
         static let name = "name"
         static let roaster = "roaster"
+        static let region = "region"
+        static let process = "process"
+        static let variety = "variety"
+        static let originType = "origin_type"
+        static let roastLevel = "roast_level"
+        static let decaf = "decaf"
+        static let rating = "rating"
+        static let tastingNotes = "tasting_notes"
+        static let minCost = "min_cost"
+        static let maxCost = "max_cost"
     }
 }
 
