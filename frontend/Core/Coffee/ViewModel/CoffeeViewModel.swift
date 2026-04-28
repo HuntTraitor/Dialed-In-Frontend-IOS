@@ -27,10 +27,16 @@ class CoffeeViewModel: ObservableObject {
         self.coffeeService = coffeeService
     }
     
-    func fetchCoffees(withToken token: String) async {
-        isLoading = true
+    func fetchCoffees(withToken token: String, showsLoading: Bool = true) async {
+        if showsLoading {
+            isLoading = true
+        }
         errorMessage = nil
-        defer { isLoading = false }
+        defer {
+            if showsLoading {
+                isLoading = false
+            }
+        }
 
         do {
             query.page = 1

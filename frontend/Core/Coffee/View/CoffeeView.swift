@@ -139,7 +139,7 @@ struct CoffeeView: View {
                     searchTask = nil
                     viewModel.query.search = nil
                     Task {
-                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                        await viewModel.fetchCoffees(withToken: authViewModel.token ?? "", showsLoading: false)
                     }
                     return
                 }
@@ -149,7 +149,7 @@ struct CoffeeView: View {
                     guard !Task.isCancelled else { return }
 
                     viewModel.query.search = newValue
-                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "")
+                    await viewModel.fetchCoffees(withToken: authViewModel.token ?? "", showsLoading: false)
                 }
             }
 
